@@ -1,11 +1,11 @@
-//  Lock Stream
+//  Taiga Stream
 //  github.com/andrewmichaelpowell
 
 import SwiftUI
 
 @main
 
-struct LockStream: App
+struct TaigaStream: App
 {
     var body: some Scene
     {

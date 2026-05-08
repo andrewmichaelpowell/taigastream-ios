@@ -1,4 +1,4 @@
-//  Lock Stream
+//  Taiga Stream
 //  github.com/andrewmichaelpowell
 
 import SwiftUI
@@ -136,7 +136,7 @@ struct MainView: View
         {
             Button(action: PlayButton1_Click)
             {
-                Text("1")
+                Text(Image(systemName: "pause.fill"))
                     .font(.title)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
@@ -198,7 +198,7 @@ struct MainView: View
         {
             Button(action: PlayButton2_Click)
             {
-                Text("2")
+                Text(Image(systemName: "pause.fill"))
                     .font(.title)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
@@ -266,7 +266,7 @@ struct MainView: View
         {
             Button(action: PlayButton3_Click)
             {
-                Text("3")
+                Text(Image(systemName: "pause.fill"))
                     .font(.title)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
@@ -334,7 +334,7 @@ struct MainView: View
         {
             Button(action: PlayButton4_Click)
             {
-                Text("4")
+                Text(Image(systemName: "pause.fill"))
                     .font(.title)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
