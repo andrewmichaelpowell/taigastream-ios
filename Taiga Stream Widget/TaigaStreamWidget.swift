@@ -1,8 +1,6 @@
 import SwiftUI
 import AppIntents
 import WidgetKit
-import AVKit
-import AVFoundation
 
 struct TaigaStreamWidgetControl1: ControlWidget
 {
