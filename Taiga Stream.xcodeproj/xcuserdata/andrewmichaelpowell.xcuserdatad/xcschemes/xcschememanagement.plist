@@ -9,7 +9,17 @@
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
+		<key>Taiga Stream WidgetExtension.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>2</integer>
+		</dict>
 		<key>Taiga Stream.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>0</integer>
+		</dict>
+		<key>TaigaStreamControlExtension.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>1</integer>
@@ -23,6 +33,11 @@
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
 		<key>3E1F17802F938D4B00DDE7E4</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>3E690D662FADE798006C88F6</key>
 		<dict>
 			<key>primary</key>
 			<true/>

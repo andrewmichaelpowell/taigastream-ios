@@ -6,6 +6,22 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		3E690D972FAE0E04006C88F6 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E690D962FAE0E04006C88F6 /* WidgetKit.framework */; };
+		3E690D992FAE0E04006C88F6 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E690D982FAE0E04006C88F6 /* SwiftUI.framework */; };
+		3E690DA42FAE0E05006C88F6 /* Taiga Stream WidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 3E690D942FAE0E04006C88F6 /* Taiga Stream WidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		3E690DA22FAE0E05006C88F6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3E1F17792F938D4B00DDE7E4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3E690D932FAE0E04006C88F6;
+			remoteInfo = "Taiga Stream WidgetExtension";
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		3E002B422FAB210400F6DC1F /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -13,6 +29,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				3E690DA42FAE0E05006C88F6 /* Taiga Stream WidgetExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -21,9 +38,19 @@
 
 /* Begin PBXFileReference section */
 		3E1F17812F938D4B00DDE7E4 /* Taiga Stream.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Taiga Stream.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3E690D942FAE0E04006C88F6 /* Taiga Stream WidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Taiga Stream WidgetExtension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3E690D962FAE0E04006C88F6 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		3E690D982FAE0E04006C88F6 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		3E690DA82FAE0E05006C88F6 /* Exceptions for "Taiga Stream Widget" folder in "Taiga Stream WidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 3E690D932FAE0E04006C88F6 /* Taiga Stream WidgetExtension */;
+		};
 		3E860EEE2FA7FE4B000194F7 /* Exceptions for "Taiga Stream" folder in "Taiga Stream" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -42,6 +69,14 @@
 			path = "Taiga Stream";
 			sourceTree = "<group>";
 		};
+		3E690D9A2FAE0E04006C88F6 /* Taiga Stream Widget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				3E690DA82FAE0E05006C88F6 /* Exceptions for "Taiga Stream Widget" folder in "Taiga Stream WidgetExtension" target */,
+			);
+			path = "Taiga Stream Widget";
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,6 +87,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3E690D912FAE0E04006C88F6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3E690D992FAE0E04006C88F6 /* SwiftUI.framework in Frameworks */,
+				3E690D972FAE0E04006C88F6 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -59,6 +103,8 @@
 			isa = PBXGroup;
 			children = (
 				3E1F17832F938D4B00DDE7E4 /* Taiga Stream */,
+				3E690D9A2FAE0E04006C88F6 /* Taiga Stream Widget */,
+				3E690D952FAE0E04006C88F6 /* Frameworks */,
 				3E1F17822F938D4B00DDE7E4 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -67,8 +113,18 @@
 			isa = PBXGroup;
 			children = (
 				3E1F17812F938D4B00DDE7E4 /* Taiga Stream.app */,
+				3E690D942FAE0E04006C88F6 /* Taiga Stream WidgetExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		3E690D952FAE0E04006C88F6 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				3E690D962FAE0E04006C88F6 /* WidgetKit.framework */,
+				3E690D982FAE0E04006C88F6 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -86,6 +142,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				3E690DA32FAE0E05006C88F6 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				3E1F17832F938D4B00DDE7E4 /* Taiga Stream */,
@@ -96,6 +153,28 @@
 			productName = makidice;
 			productReference = 3E1F17812F938D4B00DDE7E4 /* Taiga Stream.app */;
 			productType = "com.apple.product-type.application";
+		};
+		3E690D932FAE0E04006C88F6 /* Taiga Stream WidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3E690DA52FAE0E05006C88F6 /* Build configuration list for PBXNativeTarget "Taiga Stream WidgetExtension" */;
+			buildPhases = (
+				3E690D902FAE0E04006C88F6 /* Sources */,
+				3E690D912FAE0E04006C88F6 /* Frameworks */,
+				3E690D922FAE0E04006C88F6 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				3E690D9A2FAE0E04006C88F6 /* Taiga Stream Widget */,
+			);
+			name = "Taiga Stream WidgetExtension";
+			packageProductDependencies = (
+			);
+			productName = "Taiga Stream WidgetExtension";
+			productReference = 3E690D942FAE0E04006C88F6 /* Taiga Stream WidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -109,6 +188,9 @@
 				TargetAttributes = {
 					3E1F17802F938D4B00DDE7E4 = {
 						CreatedOnToolsVersion = 26.4;
+					};
+					3E690D932FAE0E04006C88F6 = {
+						CreatedOnToolsVersion = 26.4.1;
 					};
 				};
 			};
@@ -173,12 +255,20 @@
 			projectRoot = "";
 			targets = (
 				3E1F17802F938D4B00DDE7E4 /* Taiga Stream */,
+				3E690D932FAE0E04006C88F6 /* Taiga Stream WidgetExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		3E1F177F2F938D4B00DDE7E4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3E690D922FAE0E04006C88F6 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -195,7 +285,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3E690D902FAE0E04006C88F6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		3E690DA32FAE0E05006C88F6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3E690D932FAE0E04006C88F6 /* Taiga Stream WidgetExtension */;
+			targetProxy = 3E690DA22FAE0E05006C88F6 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		3E1F178A2F938D4C00DDE7E4 /* Debug */ = {
@@ -350,7 +455,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
-				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -391,9 +496,69 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
-				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		3E690DA62FAE0E05006C88F6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 925F4PY4UL;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Taiga Stream Widget/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Taiga Stream Widget";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "xyz.andrewmichaelpowell.taigastream.Taiga-Stream-Widget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		3E690DA72FAE0E05006C88F6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 925F4PY4UL;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Taiga Stream Widget/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Taiga Stream Widget";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "xyz.andrewmichaelpowell.taigastream.Taiga-Stream-Widget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
@@ -418,6 +583,15 @@
 			buildConfigurations = (
 				3E1F178D2F938D4C00DDE7E4 /* Debug */,
 				3E1F178E2F938D4C00DDE7E4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3E690DA52FAE0E05006C88F6 /* Build configuration list for PBXNativeTarget "Taiga Stream WidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3E690DA62FAE0E05006C88F6 /* Debug */,
+				3E690DA72FAE0E05006C88F6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
