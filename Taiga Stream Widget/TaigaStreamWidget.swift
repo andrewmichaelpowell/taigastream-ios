@@ -65,6 +65,66 @@ struct TaigaStreamWidgetControl4: ControlWidget
     }
 }
 
+struct TaigaStreamWidgetControl5: ControlWidget
+{
+    var body: some ControlWidgetConfiguration
+    {
+        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream5")
+        {
+            ControlWidgetButton(action: PlayStream5())
+            {
+                Image(systemName: "5.circle")
+            }
+        }
+        .displayName("Play Stream 5")
+    }
+}
+
+struct TaigaStreamWidgetControl6: ControlWidget
+{
+    var body: some ControlWidgetConfiguration
+    {
+        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream6")
+        {
+            ControlWidgetButton(action: PlayStream6())
+            {
+                Image(systemName: "6.circle")
+            }
+        }
+        .displayName("Play Stream 6")
+    }
+}
+
+struct TaigaStreamWidgetControl7: ControlWidget
+{
+    var body: some ControlWidgetConfiguration
+    {
+        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream7")
+        {
+            ControlWidgetButton(action: PlayStream7())
+            {
+                Image(systemName: "7.circle")
+            }
+        }
+        .displayName("Play Stream 7")
+    }
+}
+
+struct TaigaStreamWidgetControl8: ControlWidget
+{
+    var body: some ControlWidgetConfiguration
+    {
+        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream8")
+        {
+            ControlWidgetButton(action: PlayStream8())
+            {
+                Image(systemName: "8.circle")
+            }
+        }
+        .displayName("Play Stream 8")
+    }
+}
+
 struct PlayStream1: AppIntent
 {
     static let title: LocalizedStringResource = "Play Stream 1"
@@ -101,7 +161,51 @@ struct PlayStream3: AppIntent
 struct PlayStream4: AppIntent
 {
     static let title: LocalizedStringResource = "Play Stream 4"
+    
+    func perform() async throws -> some IntentResult
+    {
+        // Code that performs the action...
+        return .result()
+    }
+}
 
+struct PlayStream5: AppIntent
+{
+    static let title: LocalizedStringResource = "Play Stream 5"
+    
+    func perform() async throws -> some IntentResult
+    {
+        // Code that performs the action...
+        return .result()
+    }
+}
+
+struct PlayStream6: AppIntent
+{
+    static let title: LocalizedStringResource = "Play Stream 6"
+    
+    func perform() async throws -> some IntentResult
+    {
+        // Code that performs the action...
+        return .result()
+    }
+}
+
+struct PlayStream7: AppIntent
+{
+    static let title: LocalizedStringResource = "Play Stream 7"
+            
+    func perform() async throws -> some IntentResult
+    {
+            // Code that performs the action...
+        return .result()
+    }
+}
+            
+struct PlayStream8: AppIntent
+{
+    static let title: LocalizedStringResource = "Play Stream 8"
+                    
     func perform() async throws -> some IntentResult
     {
         // Code that performs the action...
