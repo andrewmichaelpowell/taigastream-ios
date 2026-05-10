@@ -5,24 +5,30 @@ import SwiftUI
 import AVKit
 import AVFoundation
 import Combine
+import WidgetKit
 
-public class PlayStreamData: ObservableObject
-{
+public class PlayStreamData: ObservableObject {
     static let shared = PlayStreamData()
     private let defaults = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
+    private var cancellables = Set<AnyCancellable>()
     
-    var CurrentStream: Int
-    {
+    var CurrentStream: Int {
         get { defaults.integer(forKey: "CurrentStreamKey") }
         set { defaults.set(newValue, forKey: "CurrentStreamKey") }
     }
 
     var Playing: Bool {
         get { defaults.bool(forKey: "PlayingKey") }
-        set { defaults.set(newValue, forKey: "PlayingKey") }
+        set {
+            defaults.set(newValue, forKey: "PlayingKey")
+            // Manually notify SwiftUI of the change since it's a computed property
+            objectWillChange.send()
+        }
     }
 
-    @Published var PlayStream = AVPlayer()
+    @Published var PlayStream = AVPlayer() {
+        didSet { setupObservers() }
+    }
     @Published var Stream1:String = UserDefaults.standard.string(forKey: "Stream1Key") ?? ""
     @Published var Stream2:String = UserDefaults.standard.string(forKey: "Stream2Key") ?? ""
     @Published var Stream3:String = UserDefaults.standard.string(forKey: "Stream3Key") ?? ""
@@ -31,12 +37,61 @@ public class PlayStreamData: ObservableObject
     @Published var Stream6:String = UserDefaults.standard.string(forKey: "Stream6Key") ?? ""
     @Published var Stream7:String = UserDefaults.standard.string(forKey: "Stream7Key") ?? ""
     @Published var Stream8:String = UserDefaults.standard.string(forKey: "Stream8Key") ?? ""
+    init() {
+        setupObservers()
+        setupInterruptionObserver()
+    }
+
+    private func setupObservers() {
+        cancellables.removeAll()
+
+        // 1. Observe timeControlStatus (Triggers when another app takes over or user pauses)
+        PlayStream.publisher(for: \.timeControlStatus)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] status in
+                if status == .paused {
+                    self?.Playing = false
+                } else if status == .playing {
+                    self?.Playing = true
+                }
+                ControlCenter.shared.reloadAllControls()
+            }
+            .store(in: &cancellables)
+
+        // 2. Observe Player Item Status (Triggers for Network Errors)
+        PlayStream.publisher(for: \.currentItem?.status)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] status in
+                if status == .failed {
+                    self?.Playing = false
+                }
+                ControlCenter.shared.reloadAllControls()
+            }
+            .store(in: &cancellables)
+    }
+
+    private func setupInterruptionObserver() {
+        // 3. System Interruption (Phone calls, alarms)
+        NotificationCenter.default.publisher(for: AVAudioSession.interruptionNotification)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] notification in
+                guard let userInfo = notification.userInfo,
+                      let typeValue = userInfo[AVAudioSessionInterruptionTypeKey] as? UInt,
+                      let type = AVAudioSession.InterruptionType(rawValue: typeValue) else { return }
+                
+                if type == .began {
+                    self?.Playing = false
+                }
+                ControlCenter.shared.reloadAllControls()
+            }
+            .store(in: &cancellables)
+    }
 }
 
 public class PlayStreamButton
 {
     static let shared = PlayStreamButton()
-    
+        
     public func PlayButton1_Click()
     {
         guard let StreamURL = URL(string: PlayStreamData.shared.Stream1) else
