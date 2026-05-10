@@ -15,23 +15,34 @@ public class PlayStreamData: ObservableObject
     
     var CurrentStream: Int
     {
-        get { defaults.integer(forKey: "CurrentStreamKey") }
-        set { defaults.set(newValue, forKey: "CurrentStreamKey") }
+        get
+        {
+            defaults.integer(forKey: "CurrentStreamKey")
+        }
+        set{
+            defaults.set(newValue, forKey: "CurrentStreamKey")
+        }
     }
 
     var Playing: Bool
     {
-        get { defaults.bool(forKey: "PlayingKey") }
-        set {
+        get
+        {
+            defaults.bool(forKey: "PlayingKey")
+        }
+        set
+        {
             defaults.set(newValue, forKey: "PlayingKey")
-            // Manually notify SwiftUI of the change since it's a computed property
             objectWillChange.send()
         }
     }
 
     @Published var PlayStream = AVPlayer()
     {
-        didSet { PlayStreamObserver() }
+        didSet
+        {
+            PlayStreamObserver()
+        }
     }
     
     @Published var Stream1:String = UserDefaults.standard.string(forKey: "Stream1Key") ?? ""
@@ -53,47 +64,56 @@ public class PlayStreamData: ObservableObject
     {
         cancellables.removeAll()
         PlayStream.publisher(for: \.timeControlStatus)
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] status in
-                if status == .paused
-                {
-                    self?.Playing = false
-                }
-                else if status == .playing
-                {
-                    self?.Playing = true
-                }
-                ControlCenter.shared.reloadAllControls()
+        .receive(on: DispatchQueue.main)
+        .sink
+        {
+            [weak self] status in
+            if status == .paused
+            {
+                self?.Playing = false
             }
-            .store(in: &cancellables)
+            else if status == .playing
+            {
+                self?.Playing = true
+            }
+            ControlCenter.shared.reloadAllControls()
+        }
+        .store(in: &cancellables)
 
         PlayStream.publisher(for: \.currentItem?.status)
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] status in
-                if status == .failed {
-                    self?.Playing = false
-                }
-                ControlCenter.shared.reloadAllControls()
+        .receive(on: DispatchQueue.main)
+        .sink
+        {
+            [weak self] status in
+            if status == .failed
+            {
+                self?.Playing = false
             }
-            .store(in: &cancellables)
+            ControlCenter.shared.reloadAllControls()
+        }
+        .store(in: &cancellables)
     }
 
     private func InterruptionObserver()
     {
         NotificationCenter.default.publisher(for: AVAudioSession.interruptionNotification)
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] notification in
-                guard let userInfo = notification.userInfo,
-                      let typeValue = userInfo[AVAudioSessionInterruptionTypeKey] as? UInt,
-                      let type = AVAudioSession.InterruptionType(rawValue: typeValue) else { return }
-                
-                if type == .began
-                {
-                    self?.Playing = false
-                }
-                ControlCenter.shared.reloadAllControls()
+        .receive(on: DispatchQueue.main)
+        .sink
+        {
+            [weak self] notification in
+            guard let userInfo = notification.userInfo,
+            let typeValue = userInfo[AVAudioSessionInterruptionTypeKey] as? UInt,
+            let type = AVAudioSession.InterruptionType(rawValue: typeValue) else
+            {
+                return
             }
-            .store(in: &cancellables)
+            if type == .began
+            {
+                self?.Playing = false
+            }
+            ControlCenter.shared.reloadAllControls()
+        }
+        .store(in: &cancellables)
     }
 }
 
