@@ -33,7 +33,6 @@ struct PlayStream1ToggleIntent: SetValueIntent, AudioPlaybackIntent {
     @MainActor
     func perform() async throws -> some IntentResult {
         PlayStreamButton.shared.PlayButton1_Click()
-        ControlCenter.shared.reloadAllControls()        
         return .result()
     }
 }
@@ -66,7 +65,6 @@ struct PlayStream2ToggleIntent: SetValueIntent, AudioPlaybackIntent {
     @MainActor
     func perform() async throws -> some IntentResult {
         PlayStreamButton.shared.PlayButton2_Click()
-        ControlCenter.shared.reloadAllControls()
         return .result()
     }
 }
@@ -99,7 +97,6 @@ struct PlayStream3ToggleIntent: SetValueIntent, AudioPlaybackIntent {
     @MainActor
     func perform() async throws -> some IntentResult {
         PlayStreamButton.shared.PlayButton3_Click()
-        ControlCenter.shared.reloadAllControls()
         return .result()
     }
 }
@@ -132,7 +129,6 @@ struct PlayStream4ToggleIntent: SetValueIntent, AudioPlaybackIntent {
     @MainActor
     func perform() async throws -> some IntentResult {
         PlayStreamButton.shared.PlayButton4_Click()
-        ControlCenter.shared.reloadAllControls()
         return .result()
     }
 }
@@ -165,7 +161,6 @@ struct PlayStream5ToggleIntent: SetValueIntent, AudioPlaybackIntent {
     @MainActor
     func perform() async throws -> some IntentResult {
         PlayStreamButton.shared.PlayButton5_Click()
-        ControlCenter.shared.reloadAllControls()
         return .result()
     }
 }
@@ -198,7 +193,6 @@ struct PlayStream6ToggleIntent: SetValueIntent, AudioPlaybackIntent {
     @MainActor
     func perform() async throws -> some IntentResult {
         PlayStreamButton.shared.PlayButton6_Click()
-        ControlCenter.shared.reloadAllControls()
         return .result()
     }
 }
@@ -231,7 +225,6 @@ struct PlayStream7ToggleIntent: SetValueIntent, AudioPlaybackIntent {
     @MainActor
     func perform() async throws -> some IntentResult {
         PlayStreamButton.shared.PlayButton7_Click()
-        ControlCenter.shared.reloadAllControls()
         return .result()
     }
 }
@@ -264,7 +257,6 @@ struct PlayStream8ToggleIntent: SetValueIntent, AudioPlaybackIntent {
     @MainActor
     func perform() async throws -> some IntentResult {
         PlayStreamButton.shared.PlayButton8_Click()
-        ControlCenter.shared.reloadAllControls()
         return .result()
     }
 }
