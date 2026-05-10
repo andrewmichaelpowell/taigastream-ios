@@ -11,204 +11,260 @@ struct TaigaStreamWidgetControl1: ControlWidget
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream1")
         {
-            ControlWidgetButton(action: PlayStream1())
-            {
-                Image(systemName: "1.circle")
-            }
+            let isOn = PlayStreamData.shared.Playing && PlayStreamData.shared.CurrentStream == 1
+            return ControlWidgetToggle(
+                isOn: isOn,
+                action: PlayStream1ToggleIntent(),
+                label:
+                {
+                    Label("Stream 1", systemImage: "1.circle")
+                }
+            )
         }
         .displayName("Play Stream 1")
     }
 }
 
+struct PlayStream1ToggleIntent: SetValueIntent, AudioPlaybackIntent {
+    static let title: LocalizedStringResource = "Toggle Stream 1"
+    @Parameter(title: "Is On")
+    var value: Bool
+
+    @MainActor
+    func perform() async throws -> some IntentResult {
+        PlayStreamButton.shared.PlayButton1_Click()
+        ControlCenter.shared.reloadAllControls()        
+        return .result()
+    }
+}
+    
 struct TaigaStreamWidgetControl2: ControlWidget
 {
     var body: some ControlWidgetConfiguration
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream2")
         {
-            ControlWidgetButton(action: PlayStream2())
-            {
-                Image(systemName: "2.circle")
-            }
+            let isOn = PlayStreamData.shared.Playing && PlayStreamData.shared.CurrentStream == 2
+            return ControlWidgetToggle(
+                isOn: isOn,
+                action: PlayStream2ToggleIntent(),
+                label:
+                {
+                    Label("Stream 2", systemImage: "2.circle")
+                }
+            )
         }
         .displayName("Play Stream 2")
     }
 }
 
+struct PlayStream2ToggleIntent: SetValueIntent, AudioPlaybackIntent {
+    static let title: LocalizedStringResource = "Toggle Stream 2"
+    @Parameter(title: "Is On")
+    var value: Bool
+
+    @MainActor
+    func perform() async throws -> some IntentResult {
+        PlayStreamButton.shared.PlayButton2_Click()
+        ControlCenter.shared.reloadAllControls()
+        return .result()
+    }
+}
+    
 struct TaigaStreamWidgetControl3: ControlWidget
 {
     var body: some ControlWidgetConfiguration
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream3")
         {
-            ControlWidgetButton(action: PlayStream3())
-            {
-                Image(systemName: "3.circle")
-            }
+            let isOn = PlayStreamData.shared.Playing && PlayStreamData.shared.CurrentStream == 3
+            return ControlWidgetToggle(
+                isOn: isOn,
+                action: PlayStream3ToggleIntent(),
+                label:
+                {
+                    Label("Stream 3", systemImage: "3.circle")
+                }
+            )
         }
         .displayName("Play Stream 3")
     }
 }
 
+struct PlayStream3ToggleIntent: SetValueIntent, AudioPlaybackIntent {
+    static let title: LocalizedStringResource = "Toggle Stream 3"
+    @Parameter(title: "Is On")
+    var value: Bool
+
+    @MainActor
+    func perform() async throws -> some IntentResult {
+        PlayStreamButton.shared.PlayButton3_Click()
+        ControlCenter.shared.reloadAllControls()
+        return .result()
+    }
+}
+    
 struct TaigaStreamWidgetControl4: ControlWidget
 {
     var body: some ControlWidgetConfiguration
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream4")
         {
-            ControlWidgetButton(action: PlayStream4())
-            {
-                Image(systemName: "4.circle")
-            }
+            let isOn = PlayStreamData.shared.Playing && PlayStreamData.shared.CurrentStream == 4
+            return ControlWidgetToggle(
+                isOn: isOn,
+                action: PlayStream4ToggleIntent(),
+                label:
+                {
+                    Label("Stream 4", systemImage: "4.circle")
+                }
+            )
         }
         .displayName("Play Stream 4")
     }
 }
 
+struct PlayStream4ToggleIntent: SetValueIntent, AudioPlaybackIntent {
+    static let title: LocalizedStringResource = "Toggle Stream 4"
+    @Parameter(title: "Is On")
+    var value: Bool
+
+    @MainActor
+    func perform() async throws -> some IntentResult {
+        PlayStreamButton.shared.PlayButton4_Click()
+        ControlCenter.shared.reloadAllControls()
+        return .result()
+    }
+}
+    
 struct TaigaStreamWidgetControl5: ControlWidget
 {
     var body: some ControlWidgetConfiguration
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream5")
         {
-            ControlWidgetButton(action: PlayStream5())
-            {
-                Image(systemName: "5.circle")
-            }
+            let isOn = PlayStreamData.shared.Playing && PlayStreamData.shared.CurrentStream == 5
+            return ControlWidgetToggle(
+                isOn: isOn,
+                action: PlayStream5ToggleIntent(),
+                label:
+                {
+                    Label("Stream 5", systemImage: "5.circle")
+                }
+            )
         }
         .displayName("Play Stream 5")
     }
 }
 
+struct PlayStream5ToggleIntent: SetValueIntent, AudioPlaybackIntent {
+    static let title: LocalizedStringResource = "Toggle Stream 5"
+    @Parameter(title: "Is On")
+    var value: Bool
+
+    @MainActor
+    func perform() async throws -> some IntentResult {
+        PlayStreamButton.shared.PlayButton5_Click()
+        ControlCenter.shared.reloadAllControls()
+        return .result()
+    }
+}
+    
 struct TaigaStreamWidgetControl6: ControlWidget
 {
     var body: some ControlWidgetConfiguration
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream6")
         {
-            ControlWidgetButton(action: PlayStream6())
-            {
-                Image(systemName: "6.circle")
-            }
+            let isOn = PlayStreamData.shared.Playing && PlayStreamData.shared.CurrentStream == 6
+            return ControlWidgetToggle(
+                isOn: isOn,
+                action: PlayStream6ToggleIntent(),
+                label:
+                {
+                    Label("Stream 6", systemImage: "6.circle")
+                }
+            )
         }
         .displayName("Play Stream 6")
     }
 }
 
+struct PlayStream6ToggleIntent: SetValueIntent, AudioPlaybackIntent {
+    static let title: LocalizedStringResource = "Toggle Stream 6"
+    @Parameter(title: "Is On")
+    var value: Bool
+
+    @MainActor
+    func perform() async throws -> some IntentResult {
+        PlayStreamButton.shared.PlayButton6_Click()
+        ControlCenter.shared.reloadAllControls()
+        return .result()
+    }
+}
+    
 struct TaigaStreamWidgetControl7: ControlWidget
 {
     var body: some ControlWidgetConfiguration
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream7")
         {
-            ControlWidgetButton(action: PlayStream7())
-            {
-                Image(systemName: "7.circle")
-            }
+            let isOn = PlayStreamData.shared.Playing && PlayStreamData.shared.CurrentStream == 7
+            return ControlWidgetToggle(
+                isOn: isOn,
+                action: PlayStream7ToggleIntent(),
+                label:
+                {
+                    Label("Stream 7", systemImage: "7.circle")
+                }
+            )
         }
         .displayName("Play Stream 7")
     }
 }
 
+struct PlayStream7ToggleIntent: SetValueIntent, AudioPlaybackIntent {
+    static let title: LocalizedStringResource = "Toggle Stream 7"
+    @Parameter(title: "Is On")
+    var value: Bool
+
+    @MainActor
+    func perform() async throws -> some IntentResult {
+        PlayStreamButton.shared.PlayButton7_Click()
+        ControlCenter.shared.reloadAllControls()
+        return .result()
+    }
+}
+    
 struct TaigaStreamWidgetControl8: ControlWidget
 {
     var body: some ControlWidgetConfiguration
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream8")
         {
-            ControlWidgetButton(action: PlayStream8())
-            {
-                Image(systemName: "8.circle")
-            }
+            let isOn = PlayStreamData.shared.Playing && PlayStreamData.shared.CurrentStream == 8
+            return ControlWidgetToggle(
+                isOn: isOn,
+                action: PlayStream8ToggleIntent(),
+                label:
+                {
+                    Label("Stream 8", systemImage: "8.circle")
+                }
+            )
         }
         .displayName("Play Stream 8")
     }
 }
 
-struct PlayStream1: AppIntent
-{
-    static let title: LocalizedStringResource = "Play Stream 1"
-    
-    func perform() async throws -> some IntentResult
-    {
-        // Code that performs the action...
-        return .result()
-    }
-}
+struct PlayStream8ToggleIntent: SetValueIntent, AudioPlaybackIntent {
+    static let title: LocalizedStringResource = "Toggle Stream 8"
+    @Parameter(title: "Is On")
+    var value: Bool
 
-struct PlayStream2: AppIntent
-{
-    static let title: LocalizedStringResource = "Play Stream 2"
-
-    func perform() async throws -> some IntentResult
-    {
-        // Code that performs the action...
-        return .result()
-    }
-}
-
-struct PlayStream3: AppIntent
-{
-    static let title: LocalizedStringResource = "Play Stream 3"
-
-    func perform() async throws -> some IntentResult
-    {
-        // Code that performs the action...
-        return .result()
-    }
-}
-
-struct PlayStream4: AppIntent
-{
-    static let title: LocalizedStringResource = "Play Stream 4"
-    
-    func perform() async throws -> some IntentResult
-    {
-        // Code that performs the action...
-        return .result()
-    }
-}
-
-struct PlayStream5: AppIntent
-{
-    static let title: LocalizedStringResource = "Play Stream 5"
-    
-    func perform() async throws -> some IntentResult
-    {
-        // Code that performs the action...
-        return .result()
-    }
-}
-
-struct PlayStream6: AppIntent
-{
-    static let title: LocalizedStringResource = "Play Stream 6"
-    
-    func perform() async throws -> some IntentResult
-    {
-        // Code that performs the action...
-        return .result()
-    }
-}
-
-struct PlayStream7: AppIntent
-{
-    static let title: LocalizedStringResource = "Play Stream 7"
-            
-    func perform() async throws -> some IntentResult
-    {
-            // Code that performs the action...
-        return .result()
-    }
-}
-            
-struct PlayStream8: AppIntent
-{
-    static let title: LocalizedStringResource = "Play Stream 8"
-                    
-    func perform() async throws -> some IntentResult
-    {
-        // Code that performs the action...
+    @MainActor
+    func perform() async throws -> some IntentResult {
+        PlayStreamButton.shared.PlayButton8_Click()
+        ControlCenter.shared.reloadAllControls()
         return .result()
     }
 }

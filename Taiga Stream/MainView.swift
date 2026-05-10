@@ -9,9 +9,19 @@ import Combine
 public class PlayStreamData: ObservableObject
 {
     static let shared = PlayStreamData()
+    private let defaults = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
     
-    @Published var CurrentStream:Int = 1
-    @Published var Playing: Bool = false
+    var CurrentStream: Int
+    {
+        get { defaults.integer(forKey: "CurrentStreamKey") }
+        set { defaults.set(newValue, forKey: "CurrentStreamKey") }
+    }
+
+    var Playing: Bool {
+        get { defaults.bool(forKey: "PlayingKey") }
+        set { defaults.set(newValue, forKey: "PlayingKey") }
+    }
+
     @Published var PlayStream = AVPlayer()
     @Published var Stream1:String = UserDefaults.standard.string(forKey: "Stream1Key") ?? ""
     @Published var Stream2:String = UserDefaults.standard.string(forKey: "Stream2Key") ?? ""
@@ -29,7 +39,10 @@ public class PlayStreamButton
     
     public func PlayButton1_Click()
     {
-        let StreamURL = URL(string: PlayStreamData.shared.Stream1)!
+        guard let StreamURL = URL(string: PlayStreamData.shared.Stream1) else
+        {
+            return
+        }
         PlayStreamData.shared.PlayStream = AVPlayer(playerItem: AVPlayerItem(url: StreamURL))
         if (PlayStreamData.shared.Playing == true && PlayStreamData.shared.CurrentStream == 1)
         {
@@ -51,7 +64,10 @@ public class PlayStreamButton
     
     public func PlayButton2_Click()
     {
-        let StreamURL = URL(string: PlayStreamData.shared.Stream2)!
+        guard let StreamURL = URL(string: PlayStreamData.shared.Stream2) else
+        {
+            return
+        }
         PlayStreamData.shared.PlayStream = AVPlayer(playerItem: AVPlayerItem(url: StreamURL))
         if (PlayStreamData.shared.Playing == true && PlayStreamData.shared.CurrentStream == 2)
         {
@@ -73,7 +89,10 @@ public class PlayStreamButton
     
     public func PlayButton3_Click()
     {
-        let StreamURL = URL(string: PlayStreamData.shared.Stream3)!
+        guard let StreamURL = URL(string: PlayStreamData.shared.Stream3) else
+        {
+            return
+        }
         PlayStreamData.shared.PlayStream = AVPlayer(playerItem: AVPlayerItem(url: StreamURL))
         if (PlayStreamData.shared.Playing == true && PlayStreamData.shared.CurrentStream == 3)
         {
@@ -95,7 +114,10 @@ public class PlayStreamButton
     
     public func PlayButton4_Click()
     {
-        let StreamURL = URL(string: PlayStreamData.shared.Stream4)!
+        guard let StreamURL = URL(string: PlayStreamData.shared.Stream4) else
+        {
+            return
+        }
         PlayStreamData.shared.PlayStream = AVPlayer(playerItem: AVPlayerItem(url: StreamURL))
         if (PlayStreamData.shared.Playing == true && PlayStreamData.shared.CurrentStream == 4)
         {
@@ -117,7 +139,10 @@ public class PlayStreamButton
     
     public func PlayButton5_Click()
     {
-        let StreamURL = URL(string: PlayStreamData.shared.Stream5)!
+        guard let StreamURL = URL(string: PlayStreamData.shared.Stream5) else
+        {
+            return
+        }
         PlayStreamData.shared.PlayStream = AVPlayer(playerItem: AVPlayerItem(url: StreamURL))
         if (PlayStreamData.shared.Playing == true && PlayStreamData.shared.CurrentStream == 5)
         {
@@ -139,7 +164,10 @@ public class PlayStreamButton
     
     public func PlayButton6_Click()
     {
-        let StreamURL = URL(string: PlayStreamData.shared.Stream6)!
+        guard let StreamURL = URL(string: PlayStreamData.shared.Stream6) else
+        {
+            return
+        }
         PlayStreamData.shared.PlayStream = AVPlayer(playerItem: AVPlayerItem(url: StreamURL))
         if (PlayStreamData.shared.Playing == true && PlayStreamData.shared.CurrentStream == 6)
         {
@@ -161,7 +189,10 @@ public class PlayStreamButton
 
     public func PlayButton7_Click()
     {
-        let StreamURL = URL(string: PlayStreamData.shared.Stream7)!
+        guard let StreamURL = URL(string: PlayStreamData.shared.Stream7) else
+        {
+            return
+        }
         PlayStreamData.shared.PlayStream = AVPlayer(playerItem: AVPlayerItem(url: StreamURL))
         if (PlayStreamData.shared.Playing == true && PlayStreamData.shared.CurrentStream == 7)
         {
@@ -183,7 +214,10 @@ public class PlayStreamButton
 
     public func PlayButton8_Click()
     {
-        let StreamURL = URL(string: PlayStreamData.shared.Stream8)!
+        guard let StreamURL = URL(string: PlayStreamData.shared.Stream8) else
+        {
+            return
+        }
         PlayStreamData.shared.PlayStream = AVPlayer(playerItem: AVPlayerItem(url: StreamURL))
         if (PlayStreamData.shared.Playing == true && PlayStreamData.shared.CurrentStream == 8)
         {
