@@ -45,14 +45,14 @@ public class PlayStreamData: ObservableObject
         }
     }
     
-    @Published var Stream1:String = UserDefaults.standard.string(forKey: "Stream1Key") ?? ""
-    @Published var Stream2:String = UserDefaults.standard.string(forKey: "Stream2Key") ?? ""
-    @Published var Stream3:String = UserDefaults.standard.string(forKey: "Stream3Key") ?? ""
-    @Published var Stream4:String = UserDefaults.standard.string(forKey: "Stream4Key") ?? ""
-    @Published var Stream5:String = UserDefaults.standard.string(forKey: "Stream5Key") ?? ""
-    @Published var Stream6:String = UserDefaults.standard.string(forKey: "Stream6Key") ?? ""
-    @Published var Stream7:String = UserDefaults.standard.string(forKey: "Stream7Key") ?? ""
-    @Published var Stream8:String = UserDefaults.standard.string(forKey: "Stream8Key") ?? ""
+    @Published var Stream1:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream1Key") ?? ""
+    @Published var Stream2:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream2Key") ?? ""
+    @Published var Stream3:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream3Key") ?? ""
+    @Published var Stream4:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream4Key") ?? ""
+    @Published var Stream5:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream5Key") ?? ""
+    @Published var Stream6:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream6Key") ?? ""
+    @Published var Stream7:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream7Key") ?? ""
+    @Published var Stream8:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream8Key") ?? ""
     
     init()
     {
@@ -326,7 +326,7 @@ struct MainView: View
                             .disableAutocorrection(true)
                             .onChange(of: PlayStreamData.shared.Stream1)
                         {
-                            UserDefaults.standard.set(PlayStreamDataShared.Stream1, forKey: "Stream1Key")
+                            NSUbiquitousKeyValueStore.default.set(PlayStreamDataShared.Stream1, forKey: "Stream1Key")
                         }
                         PlayButton1
                     }
@@ -345,7 +345,7 @@ struct MainView: View
                             .disableAutocorrection(true)
                             .onChange(of: PlayStreamDataShared.Stream2)
                         {
-                            UserDefaults.standard.set(PlayStreamDataShared.Stream2, forKey: "Stream2Key")
+                            NSUbiquitousKeyValueStore.default.set(PlayStreamDataShared.Stream2, forKey: "Stream2Key")
                         }
                         PlayButton2
                     }
@@ -364,7 +364,7 @@ struct MainView: View
                             .disableAutocorrection(true)
                             .onChange(of: PlayStreamDataShared.Stream3)
                         {
-                            UserDefaults.standard.set(PlayStreamDataShared.Stream3, forKey: "Stream3Key")
+                            NSUbiquitousKeyValueStore.default.set(PlayStreamDataShared.Stream3, forKey: "Stream3Key")
                         }
                         PlayButton3
                     }
@@ -383,7 +383,7 @@ struct MainView: View
                             .disableAutocorrection(true)
                             .onChange(of: PlayStreamDataShared.Stream4)
                         {
-                            UserDefaults.standard.set(PlayStreamDataShared.Stream4, forKey: "Stream4Key")
+                            NSUbiquitousKeyValueStore.default.set(PlayStreamDataShared.Stream4, forKey: "Stream4Key")
                         }
                         PlayButton4
                     }
@@ -402,7 +402,7 @@ struct MainView: View
                             .disableAutocorrection(true)
                             .onChange(of: PlayStreamDataShared.Stream5)
                         {
-                            UserDefaults.standard.set(PlayStreamDataShared.Stream5, forKey: "Stream5Key")
+                            NSUbiquitousKeyValueStore.default.set(PlayStreamDataShared.Stream5, forKey: "Stream5Key")
                         }
                         PlayButton5
                     }
@@ -421,7 +421,7 @@ struct MainView: View
                             .disableAutocorrection(true)
                             .onChange(of: PlayStreamDataShared.Stream6)
                         {
-                            UserDefaults.standard.set(PlayStreamDataShared.Stream6, forKey: "Stream6Key")
+                            NSUbiquitousKeyValueStore.default.set(PlayStreamDataShared.Stream6, forKey: "Stream6Key")
                         }
                         PlayButton6
                     }
@@ -440,7 +440,7 @@ struct MainView: View
                             .disableAutocorrection(true)
                             .onChange(of: PlayStreamDataShared.Stream7)
                         {
-                            UserDefaults.standard.set(PlayStreamDataShared.Stream7, forKey: "Stream7Key")
+                            NSUbiquitousKeyValueStore.default.set(PlayStreamDataShared.Stream7, forKey: "Stream7Key")
                         }
                         PlayButton7
                     }
@@ -459,7 +459,7 @@ struct MainView: View
                             .disableAutocorrection(true)
                             .onChange(of: PlayStreamDataShared.Stream8)
                         {
-                            UserDefaults.standard.set(PlayStreamDataShared.Stream8, forKey: "Stream8Key")
+                            NSUbiquitousKeyValueStore.default.set(PlayStreamDataShared.Stream8, forKey: "Stream8Key")
                         }
                         PlayButton8
                     }
