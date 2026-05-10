@@ -51,6 +51,20 @@
 			);
 			target = 3E690D932FAE0E04006C88F6 /* Taiga Stream WidgetExtension */;
 		};
+		3E690E0C2FAFF79E006C88F6 /* Exceptions for "Taiga Stream" folder in "Taiga Stream WidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				MainView.swift,
+			);
+			target = 3E690D932FAE0E04006C88F6 /* Taiga Stream WidgetExtension */;
+		};
+		3E690E0E2FB017B7006C88F6 /* Exceptions for "Taiga Stream Widget" folder in "Taiga Stream" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				TaigaStreamWidget.swift,
+			);
+			target = 3E1F17802F938D4B00DDE7E4 /* Taiga Stream */;
+		};
 		3E860EEE2FA7FE4B000194F7 /* Exceptions for "Taiga Stream" folder in "Taiga Stream" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -65,6 +79,7 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				3E860EEE2FA7FE4B000194F7 /* Exceptions for "Taiga Stream" folder in "Taiga Stream" target */,
+				3E690E0C2FAFF79E006C88F6 /* Exceptions for "Taiga Stream" folder in "Taiga Stream WidgetExtension" target */,
 			);
 			path = "Taiga Stream";
 			sourceTree = "<group>";
@@ -72,6 +87,7 @@
 		3E690D9A2FAE0E04006C88F6 /* Taiga Stream Widget */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
+				3E690E0E2FB017B7006C88F6 /* Exceptions for "Taiga Stream Widget" folder in "Taiga Stream" target */,
 				3E690DA82FAE0E05006C88F6 /* Exceptions for "Taiga Stream Widget" folder in "Taiga Stream WidgetExtension" target */,
 			);
 			path = "Taiga Stream Widget";

@@ -15,7 +15,6 @@ struct TaigaStreamWidgetControl1: ControlWidget
         }
         .displayName("Play Stream 1")
     }
-    
 }
 
 struct TaigaStreamWidgetControl2: ControlWidget
