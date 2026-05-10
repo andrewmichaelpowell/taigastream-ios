@@ -4,11 +4,12 @@
 import SwiftUI
 import AVKit
 import AVFoundation
-internal import Combine
+import Combine
 
-class PlayStreamData: ObservableObject
+public class PlayStreamData: ObservableObject
 {
     static let shared = PlayStreamData()
+    
     @Published var CurrentStream:Int = 1
     @Published var Playing: Bool = false
     @Published var PlayStream = AVPlayer()

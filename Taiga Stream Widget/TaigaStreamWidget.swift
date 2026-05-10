@@ -1,3 +1,6 @@
+//  Taiga Stream
+//  github.com/andrewmichaelpowell
+
 import SwiftUI
 import AppIntents
 import WidgetKit
