@@ -25,13 +25,15 @@ struct TaigaStreamWidgetControl1: ControlWidget
     }
 }
 
-struct PlayStream1ToggleIntent: SetValueIntent, AudioPlaybackIntent {
+struct PlayStream1ToggleIntent: SetValueIntent, AudioPlaybackIntent
+{
     static let title: LocalizedStringResource = "Stream 1"
     @Parameter(title: "Is On")
     var value: Bool
 
     @MainActor
-    func perform() async throws -> some IntentResult {
+    func perform() async throws -> some IntentResult
+    {
         PlayStreamButton.shared.PlayButton1_Click()
         return .result()
     }
@@ -57,13 +59,15 @@ struct TaigaStreamWidgetControl2: ControlWidget
     }
 }
 
-struct PlayStream2ToggleIntent: SetValueIntent, AudioPlaybackIntent {
+struct PlayStream2ToggleIntent: SetValueIntent, AudioPlaybackIntent
+{
     static let title: LocalizedStringResource = "Stream 2"
     @Parameter(title: "Is On")
     var value: Bool
 
     @MainActor
-    func perform() async throws -> some IntentResult {
+    func perform() async throws -> some IntentResult
+    {
         PlayStreamButton.shared.PlayButton2_Click()
         return .result()
     }
@@ -89,13 +93,15 @@ struct TaigaStreamWidgetControl3: ControlWidget
     }
 }
 
-struct PlayStream3ToggleIntent: SetValueIntent, AudioPlaybackIntent {
+struct PlayStream3ToggleIntent: SetValueIntent, AudioPlaybackIntent
+{
     static let title: LocalizedStringResource = "Stream 3"
     @Parameter(title: "Is On")
     var value: Bool
 
     @MainActor
-    func perform() async throws -> some IntentResult {
+    func perform() async throws -> some IntentResult
+    {
         PlayStreamButton.shared.PlayButton3_Click()
         return .result()
     }
@@ -121,13 +127,15 @@ struct TaigaStreamWidgetControl4: ControlWidget
     }
 }
 
-struct PlayStream4ToggleIntent: SetValueIntent, AudioPlaybackIntent {
+struct PlayStream4ToggleIntent: SetValueIntent, AudioPlaybackIntent
+{
     static let title: LocalizedStringResource = "Stream 4"
     @Parameter(title: "Is On")
     var value: Bool
 
     @MainActor
-    func perform() async throws -> some IntentResult {
+    func perform() async throws -> some IntentResult
+    {
         PlayStreamButton.shared.PlayButton4_Click()
         return .result()
     }
@@ -153,13 +161,15 @@ struct TaigaStreamWidgetControl5: ControlWidget
     }
 }
 
-struct PlayStream5ToggleIntent: SetValueIntent, AudioPlaybackIntent {
+struct PlayStream5ToggleIntent: SetValueIntent, AudioPlaybackIntent
+{
     static let title: LocalizedStringResource = "Stream 5"
     @Parameter(title: "Is On")
     var value: Bool
 
     @MainActor
-    func perform() async throws -> some IntentResult {
+    func perform() async throws -> some IntentResult
+    {
         PlayStreamButton.shared.PlayButton5_Click()
         return .result()
     }
@@ -185,13 +195,15 @@ struct TaigaStreamWidgetControl6: ControlWidget
     }
 }
 
-struct PlayStream6ToggleIntent: SetValueIntent, AudioPlaybackIntent {
+struct PlayStream6ToggleIntent: SetValueIntent, AudioPlaybackIntent
+{
     static let title: LocalizedStringResource = "Stream 6"
     @Parameter(title: "Is On")
     var value: Bool
 
     @MainActor
-    func perform() async throws -> some IntentResult {
+    func perform() async throws -> some IntentResult
+    {
         PlayStreamButton.shared.PlayButton6_Click()
         return .result()
     }
@@ -217,13 +229,15 @@ struct TaigaStreamWidgetControl7: ControlWidget
     }
 }
 
-struct PlayStream7ToggleIntent: SetValueIntent, AudioPlaybackIntent {
+struct PlayStream7ToggleIntent: SetValueIntent, AudioPlaybackIntent
+{
     static let title: LocalizedStringResource = "Stream 7"
     @Parameter(title: "Is On")
     var value: Bool
 
     @MainActor
-    func perform() async throws -> some IntentResult {
+    func perform() async throws -> some IntentResult
+    {
         PlayStreamButton.shared.PlayButton7_Click()
         return .result()
     }
@@ -249,13 +263,15 @@ struct TaigaStreamWidgetControl8: ControlWidget
     }
 }
 
-struct PlayStream8ToggleIntent: SetValueIntent, AudioPlaybackIntent {
+struct PlayStream8ToggleIntent: SetValueIntent, AudioPlaybackIntent
+{
     static let title: LocalizedStringResource = "Stream 8"
     @Parameter(title: "Is On")
     var value: Bool
 
     @MainActor
-    func perform() async throws -> some IntentResult {
+    func perform() async throws -> some IntentResult
+    {
         PlayStreamButton.shared.PlayButton8_Click()
         return .result()
     }
