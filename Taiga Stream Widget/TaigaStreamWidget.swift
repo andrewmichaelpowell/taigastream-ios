@@ -21,12 +21,12 @@ struct TaigaStreamWidgetControl1: ControlWidget
                 }
             )
         }
-        .displayName("Play Stream 1")
+        .displayName("Stream 1")
     }
 }
 
 struct PlayStream1ToggleIntent: SetValueIntent, AudioPlaybackIntent {
-    static let title: LocalizedStringResource = "Toggle Stream 1"
+    static let title: LocalizedStringResource = "Stream 1"
     @Parameter(title: "Is On")
     var value: Bool
 
@@ -53,12 +53,12 @@ struct TaigaStreamWidgetControl2: ControlWidget
                 }
             )
         }
-        .displayName("Play Stream 2")
+        .displayName("Stream 2")
     }
 }
 
 struct PlayStream2ToggleIntent: SetValueIntent, AudioPlaybackIntent {
-    static let title: LocalizedStringResource = "Toggle Stream 2"
+    static let title: LocalizedStringResource = "Stream 2"
     @Parameter(title: "Is On")
     var value: Bool
 
@@ -85,12 +85,12 @@ struct TaigaStreamWidgetControl3: ControlWidget
                 }
             )
         }
-        .displayName("Play Stream 3")
+        .displayName("Stream 3")
     }
 }
 
 struct PlayStream3ToggleIntent: SetValueIntent, AudioPlaybackIntent {
-    static let title: LocalizedStringResource = "Toggle Stream 3"
+    static let title: LocalizedStringResource = "Stream 3"
     @Parameter(title: "Is On")
     var value: Bool
 
@@ -117,12 +117,12 @@ struct TaigaStreamWidgetControl4: ControlWidget
                 }
             )
         }
-        .displayName("Play Stream 4")
+        .displayName("Stream 4")
     }
 }
 
 struct PlayStream4ToggleIntent: SetValueIntent, AudioPlaybackIntent {
-    static let title: LocalizedStringResource = "Toggle Stream 4"
+    static let title: LocalizedStringResource = "Stream 4"
     @Parameter(title: "Is On")
     var value: Bool
 
@@ -149,12 +149,12 @@ struct TaigaStreamWidgetControl5: ControlWidget
                 }
             )
         }
-        .displayName("Play Stream 5")
+        .displayName("Stream 5")
     }
 }
 
 struct PlayStream5ToggleIntent: SetValueIntent, AudioPlaybackIntent {
-    static let title: LocalizedStringResource = "Toggle Stream 5"
+    static let title: LocalizedStringResource = "Stream 5"
     @Parameter(title: "Is On")
     var value: Bool
 
@@ -181,12 +181,12 @@ struct TaigaStreamWidgetControl6: ControlWidget
                 }
             )
         }
-        .displayName("Play Stream 6")
+        .displayName("Stream 6")
     }
 }
 
 struct PlayStream6ToggleIntent: SetValueIntent, AudioPlaybackIntent {
-    static let title: LocalizedStringResource = "Toggle Stream 6"
+    static let title: LocalizedStringResource = "Stream 6"
     @Parameter(title: "Is On")
     var value: Bool
 
@@ -213,12 +213,12 @@ struct TaigaStreamWidgetControl7: ControlWidget
                 }
             )
         }
-        .displayName("Play Stream 7")
+        .displayName("Stream 7")
     }
 }
 
 struct PlayStream7ToggleIntent: SetValueIntent, AudioPlaybackIntent {
-    static let title: LocalizedStringResource = "Toggle Stream 7"
+    static let title: LocalizedStringResource = "Stream 7"
     @Parameter(title: "Is On")
     var value: Bool
 
@@ -245,12 +245,12 @@ struct TaigaStreamWidgetControl8: ControlWidget
                 }
             )
         }
-        .displayName("Play Stream 8")
+        .displayName("Stream 8")
     }
 }
 
 struct PlayStream8ToggleIntent: SetValueIntent, AudioPlaybackIntent {
-    static let title: LocalizedStringResource = "Toggle Stream 8"
+    static let title: LocalizedStringResource = "Stream 8"
     @Parameter(title: "Is On")
     var value: Bool
 
