@@ -57,7 +57,6 @@ public class PlayStreamData: ObservableObject
     init()
     {
         PlayStreamObserver()
-        InterruptionObserver()
     }
 
     private func PlayStreamObserver()
@@ -92,10 +91,7 @@ public class PlayStreamData: ObservableObject
             ControlCenter.shared.reloadAllControls()
         }
         .store(in: &cancellables)
-    }
-
-    private func InterruptionObserver()
-    {
+        
         NotificationCenter.default.publisher(for: AVAudioSession.interruptionNotification)
         .receive(on: DispatchQueue.main)
         .sink
@@ -131,6 +127,7 @@ public class PlayStreamData: ObservableObject
                 self?.Playing = false
                 self?.PlayStream.pause()
             }
+            ControlCenter.shared.reloadAllControls()
         }
         .store(in: &cancellables)
         
