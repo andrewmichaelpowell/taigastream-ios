@@ -174,6 +174,7 @@ public class PlayStreamButton
         {
             PlayStreamData.shared.PlayStream.pause()
             try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+            PlayStreamData.shared.Playing = false
         }
         else
         {
@@ -196,6 +197,7 @@ public class PlayStreamButton
         {
             PlayStreamData.shared.PlayStream.pause()
             try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+            PlayStreamData.shared.Playing = false
         }
         else
         {
@@ -218,6 +220,7 @@ public class PlayStreamButton
         {
             PlayStreamData.shared.PlayStream.pause()
             try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+            PlayStreamData.shared.Playing = false
         }
         else
         {
@@ -240,6 +243,7 @@ public class PlayStreamButton
         {
             PlayStreamData.shared.PlayStream.pause()
             try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+            PlayStreamData.shared.Playing = false
         }
         else
         {
@@ -262,6 +266,7 @@ public class PlayStreamButton
         {
             PlayStreamData.shared.PlayStream.pause()
             try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+            PlayStreamData.shared.Playing = false
         }
         else
         {
@@ -284,6 +289,7 @@ public class PlayStreamButton
         {
             PlayStreamData.shared.PlayStream.pause()
             try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+            PlayStreamData.shared.Playing = false
         }
         else
         {
@@ -306,6 +312,7 @@ public class PlayStreamButton
         {
             PlayStreamData.shared.PlayStream.pause()
             try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+            PlayStreamData.shared.Playing = false
         }
         else
         {
@@ -328,6 +335,7 @@ public class PlayStreamButton
         {
             PlayStreamData.shared.PlayStream.pause()
             try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+            PlayStreamData.shared.Playing = false
         }
         else
         {
