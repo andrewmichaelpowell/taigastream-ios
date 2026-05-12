@@ -120,9 +120,12 @@ public class PlayStreamData: ObservableObject
             .sink { [weak self] notification in
                 guard let userInfo = notification.userInfo,
                       let typeValue = userInfo[AVAudioSessionSilenceSecondaryAudioHintTypeKey] as? UInt,
-                      let type = AVAudioSession.SilenceSecondaryAudioHintType(rawValue: typeValue) else { return }
-
-                if type == .begin {
+                      let type = AVAudioSession.SilenceSecondaryAudioHintType(rawValue: typeValue) else
+                {
+                    return
+                }
+                if type == .begin
+                {
                     self?.Playing = false
                     self?.PlayStream.pause()
                 }
