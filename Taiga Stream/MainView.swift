@@ -116,21 +116,49 @@ public class PlayStreamData: ObservableObject
         .store(in: &cancellables)
         
         NotificationCenter.default.publisher(for: AVAudioSession.silenceSecondaryAudioHintNotification)
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] notification in
-                guard let userInfo = notification.userInfo,
-                      let typeValue = userInfo[AVAudioSessionSilenceSecondaryAudioHintTypeKey] as? UInt,
-                      let type = AVAudioSession.SilenceSecondaryAudioHintType(rawValue: typeValue) else
-                {
-                    return
-                }
-                if type == .begin
+        .receive(on: DispatchQueue.main)
+        .sink
+        {
+            [weak self] notification in
+            guard let userInfo = notification.userInfo,
+            let typeValue = userInfo[AVAudioSessionSilenceSecondaryAudioHintTypeKey] as? UInt,
+            let type = AVAudioSession.SilenceSecondaryAudioHintType(rawValue: typeValue) else
+            {
+                return
+            }
+            if type == .begin
+            {
+                self?.Playing = false
+                self?.PlayStream.pause()
+            }
+        }
+        .store(in: &cancellables)
+        
+        NotificationCenter.default.publisher(for: AVAudioSession.routeChangeNotification)
+        .receive(on: DispatchQueue.main)
+        .sink
+        {
+            [weak self] notification in
+            guard let userInfo = notification.userInfo,
+            let reasonValue = userInfo[AVAudioSessionRouteChangeReasonKey] as? UInt,
+            let reason = AVAudioSession.RouteChangeReason(rawValue: reasonValue) else
+            {
+                return
+            }
+            switch reason
+            {
+                case .categoryChange:
+                let session = AVAudioSession.sharedInstance()
+                if session.secondaryAudioShouldBeSilencedHint
                 {
                     self?.Playing = false
                     self?.PlayStream.pause()
                 }
+                default: break
             }
-            .store(in: &cancellables)
+            ControlCenter.shared.reloadAllControls()
+        }
+        .store(in: &cancellables)
     }
 }
 
