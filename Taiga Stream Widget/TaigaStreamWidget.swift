@@ -11,7 +11,7 @@ struct TaigaStreamWidgetControl1: ControlWidget
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream1")
         {
-            let isOn = PlayStreamData.shared.Playing && PlayStreamData.shared.CurrentStream == 1
+            let isOn = PlayStreamData.SharedResource.Playing && PlayStreamData.SharedResource.CurrentStream == 1
             return ControlWidgetToggle(
                 isOn: isOn,
                 action: PlayStream1ToggleIntent(),
@@ -45,7 +45,7 @@ struct TaigaStreamWidgetControl2: ControlWidget
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream2")
         {
-            let isOn = PlayStreamData.shared.Playing && PlayStreamData.shared.CurrentStream == 2
+            let isOn = PlayStreamData.SharedResource.Playing && PlayStreamData.SharedResource.CurrentStream == 2
             return ControlWidgetToggle(
                 isOn: isOn,
                 action: PlayStream2ToggleIntent(),
@@ -79,7 +79,7 @@ struct TaigaStreamWidgetControl3: ControlWidget
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream3")
         {
-            let isOn = PlayStreamData.shared.Playing && PlayStreamData.shared.CurrentStream == 3
+            let isOn = PlayStreamData.SharedResource.Playing && PlayStreamData.SharedResource.CurrentStream == 3
             return ControlWidgetToggle(
                 isOn: isOn,
                 action: PlayStream3ToggleIntent(),
@@ -113,7 +113,7 @@ struct TaigaStreamWidgetControl4: ControlWidget
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream4")
         {
-            let isOn = PlayStreamData.shared.Playing && PlayStreamData.shared.CurrentStream == 4
+            let isOn = PlayStreamData.SharedResource.Playing && PlayStreamData.SharedResource.CurrentStream == 4
             return ControlWidgetToggle(
                 isOn: isOn,
                 action: PlayStream4ToggleIntent(),
@@ -147,7 +147,7 @@ struct TaigaStreamWidgetControl5: ControlWidget
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream5")
         {
-            let isOn = PlayStreamData.shared.Playing && PlayStreamData.shared.CurrentStream == 5
+            let isOn = PlayStreamData.SharedResource.Playing && PlayStreamData.SharedResource.CurrentStream == 5
             return ControlWidgetToggle(
                 isOn: isOn,
                 action: PlayStream5ToggleIntent(),
@@ -181,7 +181,7 @@ struct TaigaStreamWidgetControl6: ControlWidget
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream6")
         {
-            let isOn = PlayStreamData.shared.Playing && PlayStreamData.shared.CurrentStream == 6
+            let isOn = PlayStreamData.SharedResource.Playing && PlayStreamData.SharedResource.CurrentStream == 6
             return ControlWidgetToggle(
                 isOn: isOn,
                 action: PlayStream6ToggleIntent(),
@@ -215,7 +215,7 @@ struct TaigaStreamWidgetControl7: ControlWidget
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream7")
         {
-            let isOn = PlayStreamData.shared.Playing && PlayStreamData.shared.CurrentStream == 7
+            let isOn = PlayStreamData.SharedResource.Playing && PlayStreamData.SharedResource.CurrentStream == 7
             return ControlWidgetToggle(
                 isOn: isOn,
                 action: PlayStream7ToggleIntent(),
@@ -249,7 +249,7 @@ struct TaigaStreamWidgetControl8: ControlWidget
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream8")
         {
-            let isOn = PlayStreamData.shared.Playing && PlayStreamData.shared.CurrentStream == 8
+            let isOn = PlayStreamData.SharedResource.Playing && PlayStreamData.SharedResource.CurrentStream == 8
             return ControlWidgetToggle(
                 isOn: isOn,
                 action: PlayStream8ToggleIntent(),

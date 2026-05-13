@@ -9,39 +9,40 @@ import WidgetKit
 
 public class PlayStreamData: ObservableObject
 {
-    static let shared = PlayStreamData()
-    private let defaults = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
-    private var cancellables = Set<AnyCancellable>()
+    static let SharedResource = PlayStreamData()
+    let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
+    var PlayerCancellables = Set<AnyCancellable>()
+    var SessionCancellables = Set<AnyCancellable>()
     
     var CurrentStream: Int
     {
         get
         {
-            defaults.integer(forKey: "CurrentStreamKey")
+            StreamState.integer(forKey: "CurrentStreamKey")
         }
         set{
-            defaults.set(newValue, forKey: "CurrentStreamKey")
+            StreamState.set(newValue, forKey: "CurrentStreamKey")
         }
     }
-
+    
     var Playing: Bool
     {
         get
         {
-            defaults.bool(forKey: "PlayingKey")
+            StreamState.bool(forKey: "PlayingKey")
         }
         set
         {
-            defaults.set(newValue, forKey: "PlayingKey")
+            StreamState.set(newValue, forKey: "PlayingKey")
             objectWillChange.send()
         }
     }
-
+    
     @Published var PlayStream = AVPlayer()
     {
         didSet
         {
-            PlayStreamObserver()
+            PlayerObservers()
         }
     }
     
@@ -56,12 +57,13 @@ public class PlayStreamData: ObservableObject
     
     init()
     {
-        PlayStreamObserver()
+        PlayerObservers()
+        SessionObservers()
     }
-
-    private func PlayStreamObserver()
+    
+    public func PlayerObservers()
     {
-        cancellables.removeAll()
+        PlayerCancellables.removeAll()
         PlayStream.publisher(for: \.timeControlStatus)
         .receive(on: DispatchQueue.main)
         .sink
@@ -77,8 +79,8 @@ public class PlayStreamData: ObservableObject
             }
             ControlCenter.shared.reloadAllControls()
         }
-        .store(in: &cancellables)
-
+        .store(in: &PlayerCancellables)
+        
         PlayStream.publisher(for: \.currentItem?.status)
         .receive(on: DispatchQueue.main)
         .sink
@@ -90,8 +92,12 @@ public class PlayStreamData: ObservableObject
             }
             ControlCenter.shared.reloadAllControls()
         }
-        .store(in: &cancellables)
-        
+        .store(in: &PlayerCancellables)
+    }
+    
+    public func SessionObservers()
+    {
+        SessionCancellables.removeAll()
         NotificationCenter.default.publisher(for: AVAudioSession.interruptionNotification)
         .receive(on: DispatchQueue.main)
         .sink
@@ -106,10 +112,11 @@ public class PlayStreamData: ObservableObject
             if type == .began
             {
                 self?.Playing = false
+                self?.PlayStream.pause()
             }
             ControlCenter.shared.reloadAllControls()
         }
-        .store(in: &cancellables)
+        .store(in: &SessionCancellables)
         
         NotificationCenter.default.publisher(for: AVAudioSession.silenceSecondaryAudioHintNotification)
         .receive(on: DispatchQueue.main)
@@ -129,7 +136,7 @@ public class PlayStreamData: ObservableObject
             }
             ControlCenter.shared.reloadAllControls()
         }
-        .store(in: &cancellables)
+        .store(in: &SessionCancellables)
         
         NotificationCenter.default.publisher(for: AVAudioSession.routeChangeNotification)
         .receive(on: DispatchQueue.main)
@@ -142,20 +149,17 @@ public class PlayStreamData: ObservableObject
             {
                 return
             }
-            switch reason
+            if reason == .categoryChange
             {
-                case .categoryChange:
-                let session = AVAudioSession.sharedInstance()
-                if session.secondaryAudioShouldBeSilencedHint
+                if AVAudioSession.sharedInstance().secondaryAudioShouldBeSilencedHint
                 {
                     self?.Playing = false
                     self?.PlayStream.pause()
                 }
-                default: break
             }
             ControlCenter.shared.reloadAllControls()
         }
-        .store(in: &cancellables)
+        .store(in: &SessionCancellables)
     }
 }
 
@@ -165,192 +169,184 @@ public class PlayStreamButton
         
     public func PlayButton1_Click()
     {
-        guard let StreamURL = URL(string: PlayStreamData.shared.Stream1) else
+        guard let StreamURL = URL(string: PlayStreamData.SharedResource.Stream1) else
         {
             return
         }
-        PlayStreamData.shared.PlayStream = AVPlayer(playerItem: AVPlayerItem(url: StreamURL))
-        if (PlayStreamData.shared.Playing == true && PlayStreamData.shared.CurrentStream == 1)
+        PlayStreamData.SharedResource.PlayStream = AVPlayer(playerItem: AVPlayerItem(url: StreamURL))
+        if (PlayStreamData.SharedResource.Playing == true && PlayStreamData.SharedResource.CurrentStream == 1)
         {
-            PlayStreamData.shared.PlayStream.pause()
+            PlayStreamData.SharedResource.PlayStream.pause()
             try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
-            PlayStreamData.shared.Playing = false
         }
         else
         {
             try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
             try? AVAudioSession.sharedInstance().setActive(true)
-            PlayStreamData.shared.PlayStream.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
-            PlayStreamData.shared.PlayStream.play()
-            PlayStreamData.shared.CurrentStream = 1
+            PlayStreamData.SharedResource.PlayStream.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
+            PlayStreamData.SharedResource.PlayStream.play()
+            PlayStreamData.SharedResource.CurrentStream = 1
         }
     }
     
     public func PlayButton2_Click()
     {
-        guard let StreamURL = URL(string: PlayStreamData.shared.Stream2) else
+        guard let StreamURL = URL(string: PlayStreamData.SharedResource.Stream2) else
         {
             return
         }
-        PlayStreamData.shared.PlayStream = AVPlayer(playerItem: AVPlayerItem(url: StreamURL))
-        if (PlayStreamData.shared.Playing == true && PlayStreamData.shared.CurrentStream == 2)
+        PlayStreamData.SharedResource.PlayStream = AVPlayer(playerItem: AVPlayerItem(url: StreamURL))
+        if (PlayStreamData.SharedResource.Playing == true && PlayStreamData.SharedResource.CurrentStream == 2)
         {
-            PlayStreamData.shared.PlayStream.pause()
+            PlayStreamData.SharedResource.PlayStream.pause()
             try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
-            PlayStreamData.shared.Playing = false
         }
         else
         {
             try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
             try? AVAudioSession.sharedInstance().setActive(true)
-            PlayStreamData.shared.PlayStream.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
-            PlayStreamData.shared.PlayStream.play()
-            PlayStreamData.shared.CurrentStream = 2
+            PlayStreamData.SharedResource.PlayStream.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
+            PlayStreamData.SharedResource.PlayStream.play()
+            PlayStreamData.SharedResource.CurrentStream = 2
         }
     }
     
     public func PlayButton3_Click()
     {
-        guard let StreamURL = URL(string: PlayStreamData.shared.Stream3) else
+        guard let StreamURL = URL(string: PlayStreamData.SharedResource.Stream3) else
         {
             return
         }
-        PlayStreamData.shared.PlayStream = AVPlayer(playerItem: AVPlayerItem(url: StreamURL))
-        if (PlayStreamData.shared.Playing == true && PlayStreamData.shared.CurrentStream == 3)
+        PlayStreamData.SharedResource.PlayStream = AVPlayer(playerItem: AVPlayerItem(url: StreamURL))
+        if (PlayStreamData.SharedResource.Playing == true && PlayStreamData.SharedResource.CurrentStream == 3)
         {
-            PlayStreamData.shared.PlayStream.pause()
+            PlayStreamData.SharedResource.PlayStream.pause()
             try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
-            PlayStreamData.shared.Playing = false
         }
         else
         {
             try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
             try? AVAudioSession.sharedInstance().setActive(true)
-            PlayStreamData.shared.PlayStream.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
-            PlayStreamData.shared.PlayStream.play()
-            PlayStreamData.shared.CurrentStream = 3
+            PlayStreamData.SharedResource.PlayStream.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
+            PlayStreamData.SharedResource.PlayStream.play()
+            PlayStreamData.SharedResource.CurrentStream = 3
         }
     }
     
     public func PlayButton4_Click()
     {
-        guard let StreamURL = URL(string: PlayStreamData.shared.Stream4) else
+        guard let StreamURL = URL(string: PlayStreamData.SharedResource.Stream4) else
         {
             return
         }
-        PlayStreamData.shared.PlayStream = AVPlayer(playerItem: AVPlayerItem(url: StreamURL))
-        if (PlayStreamData.shared.Playing == true && PlayStreamData.shared.CurrentStream == 4)
+        PlayStreamData.SharedResource.PlayStream = AVPlayer(playerItem: AVPlayerItem(url: StreamURL))
+        if (PlayStreamData.SharedResource.Playing == true && PlayStreamData.SharedResource.CurrentStream == 4)
         {
-            PlayStreamData.shared.PlayStream.pause()
+            PlayStreamData.SharedResource.PlayStream.pause()
             try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
-            PlayStreamData.shared.Playing = false
         }
         else
         {
             try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
             try? AVAudioSession.sharedInstance().setActive(true)
-            PlayStreamData.shared.PlayStream.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
-            PlayStreamData.shared.PlayStream.play()
-            PlayStreamData.shared.CurrentStream = 4
+            PlayStreamData.SharedResource.PlayStream.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
+            PlayStreamData.SharedResource.PlayStream.play()
+            PlayStreamData.SharedResource.CurrentStream = 4
         }
     }
     
     public func PlayButton5_Click()
     {
-        guard let StreamURL = URL(string: PlayStreamData.shared.Stream5) else
+        guard let StreamURL = URL(string: PlayStreamData.SharedResource.Stream5) else
         {
             return
         }
-        PlayStreamData.shared.PlayStream = AVPlayer(playerItem: AVPlayerItem(url: StreamURL))
-        if (PlayStreamData.shared.Playing == true && PlayStreamData.shared.CurrentStream == 5)
+        PlayStreamData.SharedResource.PlayStream = AVPlayer(playerItem: AVPlayerItem(url: StreamURL))
+        if (PlayStreamData.SharedResource.Playing == true && PlayStreamData.SharedResource.CurrentStream == 5)
         {
-            PlayStreamData.shared.PlayStream.pause()
+            PlayStreamData.SharedResource.PlayStream.pause()
             try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
-            PlayStreamData.shared.Playing = false
         }
         else
         {
             try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
             try? AVAudioSession.sharedInstance().setActive(true)
-            PlayStreamData.shared.PlayStream.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
-            PlayStreamData.shared.PlayStream.play()
-            PlayStreamData.shared.CurrentStream = 5
+            PlayStreamData.SharedResource.PlayStream.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
+            PlayStreamData.SharedResource.PlayStream.play()
+            PlayStreamData.SharedResource.CurrentStream = 5
         }
     }
     
     public func PlayButton6_Click()
     {
-        guard let StreamURL = URL(string: PlayStreamData.shared.Stream6) else
+        guard let StreamURL = URL(string: PlayStreamData.SharedResource.Stream6) else
         {
             return
         }
-        PlayStreamData.shared.PlayStream = AVPlayer(playerItem: AVPlayerItem(url: StreamURL))
-        if (PlayStreamData.shared.Playing == true && PlayStreamData.shared.CurrentStream == 6)
+        PlayStreamData.SharedResource.PlayStream = AVPlayer(playerItem: AVPlayerItem(url: StreamURL))
+        if (PlayStreamData.SharedResource.Playing == true && PlayStreamData.SharedResource.CurrentStream == 6)
         {
-            PlayStreamData.shared.PlayStream.pause()
+            PlayStreamData.SharedResource.PlayStream.pause()
             try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
-            PlayStreamData.shared.Playing = false
         }
         else
         {
             try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
             try? AVAudioSession.sharedInstance().setActive(true)
-            PlayStreamData.shared.PlayStream.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
-            PlayStreamData.shared.PlayStream.play()
-            PlayStreamData.shared.CurrentStream = 6
+            PlayStreamData.SharedResource.PlayStream.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
+            PlayStreamData.SharedResource.PlayStream.play()
+            PlayStreamData.SharedResource.CurrentStream = 6
         }
     }
 
     public func PlayButton7_Click()
     {
-        guard let StreamURL = URL(string: PlayStreamData.shared.Stream7) else
+        guard let StreamURL = URL(string: PlayStreamData.SharedResource.Stream7) else
         {
             return
         }
-        PlayStreamData.shared.PlayStream = AVPlayer(playerItem: AVPlayerItem(url: StreamURL))
-        if (PlayStreamData.shared.Playing == true && PlayStreamData.shared.CurrentStream == 7)
+        PlayStreamData.SharedResource.PlayStream = AVPlayer(playerItem: AVPlayerItem(url: StreamURL))
+        if (PlayStreamData.SharedResource.Playing == true && PlayStreamData.SharedResource.CurrentStream == 7)
         {
-            PlayStreamData.shared.PlayStream.pause()
+            PlayStreamData.SharedResource.PlayStream.pause()
             try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
-            PlayStreamData.shared.Playing = false
         }
         else
         {
             try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
             try? AVAudioSession.sharedInstance().setActive(true)
-            PlayStreamData.shared.PlayStream.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
-            PlayStreamData.shared.PlayStream.play()
-            PlayStreamData.shared.CurrentStream = 7
+            PlayStreamData.SharedResource.PlayStream.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
+            PlayStreamData.SharedResource.PlayStream.play()
+            PlayStreamData.SharedResource.CurrentStream = 7
         }
     }
 
     public func PlayButton8_Click()
     {
-        guard let StreamURL = URL(string: PlayStreamData.shared.Stream8) else
+        guard let StreamURL = URL(string: PlayStreamData.SharedResource.Stream8) else
         {
             return
         }
-        PlayStreamData.shared.PlayStream = AVPlayer(playerItem: AVPlayerItem(url: StreamURL))
-        if (PlayStreamData.shared.Playing == true && PlayStreamData.shared.CurrentStream == 8)
+        PlayStreamData.SharedResource.PlayStream = AVPlayer(playerItem: AVPlayerItem(url: StreamURL))
+        if (PlayStreamData.SharedResource.Playing == true && PlayStreamData.SharedResource.CurrentStream == 8)
         {
-            PlayStreamData.shared.PlayStream.pause()
+            PlayStreamData.SharedResource.PlayStream.pause()
             try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
-            PlayStreamData.shared.Playing = false
         }
         else
         {
             try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
             try? AVAudioSession.sharedInstance().setActive(true)
-            PlayStreamData.shared.PlayStream.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
-            PlayStreamData.shared.PlayStream.play()
-            PlayStreamData.shared.CurrentStream = 8
+            PlayStreamData.SharedResource.PlayStream.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
+            PlayStreamData.SharedResource.PlayStream.play()
+            PlayStreamData.SharedResource.CurrentStream = 8
         }
     }
 }
 
 struct MainView: View
 {
-    @ObservedObject var PlayStreamDataShared = PlayStreamData.shared
+    @ObservedObject var PlayStreamDataShared = PlayStreamData.SharedResource
     
     let Color1 = Color(red: 36/255.0, green: 36/255.0, blue: 40/255.0, opacity: 1.0)
     let Color2 = Color(red: 2/255.0, green: 218/255.0, blue: 195/255.0, opacity: 1.0)
@@ -374,7 +370,7 @@ struct MainView: View
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .autocapitalization(.none)
                             .disableAutocorrection(true)
-                            .onChange(of: PlayStreamData.shared.Stream1)
+                            .onChange(of: PlayStreamData.SharedResource.Stream1)
                         {
                             NSUbiquitousKeyValueStore.default.set(PlayStreamDataShared.Stream1, forKey: "Stream1Key")
                         }
