@@ -166,7 +166,7 @@ public class PlayStreamData: ObservableObject
 
 public class PlayStreamButton
 {
-    static let shared = PlayStreamButton()
+    static let PlayStreamButtonShared = PlayStreamButton()
         
     public func PlayButton1_Click()
     {
@@ -523,7 +523,7 @@ struct MainView: View
     {
         if (PlayStreamDataShared.Playing == true && PlayStreamDataShared.CurrentStream == 1 && PlayStreamDataShared.Stream1 != "")
         {
-            Button(action: PlayStreamButton.shared.PlayButton1_Click)
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton1_Click)
             {
                 Text(Image(systemName: "pause.fill"))
                     .font(.title)
@@ -536,7 +536,7 @@ struct MainView: View
         }
         else if(PlayStreamDataShared.Stream1 == "")
         {
-            Button(action: PlayStreamButton.shared.PlayButton1_Click)
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton1_Click)
             {
                 Text("1")
                     .font(.title)
@@ -550,7 +550,7 @@ struct MainView: View
         }
         else
         {
-            Button(action: PlayStreamButton.shared.PlayButton1_Click)
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton1_Click)
             {
                 Text("1")
                     .font(.title)
@@ -568,7 +568,7 @@ struct MainView: View
     {
         if (PlayStreamDataShared.Playing == true && PlayStreamDataShared.CurrentStream == 2 && PlayStreamDataShared.Stream2 != "")
         {
-            Button(action: PlayStreamButton.shared.PlayButton2_Click)
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton2_Click)
             {
                 Text(Image(systemName: "pause.fill"))
                     .font(.title)
@@ -583,7 +583,7 @@ struct MainView: View
         }
         else if(PlayStreamDataShared.Stream2 == "")
         {
-            Button(action: PlayStreamButton.shared.PlayButton2_Click)
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton2_Click)
             {
                 Text("2")
                     .font(.title)
@@ -599,7 +599,7 @@ struct MainView: View
         }
         else
         {
-            Button(action: PlayStreamButton.shared.PlayButton2_Click)
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton2_Click)
             {
                 Text("2")
                     .font(.title)
@@ -618,7 +618,7 @@ struct MainView: View
     {
         if (PlayStreamDataShared.Playing == true && PlayStreamDataShared.CurrentStream == 3 && PlayStreamDataShared.Stream3 != "")
         {
-            Button(action: PlayStreamButton.shared.PlayButton3_Click)
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton3_Click)
             {
                 Text(Image(systemName: "pause.fill"))
                     .font(.title)
@@ -633,7 +633,7 @@ struct MainView: View
         }
         else if(PlayStreamDataShared.Stream3 == "")
         {
-            Button(action: PlayStreamButton.shared.PlayButton3_Click)
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton3_Click)
             {
                 Text("3")
                     .font(.title)
@@ -649,7 +649,7 @@ struct MainView: View
         }
         else
         {
-            Button(action: PlayStreamButton.shared.PlayButton3_Click)
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton3_Click)
             {
                 Text("3")
                     .font(.title)
@@ -668,7 +668,7 @@ struct MainView: View
     {
         if (PlayStreamDataShared.Playing == true && PlayStreamDataShared.CurrentStream == 4 && PlayStreamDataShared.Stream4 != "")
         {
-            Button(action: PlayStreamButton.shared.PlayButton4_Click)
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton4_Click)
             {
                 Text(Image(systemName: "pause.fill"))
                     .font(.title)
@@ -683,7 +683,7 @@ struct MainView: View
         }
         else if(PlayStreamDataShared.Stream4 == "")
         {
-            Button(action: PlayStreamButton.shared.PlayButton4_Click)
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton4_Click)
             {
                 Text("4")
                     .font(.title)
@@ -699,7 +699,7 @@ struct MainView: View
         }
         else
         {
-            Button(action: PlayStreamButton.shared.PlayButton4_Click)
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton4_Click)
             {
                 Text("4")
                     .font(.title)
@@ -718,7 +718,7 @@ struct MainView: View
     {
         if (PlayStreamDataShared.Playing == true && PlayStreamDataShared.CurrentStream == 5 && PlayStreamDataShared.Stream5 != "")
         {
-            Button(action: PlayStreamButton.shared.PlayButton5_Click)
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton5_Click)
             {
                 Text(Image(systemName: "pause.fill"))
                     .font(.title)
@@ -733,7 +733,7 @@ struct MainView: View
         }
         else if(PlayStreamDataShared.Stream5 == "")
         {
-            Button(action: PlayStreamButton.shared.PlayButton5_Click)
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton5_Click)
             {
                 Text("5")
                     .font(.title)
@@ -749,7 +749,7 @@ struct MainView: View
         }
         else
         {
-            Button(action: PlayStreamButton.shared.PlayButton5_Click)
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton5_Click)
             {
                 Text("5")
                     .font(.title)
@@ -768,7 +768,7 @@ struct MainView: View
     {
         if (PlayStreamDataShared.Playing == true && PlayStreamDataShared.CurrentStream == 6 && PlayStreamDataShared.Stream6 != "")
         {
-            Button(action: PlayStreamButton.shared.PlayButton6_Click)
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton6_Click)
             {
                 Text(Image(systemName: "pause.fill"))
                     .font(.title)
@@ -783,7 +783,7 @@ struct MainView: View
         }
         else if(PlayStreamDataShared.Stream6 == "")
         {
-            Button(action: PlayStreamButton.shared.PlayButton6_Click)
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton6_Click)
             {
                 Text("6")
                     .font(.title)
@@ -799,7 +799,7 @@ struct MainView: View
         }
         else
         {
-            Button(action: PlayStreamButton.shared.PlayButton6_Click)
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton6_Click)
             {
                 Text("6")
                     .font(.title)
@@ -818,7 +818,7 @@ struct MainView: View
     {
         if (PlayStreamDataShared.Playing == true && PlayStreamDataShared.CurrentStream == 7 && PlayStreamDataShared.Stream7 != "")
         {
-            Button(action: PlayStreamButton.shared.PlayButton7_Click)
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton7_Click)
             {
                 Text(Image(systemName: "pause.fill"))
                     .font(.title)
@@ -833,7 +833,7 @@ struct MainView: View
         }
         else if(PlayStreamDataShared.Stream7 == "")
         {
-            Button(action: PlayStreamButton.shared.PlayButton7_Click)
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton7_Click)
             {
                 Text("7")
                     .font(.title)
@@ -849,7 +849,7 @@ struct MainView: View
         }
         else
         {
-            Button(action: PlayStreamButton.shared.PlayButton7_Click)
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton7_Click)
             {
                 Text("7")
                     .font(.title)
@@ -868,7 +868,7 @@ struct MainView: View
     {
         if (PlayStreamDataShared.Playing == true && PlayStreamDataShared.CurrentStream == 8 && PlayStreamDataShared.Stream8 != "")
         {
-            Button(action: PlayStreamButton.shared.PlayButton8_Click)
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton8_Click)
             {
                 Text(Image(systemName: "pause.fill"))
                     .font(.title)
@@ -883,7 +883,7 @@ struct MainView: View
         }
         else if(PlayStreamDataShared.Stream8 == "")
         {
-            Button(action: PlayStreamButton.shared.PlayButton8_Click)
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton8_Click)
             {
                 Text("8")
                     .font(.title)
@@ -899,7 +899,7 @@ struct MainView: View
         }
         else
         {
-            Button(action: PlayStreamButton.shared.PlayButton8_Click)
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton8_Click)
             {
                 Text("8")
                     .font(.title)

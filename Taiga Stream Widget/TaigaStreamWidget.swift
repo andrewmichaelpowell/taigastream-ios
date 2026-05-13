@@ -34,7 +34,7 @@ struct PlayStream1ToggleIntent: SetValueIntent, AudioPlaybackIntent
     @MainActor
     func perform() async throws -> some IntentResult
     {
-        PlayStreamButton.shared.PlayButton1_Click()
+        PlayStreamButton.PlayStreamButtonShared.PlayButton1_Click()
         return .result()
     }
 }
@@ -68,7 +68,7 @@ struct PlayStream2ToggleIntent: SetValueIntent, AudioPlaybackIntent
     @MainActor
     func perform() async throws -> some IntentResult
     {
-        PlayStreamButton.shared.PlayButton2_Click()
+        PlayStreamButton.PlayStreamButtonShared.PlayButton2_Click()
         return .result()
     }
 }
@@ -102,7 +102,7 @@ struct PlayStream3ToggleIntent: SetValueIntent, AudioPlaybackIntent
     @MainActor
     func perform() async throws -> some IntentResult
     {
-        PlayStreamButton.shared.PlayButton3_Click()
+        PlayStreamButton.PlayStreamButtonShared.PlayButton3_Click()
         return .result()
     }
 }
@@ -136,7 +136,7 @@ struct PlayStream4ToggleIntent: SetValueIntent, AudioPlaybackIntent
     @MainActor
     func perform() async throws -> some IntentResult
     {
-        PlayStreamButton.shared.PlayButton4_Click()
+        PlayStreamButton.PlayStreamButtonShared.PlayButton4_Click()
         return .result()
     }
 }
@@ -170,7 +170,7 @@ struct PlayStream5ToggleIntent: SetValueIntent, AudioPlaybackIntent
     @MainActor
     func perform() async throws -> some IntentResult
     {
-        PlayStreamButton.shared.PlayButton5_Click()
+        PlayStreamButton.PlayStreamButtonShared.PlayButton5_Click()
         return .result()
     }
 }
@@ -204,7 +204,7 @@ struct PlayStream6ToggleIntent: SetValueIntent, AudioPlaybackIntent
     @MainActor
     func perform() async throws -> some IntentResult
     {
-        PlayStreamButton.shared.PlayButton6_Click()
+        PlayStreamButton.PlayStreamButtonShared.PlayButton6_Click()
         return .result()
     }
 }
@@ -238,7 +238,7 @@ struct PlayStream7ToggleIntent: SetValueIntent, AudioPlaybackIntent
     @MainActor
     func perform() async throws -> some IntentResult
     {
-        PlayStreamButton.shared.PlayButton7_Click()
+        PlayStreamButton.PlayStreamButtonShared.PlayButton7_Click()
         return .result()
     }
 }
@@ -272,7 +272,7 @@ struct PlayStream8ToggleIntent: SetValueIntent, AudioPlaybackIntent
     @MainActor
     func perform() async throws -> some IntentResult
     {
-        PlayStreamButton.shared.PlayButton8_Click()
+        PlayStreamButton.PlayStreamButtonShared.PlayButton8_Click()
         return .result()
     }
 }
