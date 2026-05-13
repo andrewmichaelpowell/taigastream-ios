@@ -182,6 +182,7 @@ public class PlayStreamButton
         }
         else
         {
+            try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
             try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
             try? AVAudioSession.sharedInstance().setActive(true)
             PlayStreamData.SharedResource.PlayStream.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
@@ -204,6 +205,7 @@ public class PlayStreamButton
         }
         else
         {
+            try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
             try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
             try? AVAudioSession.sharedInstance().setActive(true)
             PlayStreamData.SharedResource.PlayStream.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
@@ -226,6 +228,7 @@ public class PlayStreamButton
         }
         else
         {
+            try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
             try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
             try? AVAudioSession.sharedInstance().setActive(true)
             PlayStreamData.SharedResource.PlayStream.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
@@ -248,6 +251,7 @@ public class PlayStreamButton
         }
         else
         {
+            try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
             try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
             try? AVAudioSession.sharedInstance().setActive(true)
             PlayStreamData.SharedResource.PlayStream.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
@@ -270,6 +274,7 @@ public class PlayStreamButton
         }
         else
         {
+            try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
             try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
             try? AVAudioSession.sharedInstance().setActive(true)
             PlayStreamData.SharedResource.PlayStream.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
@@ -292,6 +297,7 @@ public class PlayStreamButton
         }
         else
         {
+            try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
             try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
             try? AVAudioSession.sharedInstance().setActive(true)
             PlayStreamData.SharedResource.PlayStream.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
@@ -314,6 +320,7 @@ public class PlayStreamButton
         }
         else
         {
+            try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
             try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
             try? AVAudioSession.sharedInstance().setActive(true)
             PlayStreamData.SharedResource.PlayStream.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
@@ -336,6 +343,7 @@ public class PlayStreamButton
         }
         else
         {
+            try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
             try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
             try? AVAudioSession.sharedInstance().setActive(true)
             PlayStreamData.SharedResource.PlayStream.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
