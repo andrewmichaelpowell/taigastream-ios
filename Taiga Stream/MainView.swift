@@ -20,7 +20,8 @@ public class PlayStreamData: ObservableObject
         {
             StreamState.integer(forKey: "CurrentStreamKey")
         }
-        set{
+        set
+        {
             StreamState.set(newValue, forKey: "CurrentStreamKey")
         }
     }
