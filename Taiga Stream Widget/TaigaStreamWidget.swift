@@ -3,7 +3,182 @@
 
 import SwiftUI
 import AppIntents
+import AVKit
+import AVFoundation
+import Combine
 import WidgetKit
+
+public class PlayStreamData: ObservableObject
+{
+    static let SharedResource = PlayStreamData()
+    let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
+    var PlayerCancellables = Set<AnyCancellable>()
+    var SessionCancellables = Set<AnyCancellable>()
+    
+    var CurrentStream: Int
+    {
+        get
+        {
+            StreamState.integer(forKey: "CurrentStreamKey")
+        }
+        set
+        {
+            StreamState.set(newValue, forKey: "CurrentStreamKey")
+        }
+    }
+    
+    var Playing: Bool
+    {
+        get
+        {
+            StreamState.bool(forKey: "PlayingKey")
+        }
+        set
+        {
+            StreamState.set(newValue, forKey: "PlayingKey")
+            objectWillChange.send()
+        }
+    }
+    
+    @Published var PlayStream = AVPlayer()
+    @Published var Stream1:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream1Key") ?? ""
+    @Published var Stream2:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream2Key") ?? ""
+    @Published var Stream3:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream3Key") ?? ""
+    @Published var Stream4:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream4Key") ?? ""
+    @Published var Stream5:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream5Key") ?? ""
+    @Published var Stream6:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream6Key") ?? ""
+    @Published var Stream7:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream7Key") ?? ""
+    @Published var Stream8:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream8Key") ?? ""
+    
+    init()
+    {
+        PlayerObservers()
+        SessionObservers()
+    }
+    
+    public func PlayerObservers()
+    {
+        PlayerCancellables.removeAll()
+        PlayStream.publisher(for: \.timeControlStatus)
+        .receive(on: DispatchQueue.main)
+        .sink
+        {
+            [weak self] status in
+            if status == .paused
+            {
+                self?.Playing = false
+            }
+            else if status == .playing
+            {
+                self?.Playing = true
+            }
+            ControlCenter.shared.reloadAllControls()
+        }
+        .store(in: &PlayerCancellables)
+        
+        PlayStream.publisher(for: \.currentItem?.status)
+        .receive(on: DispatchQueue.main)
+        .sink
+        {
+            [weak self] status in
+            if status == .failed
+            {
+                self?.Playing = false
+            }
+            ControlCenter.shared.reloadAllControls()
+        }
+        .store(in: &PlayerCancellables)
+        
+        
+        NotificationCenter.default.publisher(for: .AVPlayerItemFailedToPlayToEndTime)
+        .receive(on: DispatchQueue.main)
+        .sink
+        {
+            [weak self] _ in
+            self?.Playing = false
+            ControlCenter.shared.reloadAllControls()
+        }
+        .store(in: &PlayerCancellables)
+        
+        NotificationCenter.default.publisher(for: .AVPlayerItemPlaybackStalled)
+        .receive(on: DispatchQueue.main)
+        .sink
+        {
+            [weak self] _ in
+            self?.Playing = false
+            ControlCenter.shared.reloadAllControls()
+        }
+        .store(in: &PlayerCancellables)
+    }
+    
+    public func SessionObservers()
+    {
+        SessionCancellables.removeAll()
+        NotificationCenter.default.publisher(for: AVAudioSession.interruptionNotification)
+        .receive(on: DispatchQueue.main)
+        .sink
+        {
+            [weak self] notification in
+            guard let userInfo = notification.userInfo,
+            let typeValue = userInfo[AVAudioSessionInterruptionTypeKey] as? UInt,
+            let type = AVAudioSession.InterruptionType(rawValue: typeValue) else
+            {
+                return
+            }
+            if type == .began
+            {
+                self?.Playing = false
+                self?.PlayStream.pause()
+            }
+            ControlCenter.shared.reloadAllControls()
+        }
+        .store(in: &SessionCancellables)
+        
+        NotificationCenter.default.publisher(for: AVAudioSession.silenceSecondaryAudioHintNotification)
+        .receive(on: DispatchQueue.main)
+        .sink
+        {
+            [weak self] notification in
+            guard let userInfo = notification.userInfo,
+            let typeValue = userInfo[AVAudioSessionSilenceSecondaryAudioHintTypeKey] as? UInt,
+            let type = AVAudioSession.SilenceSecondaryAudioHintType(rawValue: typeValue) else
+            {
+                return
+            }
+            if type == .begin
+            {
+                self?.Playing = false
+                self?.PlayStream.pause()
+            }
+            ControlCenter.shared.reloadAllControls()
+        }
+        .store(in: &SessionCancellables)
+        
+        NotificationCenter.default.publisher(for: AVAudioSession.routeChangeNotification)
+        .receive(on: DispatchQueue.main)
+        .sink
+        {
+            [weak self] notification in
+            guard let userInfo = notification.userInfo,
+            let reasonValue = userInfo[AVAudioSessionRouteChangeReasonKey] as? UInt,
+            let reason = AVAudioSession.RouteChangeReason(rawValue: reasonValue) else
+            {
+                return
+            }
+            if reason == .categoryChange
+            {
+                if AVAudioSession.sharedInstance().secondaryAudioShouldBeSilencedHint
+                {
+                    self?.Playing = false
+                    self?.PlayStream.pause()
+                }
+            }
+            ControlCenter.shared.reloadAllControls()
+        }
+        .store(in: &SessionCancellables)
+    }
+}
+
 
 struct TaigaStreamWidgetControl1: ControlWidget
 {
