@@ -24,6 +24,7 @@ public class PlayStreamData: ObservableObject
         set
         {
             StreamState.set(newValue, forKey: "CurrentStreamKey")
+            StreamState.synchronize()
         }
     }
     
@@ -36,6 +37,7 @@ public class PlayStreamData: ObservableObject
         set
         {
             StreamState.set(newValue, forKey: "PlayingKey")
+            StreamState.synchronize()
             objectWillChange.send()
         }
     }
