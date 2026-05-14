@@ -57,7 +57,7 @@ public class PlayStreamData: ObservableObject
         PlayerObservers()
         SessionObservers()
     }
-    
+
     public func PlayerObservers()
     {
         PlayerCancellables.removeAll()
@@ -180,18 +180,22 @@ public class PlayStreamData: ObservableObject
         .store(in: &SessionCancellables)
 
         NotificationCenter.default.publisher(for: AVAudioSession.mediaServicesWereLostNotification)
-            .sink { [weak self] _ in
-                self?.Playing = false
-                self?.PlayStream.pause()
-            }
-            .store(in: &SessionCancellables)
+        .sink
+        {
+            [weak self] _ in
+            self?.Playing = false
+            self?.PlayStream.pause()
+        }
+        .store(in: &SessionCancellables)
 
         NotificationCenter.default.publisher(for: AVAudioSession.mediaServicesWereResetNotification)
-            .sink { [weak self] _ in
-                self?.Playing = false
-                self?.PlayStream.pause()
-            }
-            .store(in: &SessionCancellables)
+        .sink
+        {
+            [weak self] _ in
+            self?.Playing = false
+            self?.PlayStream.pause()
+        }
+        .store(in: &SessionCancellables)
     }
 }
 
