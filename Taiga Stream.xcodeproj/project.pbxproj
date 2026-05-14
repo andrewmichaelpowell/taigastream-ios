@@ -534,6 +534,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = "Taiga Stream Widget/Taiga Stream WidgetExtension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 925F4PY4UL;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Taiga Stream Widget/Info.plist";
@@ -545,6 +546,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = "xyz.andrewmichaelpowell.taigastream.Taiga-Stream-Widget";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -564,6 +566,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = "Taiga Stream Widget/Taiga Stream WidgetExtension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 925F4PY4UL;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Taiga Stream Widget/Info.plist";
@@ -575,6 +578,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = "xyz.andrewmichaelpowell.taigastream.Taiga-Stream-Widget";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
