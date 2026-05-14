@@ -178,6 +178,20 @@ public class PlayStreamData: ObservableObject
             ControlCenter.shared.reloadAllControls()
         }
         .store(in: &SessionCancellables)
+
+        NotificationCenter.default.publisher(for: AVAudioSession.mediaServicesWereLostNotification)
+            .sink { [weak self] _ in
+                self?.Playing = false
+                self?.PlayStream.pause()
+            }
+            .store(in: &SessionCancellables)
+
+        NotificationCenter.default.publisher(for: AVAudioSession.mediaServicesWereResetNotification)
+            .sink { [weak self] _ in
+                self?.Playing = false
+                self?.PlayStream.pause()
+            }
+            .store(in: &SessionCancellables)
     }
 }
 
