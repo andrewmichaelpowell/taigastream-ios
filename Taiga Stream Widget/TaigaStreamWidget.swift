@@ -69,12 +69,12 @@ public class PlayStreamData: ObservableObject
         .receive(on: DispatchQueue.main)
         .sink
         {
-            [weak self] status in
-            if status == .paused
+            [weak self] StreamStatus in
+            if StreamStatus == .paused
             {
                 self?.Playing = false
             }
-            else if status == .playing
+            else if StreamStatus == .playing
             {
                 self?.Playing = true
             }
@@ -85,8 +85,8 @@ public class PlayStreamData: ObservableObject
         .receive(on: DispatchQueue.main)
         .sink
         {
-            [weak self] status in
-            if status == .failed
+            [weak self] StreamStatus in
+            if StreamStatus == .failed
             {
                 self?.Playing = false
             }
@@ -120,14 +120,14 @@ public class PlayStreamData: ObservableObject
         .receive(on: DispatchQueue.main)
         .sink
         {
-            [weak self] notification in
-            guard let userInfo = notification.userInfo,
-            let typeValue = userInfo[AVAudioSessionInterruptionTypeKey] as? UInt,
-            let type = AVAudioSession.InterruptionType(rawValue: typeValue) else
+            [weak self] StreamNotification in
+            guard let StreamUserInfo = StreamNotification.userInfo,
+            let StreamTypeValue = StreamUserInfo[AVAudioSessionInterruptionTypeKey] as? UInt,
+            let StreamType = AVAudioSession.InterruptionType(rawValue: StreamTypeValue) else
             {
                 return
             }
-            if type == .began
+            if StreamType == .began
             {
                 self?.Playing = false
                 self?.PlayStream.pause()
@@ -139,14 +139,14 @@ public class PlayStreamData: ObservableObject
         .receive(on: DispatchQueue.main)
         .sink
         {
-            [weak self] notification in
-            guard let userInfo = notification.userInfo,
-            let typeValue = userInfo[AVAudioSessionSilenceSecondaryAudioHintTypeKey] as? UInt,
-            let type = AVAudioSession.SilenceSecondaryAudioHintType(rawValue: typeValue) else
+            [weak self] StreamNotification in
+            guard let StreamUserInfo = StreamNotification.userInfo,
+            let StreamTypeValue = StreamUserInfo[AVAudioSessionSilenceSecondaryAudioHintTypeKey] as? UInt,
+            let StreamType = AVAudioSession.SilenceSecondaryAudioHintType(rawValue: StreamTypeValue) else
             {
                 return
             }
-            if type == .begin
+            if StreamType == .begin
             {
                 self?.Playing = false
                 self?.PlayStream.pause()
@@ -158,14 +158,14 @@ public class PlayStreamData: ObservableObject
         .receive(on: DispatchQueue.main)
         .sink
         {
-            [weak self] notification in
-            guard let userInfo = notification.userInfo,
-            let reasonValue = userInfo[AVAudioSessionRouteChangeReasonKey] as? UInt,
-            let reason = AVAudioSession.RouteChangeReason(rawValue: reasonValue) else
+            [weak self] StreamNotification in
+            guard let StreamUserInfo = StreamNotification.userInfo,
+            let StreamTypeValue = StreamUserInfo[AVAudioSessionRouteChangeReasonKey] as? UInt,
+            let StreamType = AVAudioSession.RouteChangeReason(rawValue: StreamTypeValue) else
             {
                 return
             }
-            if reason == .categoryChange
+            if StreamType == .categoryChange
             {
                 if AVAudioSession.sharedInstance().secondaryAudioShouldBeSilencedHint
                 {
