@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 100;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -25,14 +25,12 @@
 /* Begin PBXCopyFilesBuildPhase section */
 		3E002B422FAB210400F6DC1F /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
 			dstPath = "";
-			dstSubfolderSpec = 13;
+			dstSubfolder = PlugIns;
 			files = (
 				3E690DA42FAE0E05006C88F6 /* Taiga Stream WidgetExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
@@ -98,19 +96,15 @@
 /* Begin PBXFrameworksBuildPhase section */
 		3E1F177E2F938D4B00DDE7E4 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		3E690D912FAE0E04006C88F6 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				3E690D992FAE0E04006C88F6 /* SwiftUI.framework in Frameworks */,
 				3E690D972FAE0E04006C88F6 /* WidgetKit.framework in Frameworks */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
@@ -164,8 +158,6 @@
 				3E1F17832F938D4B00DDE7E4 /* Taiga Stream */,
 			);
 			name = "Taiga Stream";
-			packageProductDependencies = (
-			);
 			productName = makidice;
 			productReference = 3E1F17812F938D4B00DDE7E4 /* Taiga Stream.app */;
 			productType = "com.apple.product-type.application";
@@ -180,14 +172,10 @@
 			);
 			buildRules = (
 			);
-			dependencies = (
-			);
 			fileSystemSynchronizedGroups = (
 				3E690D9A2FAE0E04006C88F6 /* Taiga Stream Widget */,
 			);
 			name = "Taiga Stream WidgetExtension";
-			packageProductDependencies = (
-			);
 			productName = "Taiga Stream WidgetExtension";
 			productReference = 3E690D942FAE0E04006C88F6 /* Taiga Stream WidgetExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
@@ -268,7 +256,7 @@
 			);
 			mainGroup = 3E1F17782F938D4B00DDE7E4;
 			minimizedProjectReferenceProxies = 1;
-			preferredProjectObjectVersion = 77;
+			preferredProjectObjectVersion = 100;
 			productRefGroup = 3E1F17822F938D4B00DDE7E4 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -282,34 +270,26 @@
 /* Begin PBXResourcesBuildPhase section */
 		3E1F177F2F938D4B00DDE7E4 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		3E690D922FAE0E04006C88F6 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		3E1F177D2F938D4B00DDE7E4 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		3E690D902FAE0E04006C88F6 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
@@ -322,7 +302,7 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		3E1F178A2F938D4C00DDE7E4 /* Debug */ = {
+		3E1F178A2F938D4C00DDE7E4 /* Debug configuration for PBXProject "Taiga Stream" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -388,7 +368,7 @@
 			};
 			name = Debug;
 		};
-		3E1F178B2F938D4C00DDE7E4 /* Release */ = {
+		3E1F178B2F938D4C00DDE7E4 /* Release configuration for PBXProject "Taiga Stream" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -447,7 +427,7 @@
 			};
 			name = Release;
 		};
-		3E1F178D2F938D4C00DDE7E4 /* Debug */ = {
+		3E1F178D2F938D4C00DDE7E4 /* Debug configuration for PBXNativeTarget "Taiga Stream" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -489,7 +469,7 @@
 			};
 			name = Debug;
 		};
-		3E1F178E2F938D4C00DDE7E4 /* Release */ = {
+		3E1F178E2F938D4C00DDE7E4 /* Release configuration for PBXNativeTarget "Taiga Stream" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -531,7 +511,7 @@
 			};
 			name = Release;
 		};
-		3E690DA62FAE0E05006C88F6 /* Debug */ = {
+		3E690DA62FAE0E05006C88F6 /* Debug configuration for PBXNativeTarget "Taiga Stream WidgetExtension" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -563,7 +543,7 @@
 			};
 			name = Debug;
 		};
-		3E690DA72FAE0E05006C88F6 /* Release */ = {
+		3E690DA72FAE0E05006C88F6 /* Release configuration for PBXNativeTarget "Taiga Stream WidgetExtension" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -601,28 +581,25 @@
 		3E1F177C2F938D4B00DDE7E4 /* Build configuration list for PBXProject "Taiga Stream" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				3E1F178A2F938D4C00DDE7E4 /* Debug */,
-				3E1F178B2F938D4C00DDE7E4 /* Release */,
+				3E1F178A2F938D4C00DDE7E4 /* Debug configuration for PBXProject "Taiga Stream" */,
+				3E1F178B2F938D4C00DDE7E4 /* Release configuration for PBXProject "Taiga Stream" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		3E1F178C2F938D4C00DDE7E4 /* Build configuration list for PBXNativeTarget "Taiga Stream" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				3E1F178D2F938D4C00DDE7E4 /* Debug */,
-				3E1F178E2F938D4C00DDE7E4 /* Release */,
+				3E1F178D2F938D4C00DDE7E4 /* Debug configuration for PBXNativeTarget "Taiga Stream" */,
+				3E1F178E2F938D4C00DDE7E4 /* Release configuration for PBXNativeTarget "Taiga Stream" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		3E690DA52FAE0E05006C88F6 /* Build configuration list for PBXNativeTarget "Taiga Stream WidgetExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				3E690DA62FAE0E05006C88F6 /* Debug */,
-				3E690DA72FAE0E05006C88F6 /* Release */,
+				3E690DA62FAE0E05006C88F6 /* Debug configuration for PBXNativeTarget "Taiga Stream WidgetExtension" */,
+				3E690DA72FAE0E05006C88F6 /* Release configuration for PBXNativeTarget "Taiga Stream WidgetExtension" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
