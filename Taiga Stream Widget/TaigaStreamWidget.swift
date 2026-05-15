@@ -38,6 +38,7 @@ public class PlayStreamData: ObservableObject
         {
             StreamState.set(newValue, forKey: "PlayingKey")
             StreamState.synchronize()
+            objectWillChange.send()
             DispatchQueue.main.async
             {
                 ControlCenter.shared.reloadAllControls()
