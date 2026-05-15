@@ -39,6 +39,10 @@ public class PlayStreamData: ObservableObject
             StreamState.set(newValue, forKey: "PlayingKey")
             StreamState.synchronize()
             objectWillChange.send()
+            DispatchQueue.main.async
+            {
+                ControlCenter.shared.reloadAllControls()
+            }
         }
     }
     
@@ -74,7 +78,6 @@ public class PlayStreamData: ObservableObject
             {
                 self?.Playing = true
             }
-            ControlCenter.shared.reloadAllControls()
         }
         .store(in: &PlayerCancellables)
         
@@ -87,7 +90,6 @@ public class PlayStreamData: ObservableObject
             {
                 self?.Playing = false
             }
-            ControlCenter.shared.reloadAllControls()
         }
         .store(in: &PlayerCancellables)
         
@@ -98,7 +100,6 @@ public class PlayStreamData: ObservableObject
         {
             [weak self] _ in
             self?.Playing = false
-            ControlCenter.shared.reloadAllControls()
         }
         .store(in: &PlayerCancellables)
         
@@ -108,7 +109,6 @@ public class PlayStreamData: ObservableObject
         {
             [weak self] _ in
             self?.Playing = false
-            ControlCenter.shared.reloadAllControls()
         }
         .store(in: &PlayerCancellables)
     }
@@ -132,7 +132,6 @@ public class PlayStreamData: ObservableObject
                 self?.Playing = false
                 self?.PlayStream.pause()
             }
-            ControlCenter.shared.reloadAllControls()
         }
         .store(in: &SessionCancellables)
         
@@ -152,7 +151,6 @@ public class PlayStreamData: ObservableObject
                 self?.Playing = false
                 self?.PlayStream.pause()
             }
-            ControlCenter.shared.reloadAllControls()
         }
         .store(in: &SessionCancellables)
         
@@ -175,7 +173,6 @@ public class PlayStreamData: ObservableObject
                     self?.PlayStream.pause()
                 }
             }
-            ControlCenter.shared.reloadAllControls()
         }
         .store(in: &SessionCancellables)
 
@@ -402,7 +399,8 @@ struct TaigaStreamWidgetControl1: ControlWidget
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream1")
         {
-            let isOn = PlayStreamData.SharedResource.Playing && PlayStreamData.SharedResource.CurrentStream == 1
+            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
+            let isOn = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 1
             return ControlWidgetToggle(
                 isOn: isOn,
                 action: PlayStream1ToggleIntent(),
@@ -436,7 +434,8 @@ struct TaigaStreamWidgetControl2: ControlWidget
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream2")
         {
-            let isOn = PlayStreamData.SharedResource.Playing && PlayStreamData.SharedResource.CurrentStream == 2
+            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
+            let isOn = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 2
             return ControlWidgetToggle(
                 isOn: isOn,
                 action: PlayStream2ToggleIntent(),
@@ -470,7 +469,8 @@ struct TaigaStreamWidgetControl3: ControlWidget
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream3")
         {
-            let isOn = PlayStreamData.SharedResource.Playing && PlayStreamData.SharedResource.CurrentStream == 3
+            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
+            let isOn = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 3
             return ControlWidgetToggle(
                 isOn: isOn,
                 action: PlayStream3ToggleIntent(),
@@ -504,7 +504,8 @@ struct TaigaStreamWidgetControl4: ControlWidget
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream4")
         {
-            let isOn = PlayStreamData.SharedResource.Playing && PlayStreamData.SharedResource.CurrentStream == 4
+            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
+            let isOn = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 4
             return ControlWidgetToggle(
                 isOn: isOn,
                 action: PlayStream4ToggleIntent(),
@@ -538,7 +539,8 @@ struct TaigaStreamWidgetControl5: ControlWidget
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream5")
         {
-            let isOn = PlayStreamData.SharedResource.Playing && PlayStreamData.SharedResource.CurrentStream == 5
+            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
+            let isOn = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 5
             return ControlWidgetToggle(
                 isOn: isOn,
                 action: PlayStream5ToggleIntent(),
@@ -572,7 +574,8 @@ struct TaigaStreamWidgetControl6: ControlWidget
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream6")
         {
-            let isOn = PlayStreamData.SharedResource.Playing && PlayStreamData.SharedResource.CurrentStream == 6
+            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
+            let isOn = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 6
             return ControlWidgetToggle(
                 isOn: isOn,
                 action: PlayStream6ToggleIntent(),
@@ -606,7 +609,8 @@ struct TaigaStreamWidgetControl7: ControlWidget
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream7")
         {
-            let isOn = PlayStreamData.SharedResource.Playing && PlayStreamData.SharedResource.CurrentStream == 7
+            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
+            let isOn = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 7
             return ControlWidgetToggle(
                 isOn: isOn,
                 action: PlayStream7ToggleIntent(),
@@ -640,7 +644,8 @@ struct TaigaStreamWidgetControl8: ControlWidget
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream8")
         {
-            let isOn = PlayStreamData.SharedResource.Playing && PlayStreamData.SharedResource.CurrentStream == 8
+            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
+            let isOn = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 8
             return ControlWidgetToggle(
                 isOn: isOn,
                 action: PlayStream8ToggleIntent(),
