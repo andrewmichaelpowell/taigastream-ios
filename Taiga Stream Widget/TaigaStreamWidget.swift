@@ -400,9 +400,9 @@ struct TaigaStreamWidgetControl1: ControlWidget
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream1")
         {
             let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
-            let isOn = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 1
+            let ButtonState = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 1
             return ControlWidgetToggle(
-                isOn: isOn,
+                isOn: ButtonState,
                 action: PlayStream1ToggleIntent(),
                 label:
                 {
@@ -435,9 +435,9 @@ struct TaigaStreamWidgetControl2: ControlWidget
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream2")
         {
             let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
-            let isOn = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 2
+            let ButtonState = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 2
             return ControlWidgetToggle(
-                isOn: isOn,
+                isOn: ButtonState,
                 action: PlayStream2ToggleIntent(),
                 label:
                 {
@@ -470,9 +470,9 @@ struct TaigaStreamWidgetControl3: ControlWidget
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream3")
         {
             let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
-            let isOn = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 3
+            let ButtonState = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 3
             return ControlWidgetToggle(
-                isOn: isOn,
+                isOn: ButtonState,
                 action: PlayStream3ToggleIntent(),
                 label:
                 {
@@ -505,9 +505,9 @@ struct TaigaStreamWidgetControl4: ControlWidget
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream4")
         {
             let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
-            let isOn = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 4
+            let ButtonState = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 4
             return ControlWidgetToggle(
-                isOn: isOn,
+                isOn: ButtonState,
                 action: PlayStream4ToggleIntent(),
                 label:
                 {
@@ -540,9 +540,9 @@ struct TaigaStreamWidgetControl5: ControlWidget
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream5")
         {
             let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
-            let isOn = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 5
+            let ButtonState = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 5
             return ControlWidgetToggle(
-                isOn: isOn,
+                isOn: ButtonState,
                 action: PlayStream5ToggleIntent(),
                 label:
                 {
@@ -575,9 +575,9 @@ struct TaigaStreamWidgetControl6: ControlWidget
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream6")
         {
             let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
-            let isOn = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 6
+            let ButtonState = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 6
             return ControlWidgetToggle(
-                isOn: isOn,
+                isOn: ButtonState,
                 action: PlayStream6ToggleIntent(),
                 label:
                 {
@@ -610,9 +610,9 @@ struct TaigaStreamWidgetControl7: ControlWidget
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream7")
         {
             let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
-            let isOn = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 7
+            let ButtonState = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 7
             return ControlWidgetToggle(
-                isOn: isOn,
+                isOn: ButtonState,
                 action: PlayStream7ToggleIntent(),
                 label:
                 {
@@ -645,9 +645,9 @@ struct TaigaStreamWidgetControl8: ControlWidget
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream8")
         {
             let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
-            let isOn = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 8
+            let ButtonState = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 8
             return ControlWidgetToggle(
-                isOn: isOn,
+                isOn: ButtonState,
                 action: PlayStream8ToggleIntent(),
                 label:
                 {
