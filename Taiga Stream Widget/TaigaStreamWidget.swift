@@ -256,12 +256,11 @@ public class PlayStreamData: NSObject, ObservableObject
             return
         }
 
-        // Reset so a future stream start gets the fallback again if needed
         FallbackArtworkSet = false
 
-        let Query = "\(artist) \(title)"
+        let NowPlayingQuery = "\(artist) \(title)"
             .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-            let URLString = "https://itunes.apple.com/search?term=\(Query)&entity=song&limit=1"
+            let URLString = "https://itunes.apple.com/search?term=\(NowPlayingQuery)&entity=song&limit=1"
 
             guard let SearchURL = URL(string: URLString) else
             {
@@ -278,11 +277,13 @@ public class PlayStreamData: NSObject, ObservableObject
                       let JSON = try? JSONSerialization.jsonObject(with: Data) as? [String: Any],
                       let Results = JSON["results"] as? [[String: Any]],
                       let FirstResult = Results.first,
-                      // iTunes returns 100×100; replace with 600×600 for crisp display
                       let ArtworkString = FirstResult["artworkUrl100"] as? String
                 else
                 {
-                    DispatchQueue.main.async { self?.SetFallbackArtwork() }
+                    DispatchQueue.main.async
+                    {
+                        self?.SetFallbackArtwork()
+                    }
                     return
                 }
 
@@ -290,7 +291,10 @@ public class PlayStreamData: NSObject, ObservableObject
                     .replacingOccurrences(of: "100x100bb", with: "600x600bb")
                 guard let ArtworkURL = URL(string: HighResArtworkString) else
                 {
-                    DispatchQueue.main.async { self.SetFallbackArtwork() }
+                    DispatchQueue.main.async
+                    {
+                        self.SetFallbackArtwork()
+                    }
                     return
                 }
 
@@ -303,7 +307,10 @@ public class PlayStreamData: NSObject, ObservableObject
                           let ArtworkImage = UIImage(data: ImageData)
                     else
                     {
-                        DispatchQueue.main.async { self?.SetFallbackArtwork() }
+                        DispatchQueue.main.async
+                        {
+                            self?.SetFallbackArtwork()
+                        }
                         return
                     }
 
@@ -334,7 +341,10 @@ public class PlayStreamData: NSObject, ObservableObject
     private func SetFallbackArtwork()
         {
             let AppIcon = AppIconImage() ?? UIImage(systemName: "radio")
-            guard let Icon = AppIcon else { return }
+            guard let Icon = AppIcon else
+            {
+                return
+            }
             ApplyArtwork(Icon)
         }
 
@@ -386,12 +396,18 @@ public class PlayStreamData: NSObject, ObservableObject
 
         NotificationCenter.default.publisher(for: .AVPlayerItemFailedToPlayToEndTime)
         .receive(on: DispatchQueue.main)
-        .sink { [weak self] _ in self?.Playing = false }
+        .sink
+        {
+            [weak self] _ in self?.Playing = false
+        }
         .store(in: &PlayerCancellables)
 
         NotificationCenter.default.publisher(for: .AVPlayerItemPlaybackStalled)
         .receive(on: DispatchQueue.main)
-        .sink { [weak self] _ in self?.Playing = false }
+        .sink
+        {
+            [weak self] _ in self?.Playing = false
+        }
         .store(in: &PlayerCancellables)
     }
 
@@ -406,7 +422,10 @@ public class PlayStreamData: NSObject, ObservableObject
             [weak self] StreamNotification in
             guard let StreamUserInfo = StreamNotification.userInfo,
             let StreamTypeValue = StreamUserInfo[AVAudioSessionInterruptionTypeKey] as? UInt,
-            let StreamType = AVAudioSession.InterruptionType(rawValue: StreamTypeValue) else { return }
+            let StreamType = AVAudioSession.InterruptionType(rawValue: StreamTypeValue) else
+            {
+                return
+            }
             if StreamType == .began
             {
                 self?.Playing = false
@@ -422,7 +441,10 @@ public class PlayStreamData: NSObject, ObservableObject
             [weak self] StreamNotification in
             guard let StreamUserInfo = StreamNotification.userInfo,
             let StreamTypeValue = StreamUserInfo[AVAudioSessionSilenceSecondaryAudioHintTypeKey] as? UInt,
-            let StreamType = AVAudioSession.SilenceSecondaryAudioHintType(rawValue: StreamTypeValue) else { return }
+            let StreamType = AVAudioSession.SilenceSecondaryAudioHintType(rawValue: StreamTypeValue) else
+            {
+                return
+            }
             if StreamType == .begin
             {
                 self?.Playing = false
@@ -438,7 +460,10 @@ public class PlayStreamData: NSObject, ObservableObject
             [weak self] StreamNotification in
             guard let StreamUserInfo = StreamNotification.userInfo,
             let StreamTypeValue = StreamUserInfo[AVAudioSessionRouteChangeReasonKey] as? UInt,
-            let StreamType = AVAudioSession.RouteChangeReason(rawValue: StreamTypeValue) else { return }
+            let StreamType = AVAudioSession.RouteChangeReason(rawValue: StreamTypeValue) else
+            {
+                return
+            }
             if StreamType == .categoryChange
             {
                 if AVAudioSession.sharedInstance().secondaryAudioShouldBeSilencedHint
@@ -477,7 +502,10 @@ extension PlayStreamData: AVPlayerItemMetadataOutputPushDelegate
         didOutputTimedMetadataGroups groups: [AVTimedMetadataGroup],
         from track: AVPlayerItemTrack?)
     {
-        let MetadataItems = groups.flatMap { $0.items }
+        let MetadataItems = groups.flatMap
+        {
+            $0.items
+        }
         ParseMetadata(MetadataItems)
     }
 }
