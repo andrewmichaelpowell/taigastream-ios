@@ -183,7 +183,7 @@ struct MainView: View
         {
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton1_Click)
             {
-                Text(Image(systemName: "pause.fill"))
+                Text(Image(systemName: "stop.fill"))
                     .font(.title)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
@@ -228,7 +228,7 @@ struct MainView: View
         {
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton2_Click)
             {
-                Text(Image(systemName: "pause.fill"))
+                Text(Image(systemName: "stop.fill"))
                     .font(.title)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
@@ -278,7 +278,7 @@ struct MainView: View
         {
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton3_Click)
             {
-                Text(Image(systemName: "pause.fill"))
+                Text(Image(systemName: "stop.fill"))
                     .font(.title)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
@@ -328,7 +328,7 @@ struct MainView: View
         {
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton4_Click)
             {
-                Text(Image(systemName: "pause.fill"))
+                Text(Image(systemName: "stop.fill"))
                     .font(.title)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
@@ -378,7 +378,7 @@ struct MainView: View
         {
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton5_Click)
             {
-                Text(Image(systemName: "pause.fill"))
+                Text(Image(systemName: "stop.fill"))
                     .font(.title)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
@@ -428,7 +428,7 @@ struct MainView: View
         {
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton6_Click)
             {
-                Text(Image(systemName: "pause.fill"))
+                Text(Image(systemName: "stop.fill"))
                     .font(.title)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
@@ -478,7 +478,7 @@ struct MainView: View
         {
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton7_Click)
             {
-                Text(Image(systemName: "pause.fill"))
+                Text(Image(systemName: "stop.fill"))
                     .font(.title)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
@@ -528,7 +528,7 @@ struct MainView: View
         {
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton8_Click)
             {
-                Text(Image(systemName: "pause.fill"))
+                Text(Image(systemName: "stop.fill"))
                     .font(.title)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
