@@ -249,8 +249,8 @@ struct MainView: View
                     }
                     Spacer()
                 }
-                .padding(.horizontal)
             }
+            .padding(.horizontal)
             .background(.black)
             .preferredColorScheme(.dark)
         }

@@ -538,7 +538,6 @@ public class PlayStreamButton
         Data.SetFallbackArtwork()
         Data.FallbackArtworkSet = true
         Data.ObserveStreamMetadata()
-        
         Data.PlayStream.play()
     }
     
