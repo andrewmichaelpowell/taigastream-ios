@@ -16,6 +16,7 @@ public class PlayStreamData: NSObject, ObservableObject
     var PlayerCancellables = Set<AnyCancellable>()
     var SessionCancellables = Set<AnyCancellable>()
     var MetadataCancellable: AnyCancellable?
+    var PlaybackHeartbeat: AnyCancellable?
 
     var CurrentStream: Int
     {
@@ -194,6 +195,46 @@ public class PlayStreamData: NSObject, ObservableObject
 
         return Cleaned.trimmingCharacters(in: .whitespaces)
     }
+
+    private func JunkMetadata(_ value: String) -> Bool
+    {
+        let TrimmedValue = value.trimmingCharacters(in: .whitespaces)
+        if TrimmedValue.isEmpty
+        {
+            return true
+        }
+
+        let StationIDPattern = #"^zc\d+$"#
+        if TrimmedValue.range(of: StationIDPattern, options: [.regularExpression, .caseInsensitive]) != nil
+        {
+            return true
+        }
+
+        let TechnicalIDPattern = #"^[a-z0-9_\-]{6,}$"#
+        if TrimmedValue.range(of: TechnicalIDPattern, options: [.regularExpression, .caseInsensitive]) != nil
+        {
+            return true
+        }
+
+        if TrimmedValue.contains("/") || TrimmedValue.contains("://")
+        {
+            return true
+        }
+
+        let AdMarkerPattern = #"(?i)(spot\s+block|ad\s+break|commercial\s+break)"#
+        if TrimmedValue.range(of: AdMarkerPattern, options: .regularExpression) != nil
+        {
+            return true
+        }
+
+        let XMLAttributePattern = #"\w+\s*=\s*""#
+        if TrimmedValue.range(of: XMLAttributePattern, options: .regularExpression) != nil
+        {
+            return true
+        }
+
+        return false
+    }
     
     private func ParseMetadata(_ MetadataItems: [AVMetadataItem])
     {
@@ -206,7 +247,8 @@ public class PlayStreamData: NSObject, ObservableObject
                 if Item.commonKey == .commonKeyArtist,
                 let Value = try? await Item.load(.stringValue)
             {
-                Artist = CleanMetadataString(Value)
+                let cleaned = CleanMetadataString(Value)
+                Artist = JunkMetadata(cleaned) ? "" : cleaned
             }
             else if Item.commonKey == .commonKeyTitle,
             let Value = try? await Item.load(.stringValue)
@@ -237,6 +279,8 @@ public class PlayStreamData: NSObject, ObservableObject
                         Title = CleanMetadataString(Value)
                     }
                 }
+                if JunkMetadata(Title) { Title = "" }
+                if JunkMetadata(Artist) { Artist = "" }
             }
 
             let ResolvedArtist = Artist.isEmpty ? "Taiga Stream" : Artist
@@ -500,6 +544,30 @@ public class PlayStreamData: NSObject, ObservableObject
         }
         .store(in: &SessionCancellables)
     }
+    
+    public func StartPlaybackHeartbeat()
+    {
+        PlaybackHeartbeat = Timer.publish(every: 1.0, on: .main, in: .common)
+        .autoconnect()
+        .sink
+        {
+            [weak self] _ in
+            guard let self = self else
+            {
+                return
+            }
+            let actuallyPlaying = self.PlayStream.timeControlStatus == .playing
+            if !actuallyPlaying && self.Playing
+            {
+                self.Playing = false
+            }
+        }
+    }
+
+    public func StopPlaybackHeartbeat()
+    {
+        PlaybackHeartbeat = nil
+    }
 }
 
 extension PlayStreamData: AVPlayerItemMetadataOutputPushDelegate
@@ -539,6 +607,7 @@ public class PlayStreamButton
         Data.FallbackArtworkSet = true
         Data.ObserveStreamMetadata()
         Data.PlayStream.play()
+        Data.StartPlaybackHeartbeat()
     }
     
     private func PlayButtonAction(StreamURL: URL, StreamNumber: Int)
@@ -547,6 +616,7 @@ public class PlayStreamButton
         if Data.Playing && Data.CurrentStream == StreamNumber
         {
             Data.PlayStream.pause()
+            Data.StopPlaybackHeartbeat()
             try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
         }
         else
