@@ -210,7 +210,7 @@ public class PlayStreamData: NSObject, ObservableObject
             return true
         }
 
-        let TechnicalIDPattern = #"^[a-z0-9_\-]{6,}$"#
+        let TechnicalIDPattern = #"^[a-z0-9]*_[a-z0-9_]+$"#
         if TrimmedValue.range(of: TechnicalIDPattern, options: [.regularExpression, .caseInsensitive]) != nil
         {
             return true
