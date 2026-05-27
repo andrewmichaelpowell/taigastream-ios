@@ -18,5 +18,9 @@ struct TaigaStreamWidgetBundle: WidgetBundle
         TaigaStreamWidgetControl6()
         TaigaStreamWidgetControl7()
         TaigaStreamWidgetControl8()
+        TaigaStreamWidgetControl9()
+        TaigaStreamWidgetControl10()
+        TaigaStreamWidgetControl11()
+        TaigaStreamWidgetControl12()
     }
 }

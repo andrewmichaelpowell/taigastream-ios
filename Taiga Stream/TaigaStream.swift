@@ -13,6 +13,6 @@ struct TaigaStream: App
         {
             MainView()
         }
-        .defaultSize(width: 500, height: 580)
+        .defaultSize(width: 500, height: 780)
     }
 }

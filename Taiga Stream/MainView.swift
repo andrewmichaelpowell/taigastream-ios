@@ -15,165 +15,244 @@ struct MainView: View
     {
         NavigationStack
         {
-            VStack
+            ScrollView
             {
                 VStack
                 {
-                    HStack
+                    VStack
                     {
-                        TextField(PlayStreamDataShared.Stream1, text: $PlayStreamDataShared.Stream1)
-                            .font(.body)
-                            .padding()
-                            .foregroundColor(.white)
-                            .background(RoundedRectangle(cornerRadius: 10).fill(Color1))
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .autocapitalization(.none)
-                            .disableAutocorrection(true)
-                            .onChange(of: PlayStreamData.SharedResource.Stream1)
+                        HStack
                         {
-                            NSUbiquitousKeyValueStore.default.set(PlayStreamDataShared.Stream1, forKey: "Stream1Key")
+                            TextField(PlayStreamDataShared.Stream1, text: $PlayStreamDataShared.Stream1)
+                                .font(.body)
+                                .padding()
+                                .foregroundColor(.white)
+                                .background(RoundedRectangle(cornerRadius: 10).fill(Color1))
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .autocapitalization(.none)
+                                .disableAutocorrection(true)
+                                .onChange(of: PlayStreamData.SharedResource.Stream1)
+                            {
+                                NSUbiquitousKeyValueStore.default.set(PlayStreamDataShared.Stream1, forKey: "Stream1Key")
+                            }
+                            PlayButton1
                         }
-                        PlayButton1
                     }
-                }
-                VStack
-                {
-                    HStack
+                    VStack
                     {
-                        TextField(PlayStreamDataShared.Stream2, text: $PlayStreamDataShared.Stream2)
-                            .font(.body)
-                            .padding()
-                            .foregroundColor(.white)
-                            .background(RoundedRectangle(cornerRadius: 10).fill(Color1))
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .autocapitalization(.none)
-                            .disableAutocorrection(true)
-                            .onChange(of: PlayStreamDataShared.Stream2)
+                        HStack
                         {
-                            NSUbiquitousKeyValueStore.default.set(PlayStreamDataShared.Stream2, forKey: "Stream2Key")
+                            TextField(PlayStreamDataShared.Stream2, text: $PlayStreamDataShared.Stream2)
+                                .font(.body)
+                                .padding()
+                                .foregroundColor(.white)
+                                .background(RoundedRectangle(cornerRadius: 10).fill(Color1))
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .autocapitalization(.none)
+                                .disableAutocorrection(true)
+                                .onChange(of: PlayStreamDataShared.Stream2)
+                            {
+                                NSUbiquitousKeyValueStore.default.set(PlayStreamDataShared.Stream2, forKey: "Stream2Key")
+                            }
+                            PlayButton2
                         }
-                        PlayButton2
                     }
-                }
-                VStack
-                {
-                    HStack
+                    VStack
                     {
-                        TextField(PlayStreamDataShared.Stream3, text: $PlayStreamDataShared.Stream3)
-                            .font(.body)
-                            .padding()
-                            .foregroundColor(.white)
-                            .background(RoundedRectangle(cornerRadius: 10).fill(Color1))
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .autocapitalization(.none)
-                            .disableAutocorrection(true)
-                            .onChange(of: PlayStreamDataShared.Stream3)
+                        HStack
                         {
-                            NSUbiquitousKeyValueStore.default.set(PlayStreamDataShared.Stream3, forKey: "Stream3Key")
+                            TextField(PlayStreamDataShared.Stream3, text: $PlayStreamDataShared.Stream3)
+                                .font(.body)
+                                .padding()
+                                .foregroundColor(.white)
+                                .background(RoundedRectangle(cornerRadius: 10).fill(Color1))
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .autocapitalization(.none)
+                                .disableAutocorrection(true)
+                                .onChange(of: PlayStreamDataShared.Stream3)
+                            {
+                                NSUbiquitousKeyValueStore.default.set(PlayStreamDataShared.Stream3, forKey: "Stream3Key")
+                            }
+                            PlayButton3
                         }
-                        PlayButton3
                     }
-                }
-                VStack
-                {
-                    HStack
+                    VStack
                     {
-                        TextField(PlayStreamDataShared.Stream4, text: $PlayStreamDataShared.Stream4)
-                            .font(.body)
-                            .padding()
-                            .foregroundColor(.white)
-                            .background(RoundedRectangle(cornerRadius: 10).fill(Color1))
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .autocapitalization(.none)
-                            .disableAutocorrection(true)
-                            .onChange(of: PlayStreamDataShared.Stream4)
+                        HStack
                         {
-                            NSUbiquitousKeyValueStore.default.set(PlayStreamDataShared.Stream4, forKey: "Stream4Key")
+                            TextField(PlayStreamDataShared.Stream4, text: $PlayStreamDataShared.Stream4)
+                                .font(.body)
+                                .padding()
+                                .foregroundColor(.white)
+                                .background(RoundedRectangle(cornerRadius: 10).fill(Color1))
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .autocapitalization(.none)
+                                .disableAutocorrection(true)
+                                .onChange(of: PlayStreamDataShared.Stream4)
+                            {
+                                NSUbiquitousKeyValueStore.default.set(PlayStreamDataShared.Stream4, forKey: "Stream4Key")
+                            }
+                            PlayButton4
                         }
-                        PlayButton4
                     }
-                }
-                VStack
-                {
-                    HStack
+                    VStack
                     {
-                        TextField(PlayStreamDataShared.Stream5, text: $PlayStreamDataShared.Stream5)
-                            .font(.body)
-                            .padding()
-                            .foregroundColor(.white)
-                            .background(RoundedRectangle(cornerRadius: 10).fill(Color1))
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .autocapitalization(.none)
-                            .disableAutocorrection(true)
-                            .onChange(of: PlayStreamDataShared.Stream5)
+                        HStack
                         {
-                            NSUbiquitousKeyValueStore.default.set(PlayStreamDataShared.Stream5, forKey: "Stream5Key")
+                            TextField(PlayStreamDataShared.Stream5, text: $PlayStreamDataShared.Stream5)
+                                .font(.body)
+                                .padding()
+                                .foregroundColor(.white)
+                                .background(RoundedRectangle(cornerRadius: 10).fill(Color1))
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .autocapitalization(.none)
+                                .disableAutocorrection(true)
+                                .onChange(of: PlayStreamDataShared.Stream5)
+                            {
+                                NSUbiquitousKeyValueStore.default.set(PlayStreamDataShared.Stream5, forKey: "Stream5Key")
+                            }
+                            PlayButton5
                         }
-                        PlayButton5
                     }
-                }
-                VStack
-                {
-                    HStack
+                    VStack
                     {
-                        TextField(PlayStreamDataShared.Stream6, text: $PlayStreamDataShared.Stream6)
-                            .font(.body)
-                            .padding()
-                            .foregroundColor(.white)
-                            .background(RoundedRectangle(cornerRadius: 10).fill(Color1))
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .autocapitalization(.none)
-                            .disableAutocorrection(true)
-                            .onChange(of: PlayStreamDataShared.Stream6)
+                        HStack
                         {
-                            NSUbiquitousKeyValueStore.default.set(PlayStreamDataShared.Stream6, forKey: "Stream6Key")
+                            TextField(PlayStreamDataShared.Stream6, text: $PlayStreamDataShared.Stream6)
+                                .font(.body)
+                                .padding()
+                                .foregroundColor(.white)
+                                .background(RoundedRectangle(cornerRadius: 10).fill(Color1))
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .autocapitalization(.none)
+                                .disableAutocorrection(true)
+                                .onChange(of: PlayStreamDataShared.Stream6)
+                            {
+                                NSUbiquitousKeyValueStore.default.set(PlayStreamDataShared.Stream6, forKey: "Stream6Key")
+                            }
+                            PlayButton6
                         }
-                        PlayButton6
                     }
-                }
-                VStack
-                {
-                    HStack
+                    VStack
                     {
-                        TextField(PlayStreamDataShared.Stream7, text: $PlayStreamDataShared.Stream7)
-                            .font(.body)
-                            .padding()
-                            .foregroundColor(.white)
-                            .background(RoundedRectangle(cornerRadius: 10).fill(Color1))
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .autocapitalization(.none)
-                            .disableAutocorrection(true)
-                            .onChange(of: PlayStreamDataShared.Stream7)
+                        HStack
                         {
-                            NSUbiquitousKeyValueStore.default.set(PlayStreamDataShared.Stream7, forKey: "Stream7Key")
+                            TextField(PlayStreamDataShared.Stream7, text: $PlayStreamDataShared.Stream7)
+                                .font(.body)
+                                .padding()
+                                .foregroundColor(.white)
+                                .background(RoundedRectangle(cornerRadius: 10).fill(Color1))
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .autocapitalization(.none)
+                                .disableAutocorrection(true)
+                                .onChange(of: PlayStreamDataShared.Stream7)
+                            {
+                                NSUbiquitousKeyValueStore.default.set(PlayStreamDataShared.Stream7, forKey: "Stream7Key")
+                            }
+                            PlayButton7
                         }
-                        PlayButton7
                     }
-                }
-                VStack
-                {
-                    HStack
+                    VStack
                     {
-                        TextField(PlayStreamDataShared.Stream8, text: $PlayStreamDataShared.Stream8)
-                            .font(.body)
-                            .padding()
-                            .foregroundColor(.white)
-                            .background(RoundedRectangle(cornerRadius: 10).fill(Color1))
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .autocapitalization(.none)
-                            .disableAutocorrection(true)
-                            .onChange(of: PlayStreamDataShared.Stream8)
+                        HStack
                         {
-                            NSUbiquitousKeyValueStore.default.set(PlayStreamDataShared.Stream8, forKey: "Stream8Key")
+                            TextField(PlayStreamDataShared.Stream8, text: $PlayStreamDataShared.Stream8)
+                                .font(.body)
+                                .padding()
+                                .foregroundColor(.white)
+                                .background(RoundedRectangle(cornerRadius: 10).fill(Color1))
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .autocapitalization(.none)
+                                .disableAutocorrection(true)
+                                .onChange(of: PlayStreamDataShared.Stream8)
+                            {
+                                NSUbiquitousKeyValueStore.default.set(PlayStreamDataShared.Stream8, forKey: "Stream8Key")
+                            }
+                            PlayButton8
                         }
-                        PlayButton8
                     }
+                    VStack
+                    {
+                        HStack
+                        {
+                            TextField(PlayStreamDataShared.Stream9, text: $PlayStreamDataShared.Stream9)
+                                .font(.body)
+                                .padding()
+                                .foregroundColor(.white)
+                                .background(RoundedRectangle(cornerRadius: 10).fill(Color1))
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .autocapitalization(.none)
+                                .disableAutocorrection(true)
+                                .onChange(of: PlayStreamDataShared.Stream9)
+                            {
+                                NSUbiquitousKeyValueStore.default.set(PlayStreamDataShared.Stream9, forKey: "Stream9Key")
+                            }
+                            PlayButton9
+                        }
+                    }
+                    VStack
+                    {
+                        HStack
+                        {
+                            TextField(PlayStreamDataShared.Stream10, text: $PlayStreamDataShared.Stream10)
+                                .font(.body)
+                                .padding()
+                                .foregroundColor(.white)
+                                .background(RoundedRectangle(cornerRadius: 10).fill(Color1))
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .autocapitalization(.none)
+                                .disableAutocorrection(true)
+                                .onChange(of: PlayStreamDataShared.Stream10)
+                            {
+                                NSUbiquitousKeyValueStore.default.set(PlayStreamDataShared.Stream10, forKey: "Stream10Key")
+                            }
+                            PlayButton10
+                        }
+                    }
+                    VStack
+                    {
+                        HStack
+                        {
+                            TextField(PlayStreamDataShared.Stream11, text: $PlayStreamDataShared.Stream11)
+                                .font(.body)
+                                .padding()
+                                .foregroundColor(.white)
+                                .background(RoundedRectangle(cornerRadius: 10).fill(Color1))
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .autocapitalization(.none)
+                                .disableAutocorrection(true)
+                                .onChange(of: PlayStreamDataShared.Stream11)
+                            {
+                                NSUbiquitousKeyValueStore.default.set(PlayStreamDataShared.Stream11, forKey: "Stream11Key")
+                            }
+                            PlayButton11
+                        }
+                    }
+                    VStack
+                    {
+                        HStack
+                        {
+                            TextField(PlayStreamDataShared.Stream12, text: $PlayStreamDataShared.Stream12)
+                                .font(.body)
+                                .padding()
+                                .foregroundColor(.white)
+                                .background(RoundedRectangle(cornerRadius: 10).fill(Color1))
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .autocapitalization(.none)
+                                .disableAutocorrection(true)
+                                .onChange(of: PlayStreamDataShared.Stream12)
+                            {
+                                NSUbiquitousKeyValueStore.default.set(PlayStreamDataShared.Stream12, forKey: "Stream12Key")
+                            }
+                            PlayButton12
+                        }
+                    }
+                    Spacer()
                 }
-                Spacer()
+                .padding(.horizontal)
             }
-        .padding(.horizontal)
-        .background(.black)
-        .preferredColorScheme(.dark)
+            .background(.black)
+            .preferredColorScheme(.dark)
         }
     }
     
@@ -184,7 +263,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton1_Click)
             {
                 Text(Image(systemName: "stop.fill"))
-                    .font(.title)
+                    .font(.title2)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
             .frame(width: 50, height: 50)
@@ -197,7 +276,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton1_Click)
             {
                 Text("1")
-                    .font(.title)
+                    .font(.title2)
                     .foregroundColor(Color3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
@@ -211,7 +290,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton1_Click)
             {
                 Text("1")
-                    .font(.title)
+                    .font(.title2)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
             .frame(width: 50, height: 50)
@@ -220,8 +299,7 @@ struct MainView: View
             .tint(Color1)
         }
     }
-    
-    
+        
     private var PlayButton2: some View
     {
         if (PlayStreamDataShared.Playing == true && PlayStreamDataShared.CurrentStream == 2 && PlayStreamDataShared.Stream2 != "")
@@ -229,7 +307,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton2_Click)
             {
                 Text(Image(systemName: "stop.fill"))
-                    .font(.title)
+                    .font(.title2)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
                     .minimumScaleFactor(1.0)
@@ -244,7 +322,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton2_Click)
             {
                 Text("2")
-                    .font(.title)
+                    .font(.title2)
                     .foregroundColor(Color3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
@@ -260,7 +338,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton2_Click)
             {
                 Text("2")
-                    .font(.title)
+                    .font(.title2)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
                     .minimumScaleFactor(1.0)
@@ -279,7 +357,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton3_Click)
             {
                 Text(Image(systemName: "stop.fill"))
-                    .font(.title)
+                    .font(.title2)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
                     .minimumScaleFactor(1.0)
@@ -294,7 +372,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton3_Click)
             {
                 Text("3")
-                    .font(.title)
+                    .font(.title2)
                     .foregroundColor(Color3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
@@ -310,7 +388,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton3_Click)
             {
                 Text("3")
-                    .font(.title)
+                    .font(.title2)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
                     .minimumScaleFactor(1.0)
@@ -329,7 +407,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton4_Click)
             {
                 Text(Image(systemName: "stop.fill"))
-                    .font(.title)
+                    .font(.title2)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
                     .minimumScaleFactor(1.0)
@@ -344,7 +422,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton4_Click)
             {
                 Text("4")
-                    .font(.title)
+                    .font(.title2)
                     .foregroundColor(Color3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
@@ -360,7 +438,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton4_Click)
             {
                 Text("4")
-                    .font(.title)
+                    .font(.title2)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
                     .minimumScaleFactor(1.0)
@@ -379,7 +457,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton5_Click)
             {
                 Text(Image(systemName: "stop.fill"))
-                    .font(.title)
+                    .font(.title2)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
                     .minimumScaleFactor(1.0)
@@ -394,7 +472,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton5_Click)
             {
                 Text("5")
-                    .font(.title)
+                    .font(.title2)
                     .foregroundColor(Color3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
@@ -410,7 +488,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton5_Click)
             {
                 Text("5")
-                    .font(.title)
+                    .font(.title2)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
                     .minimumScaleFactor(1.0)
@@ -429,7 +507,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton6_Click)
             {
                 Text(Image(systemName: "stop.fill"))
-                    .font(.title)
+                    .font(.title2)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
                     .minimumScaleFactor(1.0)
@@ -444,7 +522,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton6_Click)
             {
                 Text("6")
-                    .font(.title)
+                    .font(.title2)
                     .foregroundColor(Color3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
@@ -460,7 +538,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton6_Click)
             {
                 Text("6")
-                    .font(.title)
+                    .font(.title2)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
                     .minimumScaleFactor(1.0)
@@ -479,7 +557,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton7_Click)
             {
                 Text(Image(systemName: "stop.fill"))
-                    .font(.title)
+                    .font(.title2)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
                     .minimumScaleFactor(1.0)
@@ -494,7 +572,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton7_Click)
             {
                 Text("7")
-                    .font(.title)
+                    .font(.title2)
                     .foregroundColor(Color3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
@@ -510,7 +588,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton7_Click)
             {
                 Text("7")
-                    .font(.title)
+                    .font(.title2)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
                     .minimumScaleFactor(1.0)
@@ -529,7 +607,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton8_Click)
             {
                 Text(Image(systemName: "stop.fill"))
-                    .font(.title)
+                    .font(.title2)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
                     .minimumScaleFactor(1.0)
@@ -544,7 +622,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton8_Click)
             {
                 Text("8")
-                    .font(.title)
+                    .font(.title2)
                     .foregroundColor(Color3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
@@ -560,10 +638,186 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton8_Click)
             {
                 Text("8")
-                    .font(.title)
+                    .font(.title2)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
                     .minimumScaleFactor(1.0)
+            }
+            .frame(width: 50, height: 50)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.circle)
+            .tint(Color1)
+        }
+    }
+    
+    private var PlayButton9: some View
+    {
+        if (PlayStreamDataShared.Playing == true && PlayStreamDataShared.CurrentStream == 9 && PlayStreamDataShared.Stream9 != "")
+        {
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton9_Click)
+            {
+                Text(Image(systemName: "stop.fill"))
+                    .font(.title2)
+                    .frame(maxWidth: .infinity, maxHeight: 50)
+            }
+            .frame(width: 50, height: 50)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.circle)
+            .tint(Color2)
+        }
+        else if(PlayStreamDataShared.Stream9 == "")
+        {
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton9_Click)
+            {
+                Text("9")
+                    .font(.title2)
+                    .foregroundColor(Color3)
+                    .frame(maxWidth: .infinity, maxHeight: 50)
+            }
+            .frame(width: 50, height: 50)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.circle)
+            .tint(Color1)
+        }
+        else
+        {
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton9_Click)
+            {
+                Text("9")
+                    .font(.title2)
+                    .frame(maxWidth: .infinity, maxHeight: 50)
+            }
+            .frame(width: 50, height: 50)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.circle)
+            .tint(Color1)
+        }
+    }
+
+    private var PlayButton10: some View
+    {
+        if (PlayStreamDataShared.Playing == true && PlayStreamDataShared.CurrentStream == 10 && PlayStreamDataShared.Stream10 != "")
+        {
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton10_Click)
+            {
+                Text(Image(systemName: "stop.fill"))
+                    .font(.title2)
+                    .frame(maxWidth: .infinity, maxHeight: 50)
+            }
+            .frame(width: 50, height: 50)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.circle)
+            .tint(Color2)
+        }
+        else if(PlayStreamDataShared.Stream10 == "")
+        {
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton10_Click)
+            {
+                Text("10")
+                    .font(.title2)
+                    .foregroundColor(Color3)
+                    .frame(maxWidth: .infinity, maxHeight: 50)
+            }
+            .frame(width: 50, height: 50)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.circle)
+            .tint(Color1)
+        }
+        else
+        {
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton10_Click)
+            {
+                Text("10")
+                    .font(.title2)
+                    .frame(maxWidth: .infinity, maxHeight: 50)
+            }
+            .frame(width: 50, height: 50)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.circle)
+            .tint(Color1)
+        }
+    }
+
+    private var PlayButton11: some View
+    {
+        if (PlayStreamDataShared.Playing == true && PlayStreamDataShared.CurrentStream == 11 && PlayStreamDataShared.Stream11 != "")
+        {
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton11_Click)
+            {
+                Text(Image(systemName: "stop.fill"))
+                    .font(.title2)
+                    .frame(maxWidth: .infinity, maxHeight: 50)
+            }
+            .frame(width: 50, height: 50)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.circle)
+            .tint(Color2)
+        }
+        else if(PlayStreamDataShared.Stream11 == "")
+        {
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton11_Click)
+            {
+                Text("11")
+                    .font(.title2)
+                    .foregroundColor(Color3)
+                    .frame(maxWidth: .infinity, maxHeight: 50)
+            }
+            .frame(width: 50, height: 50)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.circle)
+            .tint(Color1)
+        }
+        else
+        {
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton11_Click)
+            {
+                Text("11")
+                    .font(.title2)
+                    .frame(maxWidth: .infinity, maxHeight: 50)
+            }
+            .frame(width: 50, height: 50)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.circle)
+            .tint(Color1)
+        }
+    }
+
+    private var PlayButton12: some View
+    {
+        if (PlayStreamDataShared.Playing == true && PlayStreamDataShared.CurrentStream == 12 && PlayStreamDataShared.Stream12 != "")
+        {
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton12_Click)
+            {
+                Text(Image(systemName: "stop.fill"))
+                    .font(.title2)
+                    .frame(maxWidth: .infinity, maxHeight: 50)
+            }
+            .frame(width: 50, height: 50)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.circle)
+            .tint(Color2)
+        }
+        else if(PlayStreamDataShared.Stream12 == "")
+        {
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton12_Click)
+            {
+                Text("12")
+                    .font(.title2)
+                    .foregroundColor(Color3)
+                    .frame(maxWidth: .infinity, maxHeight: 50)
+            }
+            .frame(width: 50, height: 50)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.circle)
+            .tint(Color1)
+        }
+        else
+        {
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton12_Click)
+            {
+                Text("12")
+                    .font(.title2)
+                    .frame(maxWidth: .infinity, maxHeight: 50)
             }
             .frame(width: 50, height: 50)
             .buttonStyle(.borderedProminent)
