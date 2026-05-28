@@ -423,10 +423,143 @@ struct MainView: View
                 PlayButton24
             }
             .padding(.horizontal)
-            VStack
+            HStack
             {
+                TextField(PlayStreamDataShared.Stream25, text: $PlayStreamDataShared.Stream25)
+                    .font(.body)
+                    .padding()
+                    .foregroundColor(.white)
+                    .background(RoundedRectangle(cornerRadius: 10).fill(Color1))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .autocapitalization(.none)
+                    .disableAutocorrection(true)
+                    .onChange(of: PlayStreamDataShared.Stream25)
+                {
+                    NSUbiquitousKeyValueStore.default.set(PlayStreamDataShared.Stream25, forKey: "Stream25Key")
+                }
+                PlayButton25
             }
-            .padding(.vertical, 4)
+            .padding(.horizontal)
+            HStack
+            {
+                TextField(PlayStreamDataShared.Stream26, text: $PlayStreamDataShared.Stream26)
+                    .font(.body)
+                    .padding()
+                    .foregroundColor(.white)
+                    .background(RoundedRectangle(cornerRadius: 10).fill(Color1))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .autocapitalization(.none)
+                    .disableAutocorrection(true)
+                    .onChange(of: PlayStreamDataShared.Stream26)
+                {
+                    NSUbiquitousKeyValueStore.default.set(PlayStreamDataShared.Stream26, forKey: "Stream26Key")
+                }
+                PlayButton26
+            }
+            .padding(.horizontal)
+            HStack
+            {
+                TextField(PlayStreamDataShared.Stream27, text: $PlayStreamDataShared.Stream27)
+                    .font(.body)
+                    .padding()
+                    .foregroundColor(.white)
+                    .background(RoundedRectangle(cornerRadius: 10).fill(Color1))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .autocapitalization(.none)
+                    .disableAutocorrection(true)
+                    .onChange(of: PlayStreamDataShared.Stream27)
+                {
+                    NSUbiquitousKeyValueStore.default.set(PlayStreamDataShared.Stream27, forKey: "Stream27Key")
+                }
+                PlayButton27
+            }
+            .padding(.horizontal)
+            HStack
+            {
+                TextField(PlayStreamDataShared.Stream28, text: $PlayStreamDataShared.Stream28)
+                    .font(.body)
+                    .padding()
+                    .foregroundColor(.white)
+                    .background(RoundedRectangle(cornerRadius: 10).fill(Color1))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .autocapitalization(.none)
+                    .disableAutocorrection(true)
+                    .onChange(of: PlayStreamDataShared.Stream28)
+                {
+                    NSUbiquitousKeyValueStore.default.set(PlayStreamDataShared.Stream28, forKey: "Stream28Key")
+                }
+                PlayButton28
+            }
+            .padding(.horizontal)
+            HStack
+            {
+                TextField(PlayStreamDataShared.Stream29, text: $PlayStreamDataShared.Stream29)
+                    .font(.body)
+                    .padding()
+                    .foregroundColor(.white)
+                    .background(RoundedRectangle(cornerRadius: 10).fill(Color1))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .autocapitalization(.none)
+                    .disableAutocorrection(true)
+                    .onChange(of: PlayStreamDataShared.Stream29)
+                {
+                    NSUbiquitousKeyValueStore.default.set(PlayStreamDataShared.Stream29, forKey: "Stream29Key")
+                }
+                PlayButton29
+            }
+            .padding(.horizontal)
+            HStack
+            {
+                TextField(PlayStreamDataShared.Stream30, text: $PlayStreamDataShared.Stream30)
+                    .font(.body)
+                    .padding()
+                    .foregroundColor(.white)
+                    .background(RoundedRectangle(cornerRadius: 10).fill(Color1))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .autocapitalization(.none)
+                    .disableAutocorrection(true)
+                    .onChange(of: PlayStreamDataShared.Stream30)
+                {
+                    NSUbiquitousKeyValueStore.default.set(PlayStreamDataShared.Stream30, forKey: "Stream30Key")
+                }
+                PlayButton30
+            }
+            .padding(.horizontal)
+            HStack
+            {
+                TextField(PlayStreamDataShared.Stream31, text: $PlayStreamDataShared.Stream31)
+                    .font(.body)
+                    .padding()
+                    .foregroundColor(.white)
+                    .background(RoundedRectangle(cornerRadius: 10).fill(Color1))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .autocapitalization(.none)
+                    .disableAutocorrection(true)
+                    .onChange(of: PlayStreamDataShared.Stream31)
+                {
+                    NSUbiquitousKeyValueStore.default.set(PlayStreamDataShared.Stream31, forKey: "Stream31Key")
+                }
+                PlayButton31
+            }
+            .padding(.horizontal)
+            HStack
+            {
+                TextField(PlayStreamDataShared.Stream32, text: $PlayStreamDataShared.Stream32)
+                    .font(.body)
+                    .padding()
+                    .foregroundColor(.white)
+                    .background(RoundedRectangle(cornerRadius: 10).fill(Color1))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .autocapitalization(.none)
+                    .disableAutocorrection(true)
+                    .onChange(of: PlayStreamDataShared.Stream32)
+                {
+                    NSUbiquitousKeyValueStore.default.set(PlayStreamDataShared.Stream32, forKey: "Stream32Key")
+                }
+                PlayButton32
+            }
+            .padding(.horizontal)
+            Spacer()
         }
         .background(.black)
         .preferredColorScheme(.dark)
@@ -439,7 +572,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton1_Click)
             {
                 Text(Image(systemName: "stop.fill"))
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
             .frame(width: 50, height: 50)
@@ -452,7 +585,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton1_Click)
             {
                 Text("1")
-                    .font(.title2)
+                    .font(.title3)
                     .foregroundColor(Color3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
@@ -466,7 +599,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton1_Click)
             {
                 Text("1")
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
             .frame(width: 50, height: 50)
@@ -483,7 +616,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton2_Click)
             {
                 Text(Image(systemName: "stop.fill"))
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
                     .minimumScaleFactor(1.0)
@@ -498,7 +631,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton2_Click)
             {
                 Text("2")
-                    .font(.title2)
+                    .font(.title3)
                     .foregroundColor(Color3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
@@ -514,7 +647,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton2_Click)
             {
                 Text("2")
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
                     .minimumScaleFactor(1.0)
@@ -533,7 +666,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton3_Click)
             {
                 Text(Image(systemName: "stop.fill"))
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
                     .minimumScaleFactor(1.0)
@@ -548,7 +681,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton3_Click)
             {
                 Text("3")
-                    .font(.title2)
+                    .font(.title3)
                     .foregroundColor(Color3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
@@ -564,7 +697,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton3_Click)
             {
                 Text("3")
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
                     .minimumScaleFactor(1.0)
@@ -583,7 +716,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton4_Click)
             {
                 Text(Image(systemName: "stop.fill"))
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
                     .minimumScaleFactor(1.0)
@@ -598,7 +731,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton4_Click)
             {
                 Text("4")
-                    .font(.title2)
+                    .font(.title3)
                     .foregroundColor(Color3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
@@ -614,7 +747,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton4_Click)
             {
                 Text("4")
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
                     .minimumScaleFactor(1.0)
@@ -633,7 +766,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton5_Click)
             {
                 Text(Image(systemName: "stop.fill"))
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
                     .minimumScaleFactor(1.0)
@@ -648,7 +781,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton5_Click)
             {
                 Text("5")
-                    .font(.title2)
+                    .font(.title3)
                     .foregroundColor(Color3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
@@ -664,7 +797,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton5_Click)
             {
                 Text("5")
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
                     .minimumScaleFactor(1.0)
@@ -683,7 +816,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton6_Click)
             {
                 Text(Image(systemName: "stop.fill"))
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
                     .minimumScaleFactor(1.0)
@@ -698,7 +831,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton6_Click)
             {
                 Text("6")
-                    .font(.title2)
+                    .font(.title3)
                     .foregroundColor(Color3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
@@ -714,7 +847,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton6_Click)
             {
                 Text("6")
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
                     .minimumScaleFactor(1.0)
@@ -733,7 +866,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton7_Click)
             {
                 Text(Image(systemName: "stop.fill"))
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
                     .minimumScaleFactor(1.0)
@@ -748,7 +881,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton7_Click)
             {
                 Text("7")
-                    .font(.title2)
+                    .font(.title3)
                     .foregroundColor(Color3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
@@ -764,7 +897,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton7_Click)
             {
                 Text("7")
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
                     .minimumScaleFactor(1.0)
@@ -783,7 +916,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton8_Click)
             {
                 Text(Image(systemName: "stop.fill"))
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
                     .minimumScaleFactor(1.0)
@@ -798,7 +931,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton8_Click)
             {
                 Text("8")
-                    .font(.title2)
+                    .font(.title3)
                     .foregroundColor(Color3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
@@ -814,7 +947,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton8_Click)
             {
                 Text("8")
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
                     .lineLimit(1)
                     .minimumScaleFactor(1.0)
@@ -833,7 +966,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton9_Click)
             {
                 Text(Image(systemName: "stop.fill"))
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
             .frame(width: 50, height: 50)
@@ -846,7 +979,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton9_Click)
             {
                 Text("9")
-                    .font(.title2)
+                    .font(.title3)
                     .foregroundColor(Color3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
@@ -860,7 +993,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton9_Click)
             {
                 Text("9")
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
             .frame(width: 50, height: 50)
@@ -877,7 +1010,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton10_Click)
             {
                 Text(Image(systemName: "stop.fill"))
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
             .frame(width: 50, height: 50)
@@ -890,7 +1023,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton10_Click)
             {
                 Text("10")
-                    .font(.title2)
+                    .font(.title3)
                     .foregroundColor(Color3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
@@ -904,7 +1037,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton10_Click)
             {
                 Text("10")
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
             .frame(width: 50, height: 50)
@@ -921,7 +1054,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton11_Click)
             {
                 Text(Image(systemName: "stop.fill"))
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
             .frame(width: 50, height: 50)
@@ -934,7 +1067,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton11_Click)
             {
                 Text("11")
-                    .font(.title2)
+                    .font(.title3)
                     .foregroundColor(Color3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
@@ -948,7 +1081,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton11_Click)
             {
                 Text("11")
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
             .frame(width: 50, height: 50)
@@ -965,7 +1098,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton12_Click)
             {
                 Text(Image(systemName: "stop.fill"))
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
             .frame(width: 50, height: 50)
@@ -978,7 +1111,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton12_Click)
             {
                 Text("12")
-                    .font(.title2)
+                    .font(.title3)
                     .foregroundColor(Color3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
@@ -992,7 +1125,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton12_Click)
             {
                 Text("12")
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
             .frame(width: 50, height: 50)
@@ -1008,7 +1141,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton13_Click)
             {
                 Text(Image(systemName: "stop.fill"))
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
             .frame(width: 50, height: 50)
@@ -1021,7 +1154,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton13_Click)
             {
                 Text("13")
-                    .font(.title2)
+                    .font(.title3)
                     .foregroundColor(Color3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
@@ -1035,7 +1168,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton13_Click)
             {
                 Text("13")
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
             .frame(width: 50, height: 50)
@@ -1052,7 +1185,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton14_Click)
             {
                 Text(Image(systemName: "stop.fill"))
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
             .frame(width: 50, height: 50)
@@ -1065,7 +1198,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton14_Click)
             {
                 Text("14")
-                    .font(.title2)
+                    .font(.title3)
                     .foregroundColor(Color3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
@@ -1079,7 +1212,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton14_Click)
             {
                 Text("14")
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
             .frame(width: 50, height: 50)
@@ -1096,7 +1229,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton15_Click)
             {
                 Text(Image(systemName: "stop.fill"))
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
             .frame(width: 50, height: 50)
@@ -1109,7 +1242,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton15_Click)
             {
                 Text("15")
-                    .font(.title2)
+                    .font(.title3)
                     .foregroundColor(Color3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
@@ -1123,7 +1256,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton15_Click)
             {
                 Text("15")
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
             .frame(width: 50, height: 50)
@@ -1140,7 +1273,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton16_Click)
             {
                 Text(Image(systemName: "stop.fill"))
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
             .frame(width: 50, height: 50)
@@ -1153,7 +1286,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton16_Click)
             {
                 Text("16")
-                    .font(.title2)
+                    .font(.title3)
                     .foregroundColor(Color3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
@@ -1167,7 +1300,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton16_Click)
             {
                 Text("16")
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
             .frame(width: 50, height: 50)
@@ -1183,7 +1316,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton17_Click)
             {
                 Text(Image(systemName: "stop.fill"))
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
             .frame(width: 50, height: 50)
@@ -1196,7 +1329,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton17_Click)
             {
                 Text("17")
-                    .font(.title2)
+                    .font(.title3)
                     .foregroundColor(Color3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
@@ -1210,7 +1343,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton17_Click)
             {
                 Text("17")
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
             .frame(width: 50, height: 50)
@@ -1227,7 +1360,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton18_Click)
             {
                 Text(Image(systemName: "stop.fill"))
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
             .frame(width: 50, height: 50)
@@ -1240,7 +1373,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton18_Click)
             {
                 Text("18")
-                    .font(.title2)
+                    .font(.title3)
                     .foregroundColor(Color3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
@@ -1254,7 +1387,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton18_Click)
             {
                 Text("18")
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
             .frame(width: 50, height: 50)
@@ -1271,7 +1404,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton19_Click)
             {
                 Text(Image(systemName: "stop.fill"))
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
             .frame(width: 50, height: 50)
@@ -1284,7 +1417,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton19_Click)
             {
                 Text("19")
-                    .font(.title2)
+                    .font(.title3)
                     .foregroundColor(Color3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
@@ -1298,7 +1431,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton19_Click)
             {
                 Text("19")
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
             .frame(width: 50, height: 50)
@@ -1315,7 +1448,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton20_Click)
             {
                 Text(Image(systemName: "stop.fill"))
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
             .frame(width: 50, height: 50)
@@ -1328,7 +1461,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton20_Click)
             {
                 Text("20")
-                    .font(.title2)
+                    .font(.title3)
                     .foregroundColor(Color3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
@@ -1342,7 +1475,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton20_Click)
             {
                 Text("20")
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
             .frame(width: 50, height: 50)
@@ -1351,6 +1484,7 @@ struct MainView: View
             .tint(Color1)
         }
     }
+    
     private var PlayButton21: some View
     {
         if (PlayStreamDataShared.Playing == true && PlayStreamDataShared.CurrentStream == 21 && PlayStreamDataShared.Stream21 != "")
@@ -1358,7 +1492,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton21_Click)
             {
                 Text(Image(systemName: "stop.fill"))
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
             .frame(width: 50, height: 50)
@@ -1371,7 +1505,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton21_Click)
             {
                 Text("21")
-                    .font(.title2)
+                    .font(.title3)
                     .foregroundColor(Color3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
@@ -1385,7 +1519,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton21_Click)
             {
                 Text("21")
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
             .frame(width: 50, height: 50)
@@ -1394,6 +1528,7 @@ struct MainView: View
             .tint(Color1)
         }
     }
+    
     private var PlayButton22: some View
     {
         if (PlayStreamDataShared.Playing == true && PlayStreamDataShared.CurrentStream == 22 && PlayStreamDataShared.Stream22 != "")
@@ -1401,7 +1536,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton22_Click)
             {
                 Text(Image(systemName: "stop.fill"))
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
             .frame(width: 50, height: 50)
@@ -1414,7 +1549,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton22_Click)
             {
                 Text("22")
-                    .font(.title2)
+                    .font(.title3)
                     .foregroundColor(Color3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
@@ -1428,7 +1563,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton22_Click)
             {
                 Text("22")
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
             .frame(width: 50, height: 50)
@@ -1437,6 +1572,7 @@ struct MainView: View
             .tint(Color1)
         }
     }
+    
     private var PlayButton23: some View
     {
         if (PlayStreamDataShared.Playing == true && PlayStreamDataShared.CurrentStream == 23 && PlayStreamDataShared.Stream23 != "")
@@ -1444,7 +1580,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton23_Click)
             {
                 Text(Image(systemName: "stop.fill"))
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
             .frame(width: 50, height: 50)
@@ -1457,7 +1593,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton23_Click)
             {
                 Text("23")
-                    .font(.title2)
+                    .font(.title3)
                     .foregroundColor(Color3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
@@ -1471,7 +1607,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton23_Click)
             {
                 Text("23")
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
             .frame(width: 50, height: 50)
@@ -1480,6 +1616,7 @@ struct MainView: View
             .tint(Color1)
         }
     }
+    
     private var PlayButton24: some View
     {
         if (PlayStreamDataShared.Playing == true && PlayStreamDataShared.CurrentStream == 24 && PlayStreamDataShared.Stream24 != "")
@@ -1487,7 +1624,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton24_Click)
             {
                 Text(Image(systemName: "stop.fill"))
-                    .font(.title2)
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
             .frame(width: 50, height: 50)
@@ -1500,7 +1637,7 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton24_Click)
             {
                 Text("24")
-                    .font(.title2)
+                    .font(.title3)
                     .foregroundColor(Color3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
@@ -1514,7 +1651,359 @@ struct MainView: View
             Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton24_Click)
             {
                 Text("24")
-                    .font(.title2)
+                    .font(.title3)
+                    .frame(maxWidth: .infinity, maxHeight: 50)
+            }
+            .frame(width: 50, height: 50)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.circle)
+            .tint(Color1)
+        }
+    }
+
+    private var PlayButton25: some View
+    {
+        if (PlayStreamDataShared.Playing == true && PlayStreamDataShared.CurrentStream == 25 && PlayStreamDataShared.Stream25 != "")
+        {
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton25_Click)
+            {
+                Text(Image(systemName: "stop.fill"))
+                    .font(.title3)
+                    .frame(maxWidth: .infinity, maxHeight: 50)
+            }
+            .frame(width: 50, height: 50)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.circle)
+            .tint(Color2)
+        }
+        else if(PlayStreamDataShared.Stream25 == "")
+        {
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton25_Click)
+            {
+                Text("25")
+                    .font(.title3)
+                    .foregroundColor(Color3)
+                    .frame(maxWidth: .infinity, maxHeight: 50)
+            }
+            .frame(width: 50, height: 50)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.circle)
+            .tint(Color1)
+        }
+        else
+        {
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton25_Click)
+            {
+                Text("25")
+                    .font(.title3)
+                    .frame(maxWidth: .infinity, maxHeight: 50)
+            }
+            .frame(width: 50, height: 50)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.circle)
+            .tint(Color1)
+        }
+    }
+
+    private var PlayButton26: some View
+    {
+        if (PlayStreamDataShared.Playing == true && PlayStreamDataShared.CurrentStream == 26 && PlayStreamDataShared.Stream26 != "")
+        {
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton26_Click)
+            {
+                Text(Image(systemName: "stop.fill"))
+                    .font(.title3)
+                    .frame(maxWidth: .infinity, maxHeight: 50)
+            }
+            .frame(width: 50, height: 50)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.circle)
+            .tint(Color2)
+        }
+        else if(PlayStreamDataShared.Stream26 == "")
+        {
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton26_Click)
+            {
+                Text("26")
+                    .font(.title3)
+                    .foregroundColor(Color3)
+                    .frame(maxWidth: .infinity, maxHeight: 50)
+            }
+            .frame(width: 50, height: 50)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.circle)
+            .tint(Color1)
+        }
+        else
+        {
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton26_Click)
+            {
+                Text("26")
+                    .font(.title3)
+                    .frame(maxWidth: .infinity, maxHeight: 50)
+            }
+            .frame(width: 50, height: 50)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.circle)
+            .tint(Color1)
+        }
+    }
+
+    private var PlayButton27: some View
+    {
+        if (PlayStreamDataShared.Playing == true && PlayStreamDataShared.CurrentStream == 27 && PlayStreamDataShared.Stream27 != "")
+        {
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton27_Click)
+            {
+                Text(Image(systemName: "stop.fill"))
+                    .font(.title3)
+                    .frame(maxWidth: .infinity, maxHeight: 50)
+            }
+            .frame(width: 50, height: 50)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.circle)
+            .tint(Color2)
+        }
+        else if(PlayStreamDataShared.Stream27 == "")
+        {
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton27_Click)
+            {
+                Text("27")
+                    .font(.title3)
+                    .foregroundColor(Color3)
+                    .frame(maxWidth: .infinity, maxHeight: 50)
+            }
+            .frame(width: 50, height: 50)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.circle)
+            .tint(Color1)
+        }
+        else
+        {
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton27_Click)
+            {
+                Text("27")
+                    .font(.title3)
+                    .frame(maxWidth: .infinity, maxHeight: 50)
+            }
+            .frame(width: 50, height: 50)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.circle)
+            .tint(Color1)
+        }
+    }
+
+    private var PlayButton28: some View
+    {
+        if (PlayStreamDataShared.Playing == true && PlayStreamDataShared.CurrentStream == 28 && PlayStreamDataShared.Stream28 != "")
+        {
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton28_Click)
+            {
+                Text(Image(systemName: "stop.fill"))
+                    .font(.title3)
+                    .frame(maxWidth: .infinity, maxHeight: 50)
+            }
+            .frame(width: 50, height: 50)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.circle)
+            .tint(Color2)
+        }
+        else if(PlayStreamDataShared.Stream28 == "")
+        {
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton28_Click)
+            {
+                Text("28")
+                    .font(.title3)
+                    .foregroundColor(Color3)
+                    .frame(maxWidth: .infinity, maxHeight: 50)
+            }
+            .frame(width: 50, height: 50)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.circle)
+            .tint(Color1)
+        }
+        else
+        {
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton28_Click)
+            {
+                Text("28")
+                    .font(.title3)
+                    .frame(maxWidth: .infinity, maxHeight: 50)
+            }
+            .frame(width: 50, height: 50)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.circle)
+            .tint(Color1)
+        }
+    }
+
+    private var PlayButton29: some View
+    {
+        if (PlayStreamDataShared.Playing == true && PlayStreamDataShared.CurrentStream == 29 && PlayStreamDataShared.Stream29 != "")
+        {
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton29_Click)
+            {
+                Text(Image(systemName: "stop.fill"))
+                    .font(.title3)
+                    .frame(maxWidth: .infinity, maxHeight: 50)
+            }
+            .frame(width: 50, height: 50)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.circle)
+            .tint(Color2)
+        }
+        else if(PlayStreamDataShared.Stream29 == "")
+        {
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton29_Click)
+            {
+                Text("29")
+                    .font(.title3)
+                    .foregroundColor(Color3)
+                    .frame(maxWidth: .infinity, maxHeight: 50)
+            }
+            .frame(width: 50, height: 50)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.circle)
+            .tint(Color1)
+        }
+        else
+        {
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton29_Click)
+            {
+                Text("29")
+                    .font(.title3)
+                    .frame(maxWidth: .infinity, maxHeight: 50)
+            }
+            .frame(width: 50, height: 50)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.circle)
+            .tint(Color1)
+        }
+    }
+
+    private var PlayButton30: some View
+    {
+        if (PlayStreamDataShared.Playing == true && PlayStreamDataShared.CurrentStream == 30 && PlayStreamDataShared.Stream30 != "")
+        {
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton30_Click)
+            {
+                Text(Image(systemName: "stop.fill"))
+                    .font(.title3)
+                    .frame(maxWidth: .infinity, maxHeight: 50)
+            }
+            .frame(width: 50, height: 50)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.circle)
+            .tint(Color2)
+        }
+        else if(PlayStreamDataShared.Stream30 == "")
+        {
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton30_Click)
+            {
+                Text("30")
+                    .font(.title3)
+                    .foregroundColor(Color3)
+                    .frame(maxWidth: .infinity, maxHeight: 50)
+            }
+            .frame(width: 50, height: 50)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.circle)
+            .tint(Color1)
+        }
+        else
+        {
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton30_Click)
+            {
+                Text("30")
+                    .font(.title3)
+                    .frame(maxWidth: .infinity, maxHeight: 50)
+            }
+            .frame(width: 50, height: 50)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.circle)
+            .tint(Color1)
+        }
+    }
+
+    private var PlayButton31: some View
+    {
+        if (PlayStreamDataShared.Playing == true && PlayStreamDataShared.CurrentStream == 31 && PlayStreamDataShared.Stream31 != "")
+        {
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton31_Click)
+            {
+                Text(Image(systemName: "stop.fill"))
+                    .font(.title3)
+                    .frame(maxWidth: .infinity, maxHeight: 50)
+            }
+            .frame(width: 50, height: 50)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.circle)
+            .tint(Color2)
+        }
+        else if(PlayStreamDataShared.Stream31 == "")
+        {
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton31_Click)
+            {
+                Text("31")
+                    .font(.title3)
+                    .foregroundColor(Color3)
+                    .frame(maxWidth: .infinity, maxHeight: 50)
+            }
+            .frame(width: 50, height: 50)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.circle)
+            .tint(Color1)
+        }
+        else
+        {
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton31_Click)
+            {
+                Text("31")
+                    .font(.title3)
+                    .frame(maxWidth: .infinity, maxHeight: 50)
+            }
+            .frame(width: 50, height: 50)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.circle)
+            .tint(Color1)
+        }
+    }
+
+    private var PlayButton32: some View
+    {
+        if (PlayStreamDataShared.Playing == true && PlayStreamDataShared.CurrentStream == 32 && PlayStreamDataShared.Stream32 != "")
+        {
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton32_Click)
+            {
+                Text(Image(systemName: "stop.fill"))
+                    .font(.title3)
+                    .frame(maxWidth: .infinity, maxHeight: 50)
+            }
+            .frame(width: 50, height: 50)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.circle)
+            .tint(Color2)
+        }
+        else if(PlayStreamDataShared.Stream32 == "")
+        {
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton32_Click)
+            {
+                Text("32")
+                    .font(.title3)
+                    .foregroundColor(Color3)
+                    .frame(maxWidth: .infinity, maxHeight: 50)
+            }
+            .frame(width: 50, height: 50)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.circle)
+            .tint(Color1)
+        }
+        else
+        {
+            Button(action: PlayStreamButton.PlayStreamButtonShared.PlayButton32_Click)
+            {
+                Text("32")
+                    .font(.title3)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
             .frame(width: 50, height: 50)

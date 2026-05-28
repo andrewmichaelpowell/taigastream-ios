@@ -75,7 +75,15 @@ public class PlayStreamData: NSObject, ObservableObject
     @Published var Stream22:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream22Key") ?? ""
     @Published var Stream23:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream23Key") ?? ""
     @Published var Stream24:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream24Key") ?? ""
-    
+    @Published var Stream25:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream25Key") ?? ""
+    @Published var Stream26:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream26Key") ?? ""
+    @Published var Stream27:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream27Key") ?? ""
+    @Published var Stream28:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream28Key") ?? ""
+    @Published var Stream29:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream29Key") ?? ""
+    @Published var Stream30:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream30Key") ?? ""
+    @Published var Stream31:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream31Key") ?? ""
+    @Published var Stream32:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream32Key") ?? ""
+
     override init()
     {
         super.init()
@@ -150,12 +158,10 @@ public class PlayStreamData: NSObject, ObservableObject
         }
         
         MPNowPlayingInfoCenter.default().nowPlayingInfo = NowPlayingInfo
-        MPNowPlayingInfoCenter.default().playbackState = Playing ? .playing : .paused
     }
     
     public func UpdateNowPlayingPlaybackState()
     {
-        MPNowPlayingInfoCenter.default().playbackState = Playing ? .playing : .paused
         if var NowPlayingInfo = MPNowPlayingInfoCenter.default().nowPlayingInfo
         {
             NowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = Playing ? 1.0 : 0.0
@@ -170,7 +176,6 @@ public class PlayStreamData: NSObject, ObservableObject
     public func ClearNowPlayingInfo()
     {
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
-        MPNowPlayingInfoCenter.default().playbackState = .stopped
     }
     
     var MetadataOutput: AVPlayerItemMetadataOutput?
@@ -640,146 +645,290 @@ public class PlayStreamButton
     
     public func PlayButton1_Click()
     {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream1) else { return }
+        guard let URL = URL(string: PlayStreamData.SharedResource.Stream1) else
+        {
+            return
+        }
         PlayButtonAction(StreamURL: URL, StreamNumber: 1)
     }
     
     public func PlayButton2_Click()
     {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream2) else { return }
+        guard let URL = URL(string: PlayStreamData.SharedResource.Stream2) else
+        {
+            return
+        }
         PlayButtonAction(StreamURL: URL, StreamNumber: 2)
     }
     
     public func PlayButton3_Click()
     {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream3) else { return }
+        guard let URL = URL(string: PlayStreamData.SharedResource.Stream3) else
+        {
+            return
+        }
         PlayButtonAction(StreamURL: URL, StreamNumber: 3)
     }
     
     public func PlayButton4_Click()
     {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream4) else { return }
+        guard let URL = URL(string: PlayStreamData.SharedResource.Stream4) else
+        {
+            return
+        }
         PlayButtonAction(StreamURL: URL, StreamNumber: 4)
     }
     
     public func PlayButton5_Click()
     {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream5) else { return }
+        guard let URL = URL(string: PlayStreamData.SharedResource.Stream5) else
+        {
+            return
+        }
         PlayButtonAction(StreamURL: URL, StreamNumber: 5)
     }
     
     public func PlayButton6_Click()
     {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream6) else { return }
+        guard let URL = URL(string: PlayStreamData.SharedResource.Stream6) else
+        {
+            return
+        }
         PlayButtonAction(StreamURL: URL, StreamNumber: 6)
     }
     
     public func PlayButton7_Click()
     {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream7) else { return }
+        guard let URL = URL(string: PlayStreamData.SharedResource.Stream7) else
+        {
+            return
+        }
         PlayButtonAction(StreamURL: URL, StreamNumber: 7)
     }
     
     public func PlayButton8_Click()
     {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream8) else { return }
+        guard let URL = URL(string: PlayStreamData.SharedResource.Stream8) else
+        {
+            return
+        }
         PlayButtonAction(StreamURL: URL, StreamNumber: 8)
     }
     
     public func PlayButton9_Click()
     {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream9) else { return }
+        guard let URL = URL(string: PlayStreamData.SharedResource.Stream9) else
+        {
+            return
+        }
         PlayButtonAction(StreamURL: URL, StreamNumber: 9)
     }
     
     public func PlayButton10_Click()
     {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream10) else { return }
+        guard let URL = URL(string: PlayStreamData.SharedResource.Stream10) else
+        {
+            return
+        }
         PlayButtonAction(StreamURL: URL, StreamNumber: 10)
     }
     
     public func PlayButton11_Click()
     {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream11) else { return }
+        guard let URL = URL(string: PlayStreamData.SharedResource.Stream11) else
+        {
+            return
+        }
         PlayButtonAction(StreamURL: URL, StreamNumber: 11)
     }
     
     public func PlayButton12_Click()
     {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream12) else { return }
+        guard let URL = URL(string: PlayStreamData.SharedResource.Stream12) else
+        {
+            return
+        }
         PlayButtonAction(StreamURL: URL, StreamNumber: 12)
     }
     
     public func PlayButton13_Click()
     {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream13) else { return }
+        guard let URL = URL(string: PlayStreamData.SharedResource.Stream13) else
+        {
+            return
+        }
         PlayButtonAction(StreamURL: URL, StreamNumber: 13)
     }
     
     public func PlayButton14_Click()
     {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream14) else { return }
+        guard let URL = URL(string: PlayStreamData.SharedResource.Stream14) else
+        {
+            return
+        }
         PlayButtonAction(StreamURL: URL, StreamNumber: 14)
     }
     
     public func PlayButton15_Click()
     {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream15) else { return }
+        guard let URL = URL(string: PlayStreamData.SharedResource.Stream15) else
+        {
+            return
+        }
         PlayButtonAction(StreamURL: URL, StreamNumber: 15)
     }
     
     public func PlayButton16_Click()
     {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream16) else { return }
+        guard let URL = URL(string: PlayStreamData.SharedResource.Stream16) else
+        {
+            return
+        }
         PlayButtonAction(StreamURL: URL, StreamNumber: 16)
     }
     
     public func PlayButton17_Click()
     {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream17) else { return }
+        guard let URL = URL(string: PlayStreamData.SharedResource.Stream17) else
+        {
+            return
+        }
         PlayButtonAction(StreamURL: URL, StreamNumber: 17)
     }
     
     public func PlayButton18_Click()
     {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream18) else { return }
+        guard let URL = URL(string: PlayStreamData.SharedResource.Stream18) else
+        {
+            return
+        }
         PlayButtonAction(StreamURL: URL, StreamNumber: 18)
     }
     
     public func PlayButton19_Click()
     {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream19) else { return }
+        guard let URL = URL(string: PlayStreamData.SharedResource.Stream19) else
+        {
+            return
+        }
         PlayButtonAction(StreamURL: URL, StreamNumber: 19)
     }
     
     public func PlayButton20_Click()
     {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream20) else { return }
+        guard let URL = URL(string: PlayStreamData.SharedResource.Stream20) else
+        {
+            return
+        }
         PlayButtonAction(StreamURL: URL, StreamNumber: 20)
     }
     
     public func PlayButton21_Click()
     {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream21) else { return }
+        guard let URL = URL(string: PlayStreamData.SharedResource.Stream21) else
+        {
+            return
+        }
         PlayButtonAction(StreamURL: URL, StreamNumber: 21)
     }
     
     public func PlayButton22_Click()
     {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream22) else { return }
+        guard let URL = URL(string: PlayStreamData.SharedResource.Stream22) else
+        {
+            return
+        }
         PlayButtonAction(StreamURL: URL, StreamNumber: 22)
     }
     
     public func PlayButton23_Click()
     {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream23) else { return }
+        guard let URL = URL(string: PlayStreamData.SharedResource.Stream23) else
+        {
+            return
+        }
         PlayButtonAction(StreamURL: URL, StreamNumber: 23)
     }
     
     public func PlayButton24_Click()
     {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream24) else { return }
+        guard let URL = URL(string: PlayStreamData.SharedResource.Stream24) else
+        {
+            return
+        }
         PlayButtonAction(StreamURL: URL, StreamNumber: 24)
+    }
+
+    public func PlayButton25_Click()
+    {
+        guard let URL = URL(string: PlayStreamData.SharedResource.Stream25) else
+        {
+            return
+        }
+        PlayButtonAction(StreamURL: URL, StreamNumber: 25)
+    }
+
+    public func PlayButton26_Click()
+    {
+        guard let URL = URL(string: PlayStreamData.SharedResource.Stream26) else
+        {
+            return
+        }
+        PlayButtonAction(StreamURL: URL, StreamNumber: 26)
+    }
+
+    public func PlayButton27_Click()
+    {
+        guard let URL = URL(string: PlayStreamData.SharedResource.Stream27) else
+        {
+            return
+        }
+        PlayButtonAction(StreamURL: URL, StreamNumber: 27)
+    }
+
+    public func PlayButton28_Click()
+    {
+        guard let URL = URL(string: PlayStreamData.SharedResource.Stream28) else
+        {
+            return
+        }
+        PlayButtonAction(StreamURL: URL, StreamNumber: 28)
+    }
+
+    public func PlayButton29_Click()
+    {
+        guard let URL = URL(string: PlayStreamData.SharedResource.Stream29) else
+        {
+            return
+        }
+        PlayButtonAction(StreamURL: URL, StreamNumber: 29)
+    }
+
+    public func PlayButton30_Click()
+    {
+        guard let URL = URL(string: PlayStreamData.SharedResource.Stream30) else
+        {
+            return
+        }
+        PlayButtonAction(StreamURL: URL, StreamNumber: 30)
+    }
+
+    public func PlayButton31_Click()
+    {
+        guard let URL = URL(string: PlayStreamData.SharedResource.Stream31) else
+        {
+            return
+        }
+        PlayButtonAction(StreamURL: URL, StreamNumber: 31)
+    }
+    
+    public func PlayButton32_Click()
+    {
+        guard let URL = URL(string: PlayStreamData.SharedResource.Stream32) else
+        {
+            return
+        }
+        PlayButtonAction(StreamURL: URL, StreamNumber: 32)
     }
 }
 
@@ -789,8 +938,8 @@ struct TaigaStreamWidgetControl1: ControlWidget
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream1")
         {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
-            let ButtonState = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 1
+            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
+            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 1
             return ControlWidgetToggle(isOn: ButtonState, action: PlayStream1ToggleIntent())
             {
                 Label("Stream 1", systemImage: "1.circle")
@@ -817,8 +966,8 @@ struct TaigaStreamWidgetControl2: ControlWidget
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream2")
         {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
-            let ButtonState = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 2
+            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
+            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 2
             return ControlWidgetToggle(isOn: ButtonState, action: PlayStream2ToggleIntent())
             {
                 Label("Stream 2", systemImage: "2.circle")
@@ -845,8 +994,8 @@ struct TaigaStreamWidgetControl3: ControlWidget
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream3")
         {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
-            let ButtonState = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 3
+            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
+            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 3
             return ControlWidgetToggle(isOn: ButtonState, action: PlayStream3ToggleIntent())
             {
                 Label("Stream 3", systemImage: "3.circle")
@@ -873,8 +1022,8 @@ struct TaigaStreamWidgetControl4: ControlWidget
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream4")
         {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
-            let ButtonState = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 4
+            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
+            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 4
             return ControlWidgetToggle(isOn: ButtonState, action: PlayStream4ToggleIntent())
             {
                 Label("Stream 4", systemImage: "4.circle")
@@ -901,8 +1050,8 @@ struct TaigaStreamWidgetControl5: ControlWidget
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream5")
         {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
-            let ButtonState = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 5
+            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
+            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 5
             return ControlWidgetToggle(isOn: ButtonState, action: PlayStream5ToggleIntent())
             {
                 Label("Stream 5", systemImage: "5.circle")
@@ -929,8 +1078,8 @@ struct TaigaStreamWidgetControl6: ControlWidget
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream6")
         {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
-            let ButtonState = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 6
+            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
+            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 6
             return ControlWidgetToggle(isOn: ButtonState, action: PlayStream6ToggleIntent())
             {
                 Label("Stream 6", systemImage: "6.circle")
@@ -957,8 +1106,8 @@ struct TaigaStreamWidgetControl7: ControlWidget
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream7")
         {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
-            let ButtonState = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 7
+            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
+            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 7
             return ControlWidgetToggle(isOn: ButtonState, action: PlayStream7ToggleIntent())
             {
                 Label("Stream 7", systemImage: "7.circle")
@@ -985,8 +1134,8 @@ struct TaigaStreamWidgetControl8: ControlWidget
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream8")
         {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
-            let ButtonState = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 8
+            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
+            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 8
             return ControlWidgetToggle(isOn: ButtonState, action: PlayStream8ToggleIntent())
             {
                 Label("Stream 8", systemImage: "8.circle")
@@ -1013,8 +1162,8 @@ struct TaigaStreamWidgetControl9: ControlWidget
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream9")
         {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
-            let ButtonState = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 9
+            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
+            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 9
             return ControlWidgetToggle(isOn: ButtonState, action: PlayStream9ToggleIntent())
             {
                 Label("Stream 9", systemImage: "9.circle")
@@ -1041,8 +1190,8 @@ struct TaigaStreamWidgetControl10: ControlWidget
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream10")
         {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
-            let ButtonState = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 10
+            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
+            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 10
             return ControlWidgetToggle(isOn: ButtonState, action: PlayStream10ToggleIntent())
             {
                 Label("Stream 10", systemImage: "10.circle")
@@ -1069,8 +1218,8 @@ struct TaigaStreamWidgetControl11: ControlWidget
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream11")
         {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
-            let ButtonState = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 11
+            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
+            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 11
             return ControlWidgetToggle(isOn: ButtonState, action: PlayStream11ToggleIntent())
             {
                 Label("Stream 11", systemImage: "11.circle")
@@ -1097,8 +1246,8 @@ struct TaigaStreamWidgetControl12: ControlWidget
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream12")
         {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
-            let ButtonState = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 12
+            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
+            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 12
             return ControlWidgetToggle(isOn: ButtonState, action: PlayStream12ToggleIntent())
             {
                 Label("Stream 12", systemImage: "12.circle")
@@ -1125,8 +1274,8 @@ struct TaigaStreamWidgetControl13: ControlWidget
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream13")
         {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
-            let ButtonState = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 13
+            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
+            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 13
             return ControlWidgetToggle(isOn: ButtonState, action: PlayStream13ToggleIntent())
             {
                 Label("Stream 13", systemImage: "13.circle")
@@ -1153,8 +1302,8 @@ struct TaigaStreamWidgetControl14: ControlWidget
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream14")
         {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
-            let ButtonState = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 14
+            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
+            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 14
             return ControlWidgetToggle(isOn: ButtonState, action: PlayStream14ToggleIntent())
             {
                 Label("Stream 14", systemImage: "14.circle")
@@ -1181,8 +1330,8 @@ struct TaigaStreamWidgetControl15: ControlWidget
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream15")
         {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
-            let ButtonState = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 15
+            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
+            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 15
             return ControlWidgetToggle(isOn: ButtonState, action: PlayStream15ToggleIntent())
             {
                 Label("Stream 15", systemImage: "15.circle")
@@ -1209,8 +1358,8 @@ struct TaigaStreamWidgetControl16: ControlWidget
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream16")
         {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
-            let ButtonState = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 16
+            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
+            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 16
             return ControlWidgetToggle(isOn: ButtonState, action: PlayStream16ToggleIntent())
             {
                 Label("Stream 16", systemImage: "16.circle")
@@ -1237,8 +1386,8 @@ struct TaigaStreamWidgetControl17: ControlWidget
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream17")
         {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
-            let ButtonState = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 17
+            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
+            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 17
             return ControlWidgetToggle(isOn: ButtonState, action: PlayStream17ToggleIntent())
             {
                 Label("Stream 17", systemImage: "17.circle")
@@ -1265,8 +1414,8 @@ struct TaigaStreamWidgetControl18: ControlWidget
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream18")
         {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
-            let ButtonState = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 18
+            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
+            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 18
             return ControlWidgetToggle(isOn: ButtonState, action: PlayStream18ToggleIntent())
             {
                 Label("Stream 18", systemImage: "18.circle")
@@ -1293,8 +1442,8 @@ struct TaigaStreamWidgetControl19: ControlWidget
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream19")
         {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
-            let ButtonState = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 19
+            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
+            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 19
             return ControlWidgetToggle(isOn: ButtonState, action: PlayStream19ToggleIntent())
             {
                 Label("Stream 19", systemImage: "19.circle")
@@ -1321,8 +1470,8 @@ struct TaigaStreamWidgetControl20: ControlWidget
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream20")
         {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
-            let ButtonState = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 20
+            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
+            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 20
             return ControlWidgetToggle(isOn: ButtonState, action: PlayStream20ToggleIntent())
             {
                 Label("Stream 20", systemImage: "20.circle")
@@ -1349,8 +1498,8 @@ struct TaigaStreamWidgetControl21: ControlWidget
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream21")
         {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
-            let ButtonState = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 21
+            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
+            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 21
             return ControlWidgetToggle(isOn: ButtonState, action: PlayStream21ToggleIntent())
             {
                 Label("Stream 21", systemImage: "21.circle")
@@ -1377,8 +1526,8 @@ struct TaigaStreamWidgetControl22: ControlWidget
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream22")
         {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
-            let ButtonState = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 22
+            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
+            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 22
             return ControlWidgetToggle(isOn: ButtonState, action: PlayStream22ToggleIntent())
             {
                 Label("Stream 22", systemImage: "22.circle")
@@ -1405,8 +1554,8 @@ struct TaigaStreamWidgetControl23: ControlWidget
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream23")
         {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
-            let ButtonState = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 23
+            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
+            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 23
             return ControlWidgetToggle(isOn: ButtonState, action: PlayStream23ToggleIntent())
             {
                 Label("Stream 23", systemImage: "23.circle")
@@ -1433,8 +1582,8 @@ struct TaigaStreamWidgetControl24: ControlWidget
     {
         StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream24")
         {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
-            let ButtonState = StreamState.bool(forKey: "PlayingKey") && StreamState.integer(forKey: "CurrentStreamKey") == 24
+            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
+            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 24
             return ControlWidgetToggle(isOn: ButtonState, action: PlayStream24ToggleIntent())
             {
                 Label("Stream 24", systemImage: "24.circle")
@@ -1451,6 +1600,230 @@ struct PlayStream24ToggleIntent: SetValueIntent, AudioPlaybackIntent
     @MainActor func perform() async throws -> some IntentResult
     {
         PlayStreamButton.PlayStreamButtonShared.PlayButton24_Click()
+        return .result()
+    }
+}
+
+struct TaigaStreamWidgetControl25: ControlWidget
+{
+    var body: some ControlWidgetConfiguration
+    {
+        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream25")
+        {
+            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
+            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 25
+            return ControlWidgetToggle(isOn: ButtonState, action: PlayStream25ToggleIntent())
+            {
+                Label("Stream 25", systemImage: "25.circle")
+            }
+        }
+        .displayName("Stream 25")
+    }
+}
+
+struct PlayStream25ToggleIntent: SetValueIntent, AudioPlaybackIntent
+{
+    static let title: LocalizedStringResource = "Stream 25"
+    @Parameter(title: "Is On") var value: Bool
+    @MainActor func perform() async throws -> some IntentResult
+    {
+        PlayStreamButton.PlayStreamButtonShared.PlayButton25_Click()
+        return .result()
+    }
+}
+
+struct TaigaStreamWidgetControl26: ControlWidget
+{
+    var body: some ControlWidgetConfiguration
+    {
+        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream26")
+        {
+            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
+            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 26
+            return ControlWidgetToggle(isOn: ButtonState, action: PlayStream26ToggleIntent())
+            {
+                Label("Stream 26", systemImage: "26.circle")
+            }
+        }
+        .displayName("Stream 26")
+    }
+}
+
+struct PlayStream26ToggleIntent: SetValueIntent, AudioPlaybackIntent
+{
+    static let title: LocalizedStringResource = "Stream 26"
+    @Parameter(title: "Is On") var value: Bool
+    @MainActor func perform() async throws -> some IntentResult
+    {
+        PlayStreamButton.PlayStreamButtonShared.PlayButton26_Click()
+        return .result()
+    }
+}
+
+struct TaigaStreamWidgetControl27: ControlWidget
+{
+    var body: some ControlWidgetConfiguration
+    {
+        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream27")
+        {
+            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
+            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 27
+            return ControlWidgetToggle(isOn: ButtonState, action: PlayStream27ToggleIntent())
+            {
+                Label("Stream 27", systemImage: "27.circle")
+            }
+        }
+        .displayName("Stream 27")
+    }
+}
+
+struct PlayStream27ToggleIntent: SetValueIntent, AudioPlaybackIntent
+{
+    static let title: LocalizedStringResource = "Stream 27"
+    @Parameter(title: "Is On") var value: Bool
+    @MainActor func perform() async throws -> some IntentResult
+    {
+        PlayStreamButton.PlayStreamButtonShared.PlayButton27_Click()
+        return .result()
+    }
+}
+
+struct TaigaStreamWidgetControl28: ControlWidget
+{
+    var body: some ControlWidgetConfiguration
+    {
+        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream28")
+        {
+            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
+            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 28
+            return ControlWidgetToggle(isOn: ButtonState, action: PlayStream28ToggleIntent())
+            {
+                Label("Stream 28", systemImage: "28.circle")
+            }
+        }
+        .displayName("Stream 28")
+    }
+}
+
+struct PlayStream28ToggleIntent: SetValueIntent, AudioPlaybackIntent
+{
+    static let title: LocalizedStringResource = "Stream 28"
+    @Parameter(title: "Is On") var value: Bool
+    @MainActor func perform() async throws -> some IntentResult
+    {
+        PlayStreamButton.PlayStreamButtonShared.PlayButton28_Click()
+        return .result()
+    }
+}
+
+struct TaigaStreamWidgetControl29: ControlWidget
+{
+    var body: some ControlWidgetConfiguration
+    {
+        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream29")
+        {
+            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
+            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 29
+            return ControlWidgetToggle(isOn: ButtonState, action: PlayStream29ToggleIntent())
+            {
+                Label("Stream 29", systemImage: "29.circle")
+            }
+        }
+        .displayName("Stream 29")
+    }
+}
+
+struct PlayStream29ToggleIntent: SetValueIntent, AudioPlaybackIntent
+{
+    static let title: LocalizedStringResource = "Stream 29"
+    @Parameter(title: "Is On") var value: Bool
+    @MainActor func perform() async throws -> some IntentResult
+    {
+        PlayStreamButton.PlayStreamButtonShared.PlayButton29_Click()
+        return .result()
+    }
+}
+
+struct TaigaStreamWidgetControl30: ControlWidget
+{
+    var body: some ControlWidgetConfiguration
+    {
+        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream30")
+        {
+            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
+            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 30
+            return ControlWidgetToggle(isOn: ButtonState, action: PlayStream30ToggleIntent())
+            {
+                Label("Stream 30", systemImage: "30.circle")
+            }
+        }
+        .displayName("Stream 30")
+    }
+}
+
+struct PlayStream30ToggleIntent: SetValueIntent, AudioPlaybackIntent
+{
+    static let title: LocalizedStringResource = "Stream 30"
+    @Parameter(title: "Is On") var value: Bool
+    @MainActor func perform() async throws -> some IntentResult
+    {
+        PlayStreamButton.PlayStreamButtonShared.PlayButton30_Click()
+        return .result()
+    }
+}
+
+struct TaigaStreamWidgetControl31: ControlWidget
+{
+    var body: some ControlWidgetConfiguration
+    {
+        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream31")
+        {
+            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
+            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 31
+            return ControlWidgetToggle(isOn: ButtonState, action: PlayStream31ToggleIntent())
+            {
+                Label("Stream 31", systemImage: "31.circle")
+            }
+        }
+        .displayName("Stream 31")
+    }
+}
+
+struct PlayStream31ToggleIntent: SetValueIntent, AudioPlaybackIntent
+{
+    static let title: LocalizedStringResource = "Stream 31"
+    @Parameter(title: "Is On") var value: Bool
+    @MainActor func perform() async throws -> some IntentResult
+    {
+        PlayStreamButton.PlayStreamButtonShared.PlayButton31_Click()
+        return .result()
+    }
+}
+
+struct TaigaStreamWidgetControl32: ControlWidget
+{
+    var body: some ControlWidgetConfiguration
+    {
+        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream32")
+        {
+            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
+            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 32
+            return ControlWidgetToggle(isOn: ButtonState, action: PlayStream32ToggleIntent())
+            {
+                Label("Stream 32", systemImage: "32.circle")
+            }
+        }
+        .displayName("Stream 32")
+    }
+}
+
+struct PlayStream32ToggleIntent: SetValueIntent, AudioPlaybackIntent
+{
+    static let title: LocalizedStringResource = "Stream 32"
+    @Parameter(title: "Is On") var value: Bool
+    @MainActor func perform() async throws -> some IntentResult
+    {
+        PlayStreamButton.PlayStreamButtonShared.PlayButton32_Click()
         return .result()
     }
 }

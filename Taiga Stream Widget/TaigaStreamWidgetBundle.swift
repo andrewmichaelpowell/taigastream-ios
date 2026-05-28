@@ -34,5 +34,13 @@ struct TaigaStreamWidgetBundle: WidgetBundle
         TaigaStreamWidgetControl22()
         TaigaStreamWidgetControl23()
         TaigaStreamWidgetControl24()
+        TaigaStreamWidgetControl25()
+        TaigaStreamWidgetControl26()
+        TaigaStreamWidgetControl27()
+        TaigaStreamWidgetControl28()
+        TaigaStreamWidgetControl29()
+        TaigaStreamWidgetControl30()
+        TaigaStreamWidgetControl31()
+        TaigaStreamWidgetControl32()
     }
 }
