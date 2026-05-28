@@ -280,7 +280,8 @@ public class PlayStreamData: NSObject, ObservableObject
                     {
                         let CleanParts = Parts.dropLast().map
                         {
-                            $0.trimmingCharacters(in: .whitespaces) }
+                            $0.trimmingCharacters(in: .whitespaces)
+                        }
                         Title = CleanMetadataString(CleanParts.first ?? "")
                         Artist = CleanMetadataString(CleanParts.dropFirst().joined(separator: " - "))
                     }
@@ -296,8 +297,16 @@ public class PlayStreamData: NSObject, ObservableObject
                         Title = CleanMetadataString(Value)
                     }
                 }
-                if JunkMetadata(Title) { Title = "" }
-                if JunkMetadata(Artist) { Artist = "" }
+                
+                if JunkMetadata(Title)
+                {
+                    Title = ""
+                }
+                
+                if JunkMetadata(Artist)
+                {
+                    Artist = ""
+                }
             }
             
             let ResolvedArtist = Artist.isEmpty ? "Taiga Stream" : Artist
