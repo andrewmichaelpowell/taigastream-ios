@@ -37,6 +37,42 @@
     "12" : {
 
     },
+    "13" : {
+
+    },
+    "14" : {
+
+    },
+    "15" : {
+
+    },
+    "16" : {
+
+    },
+    "17" : {
+
+    },
+    "18" : {
+
+    },
+    "19" : {
+
+    },
+    "20" : {
+
+    },
+    "21" : {
+
+    },
+    "22" : {
+
+    },
+    "23" : {
+
+    },
+    "24" : {
+
+    },
     "Is On" : {
 
     },
@@ -3612,6 +3648,126 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "流 12"
+          }
+        }
+      }
+    },
+    "Stream 13" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "البث 13"
+          }
+        }
+      }
+    },
+    "Stream 14" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "البث 14"
+          }
+        }
+      }
+    },
+    "Stream 15" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "البث 15"
+          }
+        }
+      }
+    },
+    "Stream 16" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "البث 16"
+          }
+        }
+      }
+    },
+    "Stream 17" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "البث 17"
+          }
+        }
+      }
+    },
+    "Stream 18" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "البث 18"
+          }
+        }
+      }
+    },
+    "Stream 19" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "البث 19"
+          }
+        }
+      }
+    },
+    "Stream 20" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "البث 20"
+          }
+        }
+      }
+    },
+    "Stream 21" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "البث 21"
+          }
+        }
+      }
+    },
+    "Stream 22" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "البث 22"
+          }
+        }
+      }
+    },
+    "Stream 23" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "البث 23"
+          }
+        }
+      }
+    },
+    "Stream 24" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "البث 24"
           }
         }
       }
