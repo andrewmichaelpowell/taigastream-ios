@@ -158,12 +158,10 @@ public class PlayStreamData: NSObject, ObservableObject
         }
         
         MPNowPlayingInfoCenter.default().nowPlayingInfo = NowPlayingInfo
-        MPNowPlayingInfoCenter.default().playbackState = Playing ? .playing : .paused
     }
     
     public func UpdateNowPlayingPlaybackState()
     {
-        MPNowPlayingInfoCenter.default().playbackState = Playing ? .playing : .paused
         if var NowPlayingInfo = MPNowPlayingInfoCenter.default().nowPlayingInfo
         {
             NowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = Playing ? 1.0 : 0.0
@@ -178,7 +176,6 @@ public class PlayStreamData: NSObject, ObservableObject
     public func ClearNowPlayingInfo()
     {
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
-        MPNowPlayingInfoCenter.default().playbackState = .stopped
     }
     
     var MetadataOutput: AVPlayerItemMetadataOutput?
