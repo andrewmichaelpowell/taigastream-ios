@@ -243,6 +243,7 @@ public class PlayStreamData: NSObject, ObservableObject
             }
             components.path = "/status-json.xsl"
             components.query = nil
+            components.scheme = "https"
             guard let statusURL = components.url else
             {
                 return
