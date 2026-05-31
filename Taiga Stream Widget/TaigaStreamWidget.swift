@@ -218,43 +218,43 @@ public class PlayStreamData: NSObject, ObservableObject
     var ICYPollTimer: AnyCancellable?
     var LastICYTitle: String = ""
 
-    public func StartICYPolling(streamURL: URL)
+    public func StartICYPolling(StreamURL: URL)
     {
         StopICYPolling()
         LastICYTitle = ""
-        let streamString = streamURL.absoluteString
-        let apiURLString = StreamMetadataAPIs.first(where: { streamString.contains($0.key) })?.value
+        let StreamString = StreamURL.absoluteString
+        let APIURLString = StreamMetadataAPIs.first(where: { StreamString.contains($0.key) })?.value
         
-        if let apiURLString = apiURLString, let apiURL = URL(string: apiURLString)
+        if let APIURLString = APIURLString, let APIURL = URL(string: APIURLString)
         {
-            PollABCRadioMetadata(apiURL: apiURL)
+            PollABCRadioMetadata(APIURL: APIURL)
             ICYPollTimer = Timer.publish(every: 15.0, on: .main, in: .common)
                 .autoconnect()
                 .sink
             {
-                [weak self] _ in self?.PollABCRadioMetadata(apiURL: apiURL)
+                [weak self] _ in self?.PollABCRadioMetadata(APIURL: APIURL)
             }
         }
         else
         {
-            guard var components = URLComponents(url: streamURL, resolvingAgainstBaseURL: false) else
+            guard var Components = URLComponents(url: StreamURL, resolvingAgainstBaseURL: false) else
             {
                 return
             }
-            components.path = "/status-json.xsl"
-            components.query = nil
-            components.scheme = "https"
-            guard let statusURL = components.url else
+            Components.path = "/status-json.xsl"
+            Components.query = nil
+            Components.scheme = "https"
+            guard let StatusURL = Components.url else
             {
                 return
             }
-            let mountPath = streamURL.path
-            PollICYMetadata(statusURL: statusURL, mountPath: mountPath)
+            let MountPath = StreamURL.path
+            PollICYMetadata(StatusURL: StatusURL, MountPath: MountPath)
             ICYPollTimer = Timer.publish(every: 15.0, on: .main, in: .common)
                 .autoconnect()
                 .sink
             {
-                [weak self] _ in self?.PollICYMetadata(statusURL: statusURL, mountPath: mountPath)
+                [weak self] _ in self?.PollICYMetadata(StatusURL: StatusURL, MountPath: MountPath)
             }
         }
     }
@@ -265,98 +265,101 @@ public class PlayStreamData: NSObject, ObservableObject
         LastICYTitle = ""
     }
 
-    private func PollABCRadioMetadata(apiURL: URL)
+    private func PollABCRadioMetadata(APIURL: URL)
     {
-        URLSession.shared.dataTask(with: apiURL) { [weak self] data, _, error in
+        URLSession.shared.dataTask(with: APIURL) { [weak self] Data, _, Error in
             guard let self = self,
-                  let data = data,
-                  error == nil,
-                  let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-                  let now = json["now"] as? [String: Any],
-                  let recording = now["recording"] as? [String: Any]
+                  let Data = Data,
+                  Error == nil,
+                  let JSON = try? JSONSerialization.jsonObject(with: Data) as? [String: Any],
+                  let Now = JSON["now"] as? [String: Any],
+                  let Recording = Now["recording"] as? [String: Any]
             else
             {
                 return
             }
 
-            let title = (recording["title"] as? String ?? "").trimmingCharacters(in: .whitespaces)
-            var artist = ""
+            let Title = (Recording["title"] as? String ?? "").trimmingCharacters(in: .whitespaces)
+            var Artist = ""
 
-            if let artists = recording["artists"] as? [[String: Any]]
+            if let Artists = Recording["artists"] as? [[String: Any]]
             {
-                artist = artists.compactMap { $0["name"] as? String }.joined(separator: ", ")
+                Artist = Artists.compactMap { $0["name"] as? String }.joined(separator: ", ")
             }
 
-            let combined = "\(artist)|\(title)"
-            guard !title.isEmpty, combined != self.LastICYTitle else { return }
+            let combined = "\(Artist)|\(Title)"
+            guard !Title.isEmpty, combined != self.LastICYTitle else
+            {
+                return
+            }
             self.LastICYTitle = combined
-            let resolvedArtist = artist.isEmpty ? "Taiga Stream" : artist
-            let resolvedTitle  = title.isEmpty  ? "Stream \(self.CurrentStream)" : title
+            let ResolvedArtist = Artist.isEmpty ? "Taiga Stream" : Artist
+            let ResolvedTitle  = Title.isEmpty  ? "Stream \(self.CurrentStream)" : Title
             DispatchQueue.main.async {
-                self.UpdateNowPlayingInfo(artist: resolvedArtist, title: resolvedTitle)
-                self.FetchArtwork(artist: resolvedArtist, title: resolvedTitle)
+                self.UpdateNowPlayingInfo(artist: ResolvedArtist, title: ResolvedTitle)
+                self.FetchArtwork(artist: ResolvedArtist, title: ResolvedTitle)
             }
         }
         .resume()
     }
 
-    private func PollICYMetadata(statusURL: URL, mountPath: String)
+    private func PollICYMetadata(StatusURL: URL, MountPath: String)
     {
-        URLSession.shared.dataTask(with: statusURL)
+        URLSession.shared.dataTask(with: StatusURL)
         {
-            [weak self] data, _, error in
+            [weak self] Data, _, Error in
             guard let self = self,
-                  let data = data,
-                  error == nil,
-                  let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-                  let icestats = json["icestats"] as? [String: Any]
+                  let Data = Data,
+                  Error == nil,
+                  let JSON = try? JSONSerialization.jsonObject(with: Data) as? [String: Any],
+                  let Icestats = JSON["icestats"] as? [String: Any]
             else
             {
                 return
             }
 
-            var sources: [[String: Any]] = []
-            if let array = icestats["source"] as? [[String: Any]]
+            var Sources: [[String: Any]] = []
+            if let Array = Icestats["source"] as? [[String: Any]]
             {
-                sources = array
+                Sources = Array
             }
-            else if let single = icestats["source"] as? [String: Any]
+            else if let single = Icestats["source"] as? [String: Any]
             {
-                sources = [single]
+                Sources = [single]
             }
 
-            let match = sources.first { ($0["listenurl"] as? String)?.hasSuffix(mountPath) == true } ?? sources.first
+            let Match = Sources.first { ($0["listenurl"] as? String)?.hasSuffix(MountPath) == true } ?? Sources.first
 
-            guard let source = match,
-                  let rawTitle = source["title"] as? String
+            guard let Source = Match,
+                  let RawTitle = Source["title"] as? String
             else
             {
                 return
             }
 
-            let title = rawTitle.trimmingCharacters(in: .whitespaces)
-            guard !title.isEmpty, title != self.LastICYTitle else { return }
-            self.LastICYTitle = title
-            let parts = title.components(separatedBy: " - ")
-            let artist: String
-            let songTitle: String
+            let Title = RawTitle.trimmingCharacters(in: .whitespaces)
+            guard !Title.isEmpty, Title != self.LastICYTitle else { return }
+            self.LastICYTitle = Title
+            let Parts = Title.components(separatedBy: " - ")
+            let Artist: String
+            let SongTitle: String
 
-            if parts.count >= 2
+            if Parts.count >= 2
             {
-                artist    = self.CleanMetadataString(parts[0].trimmingCharacters(in: .whitespaces))
-                songTitle = self.CleanMetadataString(parts.dropFirst().joined(separator: " - ").trimmingCharacters(in: .whitespaces))
+                Artist = self.CleanMetadataString(Parts[0].trimmingCharacters(in: .whitespaces))
+                SongTitle = self.CleanMetadataString(Parts.dropFirst().joined(separator: " - ").trimmingCharacters(in: .whitespaces))
             }
             else
             {
-                artist    = "Taiga Stream"
-                songTitle = self.CleanMetadataString(title)
+                Artist = "Taiga Stream"
+                SongTitle = self.CleanMetadataString(Title)
             }
 
-            let resolvedArtist = artist.isEmpty ? "Taiga Stream" : artist
-            let resolvedTitle  = songTitle.isEmpty ? "Stream \(self.CurrentStream)" : songTitle
+            let ResolvedArtist = Artist.isEmpty ? "Taiga Stream" : Artist
+            let ResolvedTitle  = SongTitle.isEmpty ? "Stream \(self.CurrentStream)" : SongTitle
             DispatchQueue.main.async {
-                self.UpdateNowPlayingInfo(artist: resolvedArtist, title: resolvedTitle)
-                self.FetchArtwork(artist: resolvedArtist, title: resolvedTitle)
+                self.UpdateNowPlayingInfo(artist: ResolvedArtist, title: ResolvedTitle)
+                self.FetchArtwork(artist: ResolvedArtist, title: ResolvedTitle)
             }
         }
         .resume()
@@ -810,7 +813,7 @@ public class PlayStreamButton
         Data.ObserveStreamMetadata()
         Data.PlayStream.play()
         Data.StartPlaybackHeartbeat()
-        Data.StartICYPolling(streamURL: StreamURL)
+        Data.StartICYPolling(StreamURL: StreamURL)
     }
     
     private func PlayButtonAction(StreamURL: URL, StreamNumber: Int)
