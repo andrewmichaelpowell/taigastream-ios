@@ -210,6 +210,13 @@ public class PlayStreamData: NSObject, ObservableObject
             Cleaned = String(Cleaned[Cleaned.startIndex..<Range.lowerBound])
         }
         
+        let BracketedCodePattern = #"\s*\[[A-Za-z0-9]{3,4}\]\s*$"#
+
+        if let Range = Cleaned.range(of: BracketedCodePattern, options: .regularExpression)
+        {
+            Cleaned = String(Cleaned[Cleaned.startIndex..<Range.lowerBound])
+        }
+        
         return Cleaned.trimmingCharacters(in: .whitespaces)
     }
     
