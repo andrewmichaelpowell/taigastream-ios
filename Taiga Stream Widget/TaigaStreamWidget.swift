@@ -197,22 +197,22 @@ public class PlayStreamData: NSObject, ObservableObject
 
     let StreamMetadataAPIs: [String: String] =
     [
-        "streamguys1.com/live/abccountry"                             : "https://music.abcradio.net.au/api/v1/plays/country/now.json",
-        "streamguys1.com/live/abcjazz"                                : "https://music.abcradio.net.au/api/v1/plays/jazz/now.json",
-        "streamguys1.com/live/classicfmnsw"                           : "https://music.abcradio.net.au/api/v1/plays/classic/now.json",
-        "streamguys1.com/live/classic2"                               : "https://music.abcradio.net.au/api/v1/plays/classic2/now.json",
-        "streamguys1.com/live/doublejnsw"                             : "https://music.abcradio.net.au/api/v1/plays/doublej/now.json",
-        "streamguys1.com/live/triplejnsw"                             : "https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
-        "streamguys1.com/live/triplejhottest"                         : "https://music.abcradio.net.au/api/v1/plays/h100/now.json",
-        "streamguys1.com/live/triplejunearthed"                       : "https://music.abcradio.net.au/api/v1/plays/unearthed/now.json",
-        "streaming.abc-cdn.net.au/audio/hls/abccountry.m3u8"          : "https://music.abcradio.net.au/api/v1/plays/country/now.json",
-        "streaming.abc-cdn.net.au/audio/hls/abcjazz.m3u8"             : "https://music.abcradio.net.au/api/v1/plays/jazz/now.json",
-        "streaming.abc-cdn.net.au/audio/hls/classicfmnsw.m3u8"        : "https://music.abcradio.net.au/api/v1/plays/classic/now.json",
-        "streaming.abc-cdn.net.au/audio/hls/classic2.m3u8"            : "https://music.abcradio.net.au/api/v1/plays/classic2/now.json",
-        "streaming.abc-cdn.net.au/audio/hls/doublejnsw.m3u8"          : "https://music.abcradio.net.au/api/v1/plays/doublej/now.json",
-        "streaming.abc-cdn.net.au/audio/hls/triplejnsw.m3u8"          : "https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
-        "streaming.abc-cdn.net.au/audio/hls/triplejhottest.m3u8"      : "https://music.abcradio.net.au/api/v1/plays/h100/now.json",
-        "streaming.abc-cdn.net.au/audio/hls/triplejunearthed.m3u8"    : "https://music.abcradio.net.au/api/v1/plays/unearthed/now.json",
+        "streamguys1.com/live/abccountry" : "https://music.abcradio.net.au/api/v1/plays/country/now.json",
+        "streamguys1.com/live/abcjazz" : "https://music.abcradio.net.au/api/v1/plays/jazz/now.json",
+        "streamguys1.com/live/classicfmnsw" : "https://music.abcradio.net.au/api/v1/plays/classic/now.json",
+        "streamguys1.com/live/classic2" : "https://music.abcradio.net.au/api/v1/plays/classic2/now.json",
+        "streamguys1.com/live/doublejnsw" : "https://music.abcradio.net.au/api/v1/plays/doublej/now.json",
+        "streamguys1.com/live/triplejnsw" : "https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
+        "streamguys1.com/live/triplejhottest" : "https://music.abcradio.net.au/api/v1/plays/h100/now.json",
+        "streamguys1.com/live/triplejunearthed" : "https://music.abcradio.net.au/api/v1/plays/unearthed/now.json",
+        "streaming.abc-cdn.net.au/audio/hls/abccountry.m3u8" : "https://music.abcradio.net.au/api/v1/plays/country/now.json",
+        "streaming.abc-cdn.net.au/audio/hls/abcjazz.m3u8" : "https://music.abcradio.net.au/api/v1/plays/jazz/now.json",
+        "streaming.abc-cdn.net.au/audio/hls/classicfmnsw.m3u8" : "https://music.abcradio.net.au/api/v1/plays/classic/now.json",
+        "streaming.abc-cdn.net.au/audio/hls/classic2.m3u8" : "https://music.abcradio.net.au/api/v1/plays/classic2/now.json",
+        "streaming.abc-cdn.net.au/audio/hls/doublejnsw.m3u8" : "https://music.abcradio.net.au/api/v1/plays/doublej/now.json",
+        "streaming.abc-cdn.net.au/audio/hls/triplejnsw.m3u8" : "https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
+        "streaming.abc-cdn.net.au/audio/hls/triplejhottest.m3u8" : "https://music.abcradio.net.au/api/v1/plays/h100/now.json",
+        "streaming.abc-cdn.net.au/audio/hls/triplejunearthed.m3u8" : "https://music.abcradio.net.au/api/v1/plays/unearthed/now.json",
     ]
     
     var ICYPollTimer: AnyCancellable?
@@ -267,7 +267,9 @@ public class PlayStreamData: NSObject, ObservableObject
 
     private func PollABCRadioMetadata(APIURL: URL)
     {
-        URLSession.shared.dataTask(with: APIURL) { [weak self] Data, _, Error in
+        URLSession.shared.dataTask(with: APIURL)
+        {
+            [weak self] Data, _, Error in
             guard let self = self,
                   let Data = Data,
                   Error == nil,
@@ -287,12 +289,12 @@ public class PlayStreamData: NSObject, ObservableObject
                 Artist = Artists.compactMap { $0["name"] as? String }.joined(separator: ", ")
             }
 
-            let combined = "\(Artist)|\(Title)"
-            guard !Title.isEmpty, combined != self.LastICYTitle else
+            let Combined = "\(Artist)|\(Title)"
+            guard !Title.isEmpty, Combined != self.LastICYTitle else
             {
                 return
             }
-            self.LastICYTitle = combined
+            self.LastICYTitle = Combined
             let ResolvedArtist = Artist.isEmpty ? "Taiga Stream" : Artist
             let ResolvedTitle  = Title.isEmpty  ? "Stream \(self.CurrentStream)" : Title
             DispatchQueue.main.async {
