@@ -193,6 +193,174 @@ public class PlayStreamData: NSObject, ObservableObject
         MetadataOutput = Output
     }
     
+    public typealias MetadataAPIFetcher = (URL) -> String?
+
+    let StreamMetadataAPIs: [String: String] =
+    [
+        "streamguys1.com/live/abccountry"                             : "https://music.abcradio.net.au/api/v1/plays/country/now.json",
+        "streamguys1.com/live/abcjazz"                                : "https://music.abcradio.net.au/api/v1/plays/jazz/now.json",
+        "streamguys1.com/live/classicfmnsw"                           : "https://music.abcradio.net.au/api/v1/plays/classic/now.json",
+        "streamguys1.com/live/classic2"                               : "https://music.abcradio.net.au/api/v1/plays/classic2/now.json",
+        "streamguys1.com/live/doublejnsw"                             : "https://music.abcradio.net.au/api/v1/plays/doublej/now.json",
+        "streamguys1.com/live/triplejnsw"                             : "https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
+        "streamguys1.com/live/triplejhottest"                         : "https://music.abcradio.net.au/api/v1/plays/h100/now.json",
+        "streamguys1.com/live/triplejunearthed"                       : "https://music.abcradio.net.au/api/v1/plays/unearthed/now.json",
+        "streaming.abc-cdn.net.au/audio/hls/abccountry.m3u8"          : "https://music.abcradio.net.au/api/v1/plays/country/now.json",
+        "streaming.abc-cdn.net.au/audio/hls/abcjazz.m3u8"             : "https://music.abcradio.net.au/api/v1/plays/jazz/now.json",
+        "streaming.abc-cdn.net.au/audio/hls/classicfmnsw.m3u8"        : "https://music.abcradio.net.au/api/v1/plays/classic/now.json",
+        "streaming.abc-cdn.net.au/audio/hls/classic2.m3u8"            : "https://music.abcradio.net.au/api/v1/plays/classic2/now.json",
+        "streaming.abc-cdn.net.au/audio/hls/doublejnsw.m3u8"          : "https://music.abcradio.net.au/api/v1/plays/doublej/now.json",
+        "streaming.abc-cdn.net.au/audio/hls/triplejnsw.m3u8"          : "https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
+        "streaming.abc-cdn.net.au/audio/hls/triplejhottest.m3u8"      : "https://music.abcradio.net.au/api/v1/plays/h100/now.json",
+        "streaming.abc-cdn.net.au/audio/hls/triplejunearthed.m3u8"    : "https://music.abcradio.net.au/api/v1/plays/unearthed/now.json",
+    ]
+    
+    var ICYPollTimer: AnyCancellable?
+    var LastICYTitle: String = ""
+
+    public func StartICYPolling(streamURL: URL)
+    {
+        StopICYPolling()
+        LastICYTitle = ""
+        let streamString = streamURL.absoluteString
+        let apiURLString = StreamMetadataAPIs.first(where: { streamString.contains($0.key) })?.value
+        
+        if let apiURLString = apiURLString, let apiURL = URL(string: apiURLString)
+        {
+            PollABCRadioMetadata(apiURL: apiURL)
+            ICYPollTimer = Timer.publish(every: 15.0, on: .main, in: .common)
+                .autoconnect()
+                .sink
+            {
+                [weak self] _ in self?.PollABCRadioMetadata(apiURL: apiURL)
+            }
+        }
+        else
+        {
+            guard var components = URLComponents(url: streamURL, resolvingAgainstBaseURL: false) else
+            {
+                return
+            }
+            components.path = "/status-json.xsl"
+            components.query = nil
+            guard let statusURL = components.url else
+            {
+                return
+            }
+            let mountPath = streamURL.path
+            PollICYMetadata(statusURL: statusURL, mountPath: mountPath)
+            ICYPollTimer = Timer.publish(every: 15.0, on: .main, in: .common)
+                .autoconnect()
+                .sink
+            {
+                [weak self] _ in self?.PollICYMetadata(statusURL: statusURL, mountPath: mountPath)
+            }
+        }
+    }
+
+    public func StopICYPolling()
+    {
+        ICYPollTimer = nil
+        LastICYTitle = ""
+    }
+
+    private func PollABCRadioMetadata(apiURL: URL)
+    {
+        URLSession.shared.dataTask(with: apiURL) { [weak self] data, _, error in
+            guard let self = self,
+                  let data = data,
+                  error == nil,
+                  let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  let now = json["now"] as? [String: Any],
+                  let recording = now["recording"] as? [String: Any]
+            else
+            {
+                return
+            }
+
+            let title = (recording["title"] as? String ?? "").trimmingCharacters(in: .whitespaces)
+            var artist = ""
+
+            if let artists = recording["artists"] as? [[String: Any]]
+            {
+                artist = artists.compactMap { $0["name"] as? String }.joined(separator: ", ")
+            }
+
+            let combined = "\(artist)|\(title)"
+            guard !title.isEmpty, combined != self.LastICYTitle else { return }
+            self.LastICYTitle = combined
+            let resolvedArtist = artist.isEmpty ? "Taiga Stream" : artist
+            let resolvedTitle  = title.isEmpty  ? "Stream \(self.CurrentStream)" : title
+            DispatchQueue.main.async {
+                self.UpdateNowPlayingInfo(artist: resolvedArtist, title: resolvedTitle)
+                self.FetchArtwork(artist: resolvedArtist, title: resolvedTitle)
+            }
+        }
+        .resume()
+    }
+
+    private func PollICYMetadata(statusURL: URL, mountPath: String)
+    {
+        URLSession.shared.dataTask(with: statusURL)
+        {
+            [weak self] data, _, error in
+            guard let self = self,
+                  let data = data,
+                  error == nil,
+                  let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  let icestats = json["icestats"] as? [String: Any]
+            else
+            {
+                return
+            }
+
+            var sources: [[String: Any]] = []
+            if let array = icestats["source"] as? [[String: Any]]
+            {
+                sources = array
+            }
+            else if let single = icestats["source"] as? [String: Any]
+            {
+                sources = [single]
+            }
+
+            let match = sources.first { ($0["listenurl"] as? String)?.hasSuffix(mountPath) == true } ?? sources.first
+
+            guard let source = match,
+                  let rawTitle = source["title"] as? String
+            else
+            {
+                return
+            }
+
+            let title = rawTitle.trimmingCharacters(in: .whitespaces)
+            guard !title.isEmpty, title != self.LastICYTitle else { return }
+            self.LastICYTitle = title
+            let parts = title.components(separatedBy: " - ")
+            let artist: String
+            let songTitle: String
+
+            if parts.count >= 2
+            {
+                artist    = self.CleanMetadataString(parts[0].trimmingCharacters(in: .whitespaces))
+                songTitle = self.CleanMetadataString(parts.dropFirst().joined(separator: " - ").trimmingCharacters(in: .whitespaces))
+            }
+            else
+            {
+                artist    = "Taiga Stream"
+                songTitle = self.CleanMetadataString(title)
+            }
+
+            let resolvedArtist = artist.isEmpty ? "Taiga Stream" : artist
+            let resolvedTitle  = songTitle.isEmpty ? "Stream \(self.CurrentStream)" : songTitle
+            DispatchQueue.main.async {
+                self.UpdateNowPlayingInfo(artist: resolvedArtist, title: resolvedTitle)
+                self.FetchArtwork(artist: resolvedArtist, title: resolvedTitle)
+            }
+        }
+        .resume()
+    }
+    
     private func CleanMetadataString(_ Artist: String) -> String
     {
         let ISRCPattern = #"\s*-\s*[A-Z][A-Z0-9]{7,11}$"#
@@ -641,6 +809,7 @@ public class PlayStreamButton
         Data.ObserveStreamMetadata()
         Data.PlayStream.play()
         Data.StartPlaybackHeartbeat()
+        Data.StartICYPolling(streamURL: StreamURL)
     }
     
     private func PlayButtonAction(StreamURL: URL, StreamNumber: Int)
@@ -650,6 +819,7 @@ public class PlayStreamButton
         {
             Data.PlayStream.pause()
             Data.StopPlaybackHeartbeat()
+            Data.StopICYPolling()
             try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
         }
         else
