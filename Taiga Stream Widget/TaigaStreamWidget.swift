@@ -213,6 +213,11 @@ public class PlayStreamData: NSObject, ObservableObject
         "streaming.abc-cdn.net.au/audio/hls/triplejnsw.m3u8" : "https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
         "streaming.abc-cdn.net.au/audio/hls/triplejhottest.m3u8" : "https://music.abcradio.net.au/api/v1/plays/h100/now.json",
         "streaming.abc-cdn.net.au/audio/hls/triplejunearthed.m3u8" : "https://music.abcradio.net.au/api/v1/plays/unearthed/now.json",
+        "bbc_1xtra" : "https://rms.api.bbc.co.uk/v2/services/bbc_1xtra/segments/latest?experience=domestic&offset=0&limit=1",
+        "bbc_6music" : "https://rms.api.bbc.co.uk/v2/services/bbc_6music/segments/latest?experience=domestic&offset=0&limit=1",
+        "bbc_radio_one" : "https://rms.api.bbc.co.uk/v2/services/bbc_radio_one/segments/latest?experience=domestic&offset=0&limit=1",
+        "bbc_radio_two" : "https://rms.api.bbc.co.uk/v2/services/bbc_radio_two/segments/latest?experience=domestic&offset=0&limit=1",
+        "bbc_radio_three" : "https://rms.api.bbc.co.uk/v2/services/bbc_radio_three/segments/latest?experience=domestic&offset=0&limit=1",
     ]
     
     var ICYPollTimer: AnyCancellable?
@@ -227,12 +232,25 @@ public class PlayStreamData: NSObject, ObservableObject
         
         if let APIURLString = APIURLString, let APIURL = URL(string: APIURLString)
         {
-            PollABCRadioMetadata(APIURL: APIURL)
-            ICYPollTimer = Timer.publish(every: 15.0, on: .main, in: .common)
-                .autoconnect()
-                .sink
+            if APIURLString.contains("rms.api.bbc.co.uk")
             {
-                [weak self] _ in self?.PollABCRadioMetadata(APIURL: APIURL)
+                PollBBCRadioMetadata(APIURL: APIURL)
+                ICYPollTimer = Timer.publish(every: 15.0, on: .main, in: .common)
+                    .autoconnect()
+                    .sink
+                {
+                    [weak self] _ in self?.PollBBCRadioMetadata(APIURL: APIURL)
+                }
+            }
+            else if APIURLString.contains("music.abcradio.net.au")
+            {
+                PollABCRadioMetadata(APIURL: APIURL)
+                ICYPollTimer = Timer.publish(every: 15.0, on: .main, in: .common)
+                    .autoconnect()
+                    .sink
+                {
+                    [weak self] _ in self?.PollABCRadioMetadata(APIURL: APIURL)
+                }
             }
         }
         else
@@ -305,6 +323,45 @@ public class PlayStreamData: NSObject, ObservableObject
         .resume()
     }
 
+    private func PollBBCRadioMetadata(APIURL: URL)
+    {
+        var Request = URLRequest(url: APIURL)
+        Request.setValue("application/json", forHTTPHeaderField: "Accept")
+        URLSession.shared.dataTask(with: Request)
+        {
+            [weak self] Data, _, Error in
+            guard let self = self,
+                  let Data = Data,
+                  Error == nil,
+                  let JSON = try? JSONSerialization.jsonObject(with: Data) as? [String: Any],
+                  let DataArray = JSON["data"] as? [[String: Any]],
+                  let NowPlaying = DataArray.first(where: {($0["offset"] as? [String: Any])?["now_playing"] as? Bool == true}) ?? DataArray.first,
+                  let Titles = NowPlaying["titles"] as? [String: Any]
+            else
+            {
+                return
+            }
+
+            let Artist = (Titles["primary"] as? String ?? "").trimmingCharacters(in: .whitespaces)
+            let Title  = (Titles["secondary"] as? String ?? "").trimmingCharacters(in: .whitespaces)
+            let Combined = "\(Artist)|\(Title)"
+            guard !Title.isEmpty, Combined != self.LastICYTitle else
+            {
+                return
+            }
+            
+            self.LastICYTitle = Combined
+            let ResolvedArtist = Artist.isEmpty ? "Taiga Stream" : Artist
+            let ResolvedTitle  = Title.isEmpty  ? "Stream \(self.CurrentStream)" : Title
+            DispatchQueue.main.async
+            {
+                self.UpdateNowPlayingInfo(artist: ResolvedArtist, title: ResolvedTitle)
+                self.FetchArtwork(artist: ResolvedArtist, title: ResolvedTitle)
+            }
+        }
+        .resume()
+    }
+    
     private func PollICYMetadata(StatusURL: URL, MountPath: String)
     {
         URLSession.shared.dataTask(with: StatusURL)
