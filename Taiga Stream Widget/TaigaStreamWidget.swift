@@ -197,6 +197,11 @@ public class PlayStreamData: NSObject, ObservableObject
 
     let StreamMetadataAPIs: [String: String] =
     [
+        "bbc_1xtra" : "https://rms.api.bbc.co.uk/v2/services/bbc_1xtra/segments/latest?experience=domestic&offset=0&limit=1",
+        "bbc_6music" : "https://rms.api.bbc.co.uk/v2/services/bbc_6music/segments/latest?experience=domestic&offset=0&limit=1",
+        "bbc_radio_one" : "https://rms.api.bbc.co.uk/v2/services/bbc_radio_one/segments/latest?experience=domestic&offset=0&limit=1",
+        "bbc_radio_two" : "https://rms.api.bbc.co.uk/v2/services/bbc_radio_two/segments/latest?experience=domestic&offset=0&limit=1",
+        "bbc_radio_three" : "https://rms.api.bbc.co.uk/v2/services/bbc_radio_three/segments/latest?experience=domestic&offset=0&limit=1",
         "streamguys1.com/live/abccountry" : "https://music.abcradio.net.au/api/v1/plays/country/now.json",
         "streamguys1.com/live/abcjazz" : "https://music.abcradio.net.au/api/v1/plays/jazz/now.json",
         "streamguys1.com/live/classicfmnsw" : "https://music.abcradio.net.au/api/v1/plays/classic/now.json",
@@ -213,11 +218,6 @@ public class PlayStreamData: NSObject, ObservableObject
         "streaming.abc-cdn.net.au/audio/hls/triplejnsw.m3u8" : "https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
         "streaming.abc-cdn.net.au/audio/hls/triplejhottest.m3u8" : "https://music.abcradio.net.au/api/v1/plays/h100/now.json",
         "streaming.abc-cdn.net.au/audio/hls/triplejunearthed.m3u8" : "https://music.abcradio.net.au/api/v1/plays/unearthed/now.json",
-        "bbc_1xtra" : "https://rms.api.bbc.co.uk/v2/services/bbc_1xtra/segments/latest?experience=domestic&offset=0&limit=1",
-        "bbc_6music" : "https://rms.api.bbc.co.uk/v2/services/bbc_6music/segments/latest?experience=domestic&offset=0&limit=1",
-        "bbc_radio_one" : "https://rms.api.bbc.co.uk/v2/services/bbc_radio_one/segments/latest?experience=domestic&offset=0&limit=1",
-        "bbc_radio_two" : "https://rms.api.bbc.co.uk/v2/services/bbc_radio_two/segments/latest?experience=domestic&offset=0&limit=1",
-        "bbc_radio_three" : "https://rms.api.bbc.co.uk/v2/services/bbc_radio_three/segments/latest?experience=domestic&offset=0&limit=1",
     ]
     
     var ICYPollTimer: AnyCancellable?
