@@ -477,12 +477,14 @@ public class PlayStreamData: NSObject, ObservableObject
         }
         
         let AdMarkerPattern = #"(?i)(spot\s+block|ad\s+break|commercial\s+break)"#
+
         if TrimmedValue.range(of: AdMarkerPattern, options: .regularExpression) != nil
         {
             return true
         }
         
         let XMLAttributePattern = #"\w+\s*=\s*""#
+
         if TrimmedValue.range(of: XMLAttributePattern, options: .regularExpression) != nil
         {
             return true
@@ -505,8 +507,8 @@ public class PlayStreamData: NSObject, ObservableObject
                     let cleaned = CleanMetadataString(Value)
                     Artist = JunkMetadata(cleaned) ? "" : cleaned
                 }
-                else if Item.commonKey == .commonKeyTitle,
-                        let Value = try? await Item.load(.stringValue)
+
+                else if Item.commonKey == .commonKeyTitle, let Value = try? await Item.load(.stringValue)
                 {
                     let Parts = Value.components(separatedBy: " - ")
                     let ISRCPattern = #"^[A-Z][A-Z0-9]{7,11}$"#
@@ -569,6 +571,7 @@ public class PlayStreamData: NSObject, ObservableObject
                 SetFallbackArtwork()
                 FallbackArtworkSet = true
             }
+            
             return
         }
         
@@ -602,8 +605,7 @@ public class PlayStreamData: NSObject, ObservableObject
                 return
             }
             
-            let HighResArtworkString = ArtworkString
-                .replacingOccurrences(of: "100x100bb", with: "600x600bb")
+            let HighResArtworkString = ArtworkString.replacingOccurrences(of: "100x100bb", with: "600x600bb")
             guard let ArtworkURL = URL(string: HighResArtworkString) else
             {
                 DispatchQueue.main.async
