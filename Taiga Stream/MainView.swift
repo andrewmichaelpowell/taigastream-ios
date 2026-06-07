@@ -6,11 +6,11 @@ import SwiftUI
 struct MainView: View
 {
     @ObservedObject var playStreamDataShared = PlayStreamData.shared
-
+    
     let color1 = Color(red: 36/255.0, green: 36/255.0, blue: 40/255.0, opacity: 1.0)
     let color2 = Color(red: 2/255.0, green: 218/255.0, blue: 195/255.0, opacity: 1.0)
     let color3 = Color(red: 72/255.0, green: 72/255.0, blue: 80/255.0, opacity: 1.0)
-
+    
     var body: some View
     {
         ScrollView
@@ -38,7 +38,7 @@ struct MainView: View
                             forKey: "Stream\(streamNumber)Key"
                         )
                     }
-
+                    
                     PlayButton(streamNumber: streamNumber)
                 }
                 .padding(.horizontal)
@@ -54,21 +54,21 @@ struct PlayButton: View
 {
     let streamNumber: Int
     @ObservedObject var data = PlayStreamData.shared
-
+    
     let Color1 = Color(red: 36/255.0, green: 36/255.0, blue: 40/255.0, opacity: 1.0)
     let Color2 = Color(red: 2/255.0, green: 218/255.0, blue: 195/255.0, opacity: 1.0)
     let Color3 = Color(red: 72/255.0, green: 72/255.0, blue: 80/255.0, opacity: 1.0)
-
+    
     private var playingStatus: Bool
     {
         data.isPlaying && data.currentStream == streamNumber && data.streams[streamNumber - 1] != ""
     }
-
+    
     private var dataStatus: Bool
     {
         data.streams[streamNumber - 1] == ""
     }
-
+    
     var body: some View
     {
         Button(action: { PlayStreamButton.shared.playButtonClick(streamNumber: streamNumber) })

@@ -167,7 +167,7 @@ public class PlayStreamData: NSObject, ObservableObject
     }
     
     public typealias metadataApiFetcher = (URL) -> String?
-
+    
     private let streamMetadataApis: [String: String] =
     [
         "bbc_1xtra" : "https://rms.api.bbc.co.uk/v2/services/bbc_1xtra/segments/latest?experience=domestic&offset=0&limit=1",
@@ -195,7 +195,7 @@ public class PlayStreamData: NSObject, ObservableObject
     
     private var icyPollTimer: AnyCancellable?
     private var lastIcyTitle: String = ""
-
+    
     func startIcyPolling(streamUrl: URL)
     {
         stopIcyPolling()
@@ -249,13 +249,13 @@ public class PlayStreamData: NSObject, ObservableObject
             }
         }
     }
-
+    
     func stopIcyPolling()
     {
         icyPollTimer = nil
         lastIcyTitle = ""
     }
-
+    
     private func pollAbcRadioMetadata(apiUrl: URL)
     {
         URLSession.shared.dataTask(with: apiUrl)
@@ -271,15 +271,15 @@ public class PlayStreamData: NSObject, ObservableObject
             {
                 return
             }
-
+            
             let title = (recording["title"] as? String ?? "").trimmingCharacters(in: .whitespaces)
             var artist = ""
-
+            
             if let artists = recording["artists"] as? [[String: Any]]
             {
                 artist = artists.compactMap { $0["name"] as? String }.joined(separator: ", ")
             }
-
+            
             let combined = "\(artist)|\(title)"
             guard !title.isEmpty, combined != self.lastIcyTitle else
             {
@@ -296,7 +296,7 @@ public class PlayStreamData: NSObject, ObservableObject
         }
         .resume()
     }
-
+    
     private func pollBbcRadioMetadata(apiUrl: URL)
     {
         var request = URLRequest(url: apiUrl)
@@ -315,7 +315,7 @@ public class PlayStreamData: NSObject, ObservableObject
             {
                 return
             }
-
+            
             let artist = (titles["primary"] as? String ?? "").trimmingCharacters(in: .whitespaces)
             let title  = (titles["secondary"] as? String ?? "").trimmingCharacters(in: .whitespaces)
             let combined = "\(artist)|\(title)"
@@ -350,7 +350,7 @@ public class PlayStreamData: NSObject, ObservableObject
             {
                 return
             }
-
+            
             var sources: [[String: Any]] = []
             if let array = iceStats["source"] as? [[String: Any]]
             {
@@ -360,23 +360,23 @@ public class PlayStreamData: NSObject, ObservableObject
             {
                 sources = [single]
             }
-
+            
             let match = sources.first { ($0["listenurl"] as? String)?.hasSuffix(mountPath) == true } ?? sources.first
-
+            
             guard let source = match,
                   let rawTitle = source["title"] as? String
             else
             {
                 return
             }
-
+            
             let title = rawTitle.trimmingCharacters(in: .whitespaces)
             guard !title.isEmpty, title != self.lastIcyTitle else { return }
             self.lastIcyTitle = title
             let parts = title.components(separatedBy: " - ")
             let artist: String
             let songTitle: String
-
+            
             if parts.count >= 2
             {
                 artist = self.cleanMetadataString(parts[0].trimmingCharacters(in: .whitespaces))
@@ -387,7 +387,7 @@ public class PlayStreamData: NSObject, ObservableObject
                 artist = "Taiga Stream"
                 songTitle = self.cleanMetadataString(title)
             }
-
+            
             let resolvedArtist = artist.isEmpty ? "Taiga Stream" : artist
             let resolvedTitle  = songTitle.isEmpty ? "Stream \(self.currentStream)" : songTitle
             DispatchQueue.main.async
@@ -417,7 +417,7 @@ public class PlayStreamData: NSObject, ObservableObject
         }
         
         let bracketedCodePattern = #"\s*\[[A-Za-z0-9]{3,4}\]\s*$"#
-
+        
         if let range = cleaned.range(of: bracketedCodePattern, options: .regularExpression)
         {
             cleaned = String(cleaned[cleaned.startIndex..<range.lowerBound])
@@ -452,14 +452,14 @@ public class PlayStreamData: NSObject, ObservableObject
         }
         
         let adMarkerPattern = #"(?i)(spot\s+block|ad\s+break|commercial\s+break)"#
-
+        
         if trimmedValue.range(of: adMarkerPattern, options: .regularExpression) != nil
         {
             return true
         }
         
         let xmlAttributePattern = #"\w+\s*=\s*""#
-
+        
         if trimmedValue.range(of: xmlAttributePattern, options: .regularExpression) != nil
         {
             return true
@@ -482,7 +482,7 @@ public class PlayStreamData: NSObject, ObservableObject
                     let cleaned = cleanMetadataString(value)
                     artist = junkMetadata(cleaned) ? "" : cleaned
                 }
-
+                
                 else if item.commonKey == .commonKeyTitle, let value = try? await item.load(.stringValue)
                 {
                     let parts = value.components(separatedBy: " - ")
@@ -887,7 +887,7 @@ private func makeStreamControl(streamNumber: Int) -> some ControlWidgetConfigura
     {
         let streamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
         let streamStatus = (streamState?.bool(forKey: "PlayingKey") ?? false)
-                && (streamState?.integer(forKey: "CurrentStreamKey") ?? 0) == streamNumber
+        && (streamState?.integer(forKey: "CurrentStreamKey") ?? 0) == streamNumber
         return ControlWidgetToggle(isOn: streamStatus, action: PlayStreamToggleIntent(streamNumber: streamNumber))
         {
             Label("Stream \(streamNumber)", systemImage: "\(streamNumber).circle")
@@ -903,7 +903,7 @@ struct PlayStreamToggleIntent: SetValueIntent, AudioPlaybackIntent
     static let title: LocalizedStringResource = "Play Stream"
     @Parameter(title: "Stream Number") var streamNumber: Int
     @Parameter(title: "Stream Status") var value: Bool
-
+    
     init(streamNumber: Int)
     {
         self.streamNumber = streamNumber
@@ -913,7 +913,7 @@ struct PlayStreamToggleIntent: SetValueIntent, AudioPlaybackIntent
     {
         self.streamNumber = 1
     }
-
+    
     @MainActor func perform() async throws -> some IntentResult
     {
         PlayStreamButton.shared.playButtonClick(streamNumber: streamNumber)
