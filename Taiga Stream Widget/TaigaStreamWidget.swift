@@ -3,7 +3,6 @@
 
 import SwiftUI
 import AppIntents
-import AVKit
 import AVFoundation
 import Combine
 import MediaPlayer
@@ -11,109 +10,82 @@ import WidgetKit
 
 public class PlayStreamData: NSObject, ObservableObject
 {
-    static let SharedResource = PlayStreamData()
-    let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
-    var PlayerCancellables = Set<AnyCancellable>()
-    var SessionCancellables = Set<AnyCancellable>()
-    var MetadataCancellable: AnyCancellable?
-    var PlaybackHeartbeat: AnyCancellable?
+    static let shared = PlayStreamData()
+    let streamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
+    var playerCancellables = Set<AnyCancellable>()
+    var sessionCancellables = Set<AnyCancellable>()
+    var metadataCancellable: AnyCancellable?
+    var playbackHeartbeat: AnyCancellable?
     
-    var CurrentStream: Int
+    var currentStream: Int
     {
         get
         {
-            StreamState.integer(forKey: "CurrentStreamKey")
+            streamState.integer(forKey: "CurrentStreamKey")
         }
         set
         {
-            StreamState.set(newValue, forKey: "CurrentStreamKey")
-            StreamState.synchronize()
+            streamState.set(newValue, forKey: "CurrentStreamKey")
+            streamState.synchronize()
         }
     }
     
-    var Playing: Bool
+    var isPlaying: Bool
     {
         get
         {
-            StreamState.bool(forKey: "PlayingKey")
+            streamState.bool(forKey: "PlayingKey")
         }
         set
         {
-            StreamState.set(newValue, forKey: "PlayingKey")
-            StreamState.synchronize()
+            streamState.set(newValue, forKey: "PlayingKey")
+            streamState.synchronize()
             objectWillChange.send()
             DispatchQueue.main.async
             {
                 ControlCenter.shared.reloadAllControls()
             }
-            UpdateNowPlayingPlaybackState()
+            updateNowPlayingPlaybackState()
         }
     }
     
-    @Published var PlayStream = AVPlayer()
-    @Published var Stream1:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream1Key") ?? ""
-    @Published var Stream2:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream2Key") ?? ""
-    @Published var Stream3:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream3Key") ?? ""
-    @Published var Stream4:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream4Key") ?? ""
-    @Published var Stream5:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream5Key") ?? ""
-    @Published var Stream6:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream6Key") ?? ""
-    @Published var Stream7:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream7Key") ?? ""
-    @Published var Stream8:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream8Key") ?? ""
-    @Published var Stream9:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream9Key") ?? ""
-    @Published var Stream10:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream10Key") ?? ""
-    @Published var Stream11:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream11Key") ?? ""
-    @Published var Stream12:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream12Key") ?? ""
-    @Published var Stream13:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream13Key") ?? ""
-    @Published var Stream14:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream14Key") ?? ""
-    @Published var Stream15:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream15Key") ?? ""
-    @Published var Stream16:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream16Key") ?? ""
-    @Published var Stream17:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream17Key") ?? ""
-    @Published var Stream18:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream18Key") ?? ""
-    @Published var Stream19:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream19Key") ?? ""
-    @Published var Stream20:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream20Key") ?? ""
-    @Published var Stream21:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream21Key") ?? ""
-    @Published var Stream22:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream22Key") ?? ""
-    @Published var Stream23:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream23Key") ?? ""
-    @Published var Stream24:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream24Key") ?? ""
-    @Published var Stream25:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream25Key") ?? ""
-    @Published var Stream26:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream26Key") ?? ""
-    @Published var Stream27:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream27Key") ?? ""
-    @Published var Stream28:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream28Key") ?? ""
-    @Published var Stream29:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream29Key") ?? ""
-    @Published var Stream30:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream30Key") ?? ""
-    @Published var Stream31:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream31Key") ?? ""
-    @Published var Stream32:String = NSUbiquitousKeyValueStore.default.string(forKey: "Stream32Key") ?? ""
-
+    @Published var audioPlayer = AVPlayer()
+    @Published var streams: [String] = (1...32).map
+    {
+        NSUbiquitousKeyValueStore.default.string(forKey: "Stream\($0)Key") ?? ""
+    }
+    
     override init()
     {
         super.init()
-        PlayerObservers()
-        SessionObservers()
-        SetupRemoteCommandCenter()
+        playerObservers()
+        sessionObservers()
+        setupRemoteCommandCenter()
     }
     
-    public func SetupRemoteCommandCenter()
+    private func setupRemoteCommandCenter()
     {
-        let CommandCenter = MPRemoteCommandCenter.shared()
-        CommandCenter.playCommand.isEnabled = true
-        CommandCenter.playCommand.addTarget
+        let commandCenter = MPRemoteCommandCenter.shared()
+        commandCenter.playCommand.isEnabled = true
+        commandCenter.playCommand.addTarget
         {
             [weak self] _ in
-            self?.PlayStream.play()
+            self?.audioPlayer.play()
             return .success
         }
         
-        CommandCenter.stopCommand.isEnabled = true
-        CommandCenter.stopCommand.addTarget
+        commandCenter.stopCommand.isEnabled = true
+        commandCenter.stopCommand.addTarget
         {
             [weak self] _ in
-            self?.PlayStream.pause()
+            self?.audioPlayer.pause()
             try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+            self?.clearNowPlayingInfo()
             return .success
         }
         
-        CommandCenter.togglePlayPauseCommand.isEnabled = true
-        CommandCenter.togglePlayPauseCommand.addTarget
+        commandCenter.togglePlayPauseCommand.isEnabled = true
+        commandCenter.togglePlayPauseCommand.addTarget
         {
             [weak self] _ in
             guard let self = self else
@@ -121,81 +93,82 @@ public class PlayStreamData: NSObject, ObservableObject
                 return .commandFailed
             }
             
-            if self.Playing
+            if self.isPlaying
             {
-                self.PlayStream.pause()
+                self.audioPlayer.pause()
                 try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+                self.clearNowPlayingInfo()
             }
             else
             {
-                self.PlayStream.play()
+                self.audioPlayer.play()
             }
             return .success
         }
-        CommandCenter.pauseCommand.isEnabled = false
-        CommandCenter.skipForwardCommand.isEnabled = false
-        CommandCenter.skipForwardCommand.preferredIntervals = []
-        CommandCenter.skipBackwardCommand.isEnabled = false
-        CommandCenter.skipBackwardCommand.preferredIntervals = []
-        CommandCenter.nextTrackCommand.isEnabled = false
-        CommandCenter.previousTrackCommand.isEnabled = false
-        CommandCenter.changePlaybackPositionCommand.isEnabled = false
+        commandCenter.pauseCommand.isEnabled = false
+        commandCenter.skipForwardCommand.isEnabled = false
+        commandCenter.skipForwardCommand.preferredIntervals = []
+        commandCenter.skipBackwardCommand.isEnabled = false
+        commandCenter.skipBackwardCommand.preferredIntervals = []
+        commandCenter.nextTrackCommand.isEnabled = false
+        commandCenter.previousTrackCommand.isEnabled = false
+        commandCenter.changePlaybackPositionCommand.isEnabled = false
     }
     
-    public func UpdateNowPlayingInfo(artist: String = "", title: String = "")
+    func updateNowPlayingInfo(artist: String = "", title: String = "")
     {
-        let ExistingArtwork = MPNowPlayingInfoCenter.default().nowPlayingInfo?[MPMediaItemPropertyArtwork]
-        var NowPlayingInfo = [String: Any]()
-        NowPlayingInfo[MPNowPlayingInfoPropertyIsLiveStream] = true
-        NowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = Playing ? 1.0 : 0.0
-        NowPlayingInfo[MPNowPlayingInfoPropertyDefaultPlaybackRate] = 1.0
-        NowPlayingInfo[MPMediaItemPropertyArtist] = artist.isEmpty ? "Taiga Stream" : artist
-        NowPlayingInfo[MPMediaItemPropertyTitle]  = title.isEmpty  ? "Stream \(CurrentStream)" : title
+        let existingArtwork = MPNowPlayingInfoCenter.default().nowPlayingInfo?[MPMediaItemPropertyArtwork]
+        var nowPlayingInfo = [String: Any]()
+        nowPlayingInfo[MPNowPlayingInfoPropertyIsLiveStream] = true
+        nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = isPlaying ? 1.0 : 0.0
+        nowPlayingInfo[MPNowPlayingInfoPropertyDefaultPlaybackRate] = 1.0
+        nowPlayingInfo[MPMediaItemPropertyArtist] = artist.isEmpty ? "Taiga Stream" : artist
+        nowPlayingInfo[MPMediaItemPropertyTitle]  = title.isEmpty  ? "Stream \(currentStream)" : title
         
-        if let ExistingArtwork = ExistingArtwork
+        if let existingArtwork = existingArtwork
         {
-            NowPlayingInfo[MPMediaItemPropertyArtwork] = ExistingArtwork
+            nowPlayingInfo[MPMediaItemPropertyArtwork] = existingArtwork
         }
         
-        MPNowPlayingInfoCenter.default().nowPlayingInfo = NowPlayingInfo
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
     }
     
-    public func UpdateNowPlayingPlaybackState()
+    private func updateNowPlayingPlaybackState()
     {
         if var NowPlayingInfo = MPNowPlayingInfoCenter.default().nowPlayingInfo
         {
-            NowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = Playing ? 1.0 : 0.0
+            NowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = isPlaying ? 1.0 : 0.0
             MPNowPlayingInfoCenter.default().nowPlayingInfo = NowPlayingInfo
         }
         else
         {
-            UpdateNowPlayingInfo()
+            updateNowPlayingInfo()
         }
     }
     
-    public func ClearNowPlayingInfo()
+    func clearNowPlayingInfo()
     {
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
     }
     
-    var MetadataOutput: AVPlayerItemMetadataOutput?
+    private var metadataOutput: AVPlayerItemMetadataOutput?
     
-    public func ObserveStreamMetadata()
+    func observeStreamMetadata()
     {
-        if let ExistingOutput = MetadataOutput
+        if let existingOutput = metadataOutput
         {
-            PlayStream.currentItem?.remove(ExistingOutput)
+            audioPlayer.currentItem?.remove(existingOutput)
         }
         
-        let Output = AVPlayerItemMetadataOutput(identifiers: nil)
-        Output.setDelegate(self, queue: .main)
-        PlayStream.currentItem?.add(Output)
-        MetadataOutput = Output
+        let output = AVPlayerItemMetadataOutput(identifiers: nil)
+        output.setDelegate(self, queue: .main)
+        audioPlayer.currentItem?.add(output)
+        metadataOutput = output
     }
     
-    public typealias MetadataAPIFetcher = (URL) -> String?
+    public typealias metadataApiFetcher = (URL) -> String?
 
-    let StreamMetadataAPIs: [String: String] =
+    private let streamMetadataApis: [String: String] =
     [
         "bbc_1xtra" : "https://rms.api.bbc.co.uk/v2/services/bbc_1xtra/segments/latest?experience=domestic&offset=0&limit=1",
         "bbc_6music" : "https://rms.api.bbc.co.uk/v2/services/bbc_6music/segments/latest?experience=domestic&offset=0&limit=1",
@@ -220,272 +193,274 @@ public class PlayStreamData: NSObject, ObservableObject
         "streaming.abc-cdn.net.au/audio/hls/triplejunearthed.m3u8" : "https://music.abcradio.net.au/api/v1/plays/unearthed/now.json",
     ]
     
-    var ICYPollTimer: AnyCancellable?
-    var LastICYTitle: String = ""
+    private var icyPollTimer: AnyCancellable?
+    private var lastIcyTitle: String = ""
 
-    public func StartICYPolling(StreamURL: URL)
+    func startIcyPolling(streamUrl: URL)
     {
-        StopICYPolling()
-        LastICYTitle = ""
-        let StreamString = StreamURL.absoluteString
-        let APIURLString = StreamMetadataAPIs.first(where: { StreamString.contains($0.key) })?.value
+        stopIcyPolling()
+        lastIcyTitle = ""
+        let streamString = streamUrl.absoluteString
+        let apiUrlString = streamMetadataApis.first(where: { streamString.contains($0.key) })?.value
         
-        if let APIURLString = APIURLString, let APIURL = URL(string: APIURLString)
+        if let apiUrlString = apiUrlString, let apiUrl = URL(string: apiUrlString)
         {
-            if APIURLString.contains("rms.api.bbc.co.uk")
+            if apiUrlString.contains("rms.api.bbc.co.uk")
             {
-                PollBBCRadioMetadata(APIURL: APIURL)
-                ICYPollTimer = Timer.publish(every: 15.0, on: .main, in: .common)
+                pollBbcRadioMetadata(apiUrl: apiUrl)
+                icyPollTimer = Timer.publish(every: 15.0, on: .main, in: .common)
                     .autoconnect()
                     .sink
                 {
-                    [weak self] _ in self?.PollBBCRadioMetadata(APIURL: APIURL)
+                    [weak self] _ in self?.pollBbcRadioMetadata(apiUrl: apiUrl)
                 }
             }
-            else if APIURLString.contains("music.abcradio.net.au")
+            else if apiUrlString.contains("music.abcradio.net.au")
             {
-                PollABCRadioMetadata(APIURL: APIURL)
-                ICYPollTimer = Timer.publish(every: 15.0, on: .main, in: .common)
+                pollAbcRadioMetadata(apiUrl: apiUrl)
+                icyPollTimer = Timer.publish(every: 15.0, on: .main, in: .common)
                     .autoconnect()
                     .sink
                 {
-                    [weak self] _ in self?.PollABCRadioMetadata(APIURL: APIURL)
+                    [weak self] _ in self?.pollAbcRadioMetadata(apiUrl: apiUrl)
                 }
             }
         }
         else
         {
-            guard var Components = URLComponents(url: StreamURL, resolvingAgainstBaseURL: false) else
+            guard var components = URLComponents(url: streamUrl, resolvingAgainstBaseURL: false) else
             {
                 return
             }
-            Components.path = "/status-json.xsl"
-            Components.query = nil
-            Components.scheme = "https"
-            guard let StatusURL = Components.url else
+            components.path = "/status-json.xsl"
+            components.query = nil
+            components.scheme = "https"
+            guard let statusUrl = components.url else
             {
                 return
             }
-            let MountPath = StreamURL.path
-            PollICYMetadata(StatusURL: StatusURL, MountPath: MountPath)
-            ICYPollTimer = Timer.publish(every: 15.0, on: .main, in: .common)
+            let mountPath = streamUrl.path
+            pollIcyMetadata(statusUrl: statusUrl, mountPath: mountPath)
+            icyPollTimer = Timer.publish(every: 15.0, on: .main, in: .common)
                 .autoconnect()
                 .sink
             {
-                [weak self] _ in self?.PollICYMetadata(StatusURL: StatusURL, MountPath: MountPath)
+                [weak self] _ in self?.pollIcyMetadata(statusUrl: statusUrl, mountPath: mountPath)
             }
         }
     }
 
-    public func StopICYPolling()
+    func stopIcyPolling()
     {
-        ICYPollTimer = nil
-        LastICYTitle = ""
+        icyPollTimer = nil
+        lastIcyTitle = ""
     }
 
-    private func PollABCRadioMetadata(APIURL: URL)
+    private func pollAbcRadioMetadata(apiUrl: URL)
     {
-        URLSession.shared.dataTask(with: APIURL)
+        URLSession.shared.dataTask(with: apiUrl)
         {
-            [weak self] Data, _, Error in
+            [weak self] data, _, error in
             guard let self = self,
-                  let Data = Data,
-                  Error == nil,
-                  let JSON = try? JSONSerialization.jsonObject(with: Data) as? [String: Any],
-                  let Now = JSON["now"] as? [String: Any],
-                  let Recording = Now["recording"] as? [String: Any]
+                  let data = data,
+                  error == nil,
+                  let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  let now = json["now"] as? [String: Any],
+                  let recording = now["recording"] as? [String: Any]
             else
             {
                 return
             }
 
-            let Title = (Recording["title"] as? String ?? "").trimmingCharacters(in: .whitespaces)
-            var Artist = ""
+            let title = (recording["title"] as? String ?? "").trimmingCharacters(in: .whitespaces)
+            var artist = ""
 
-            if let Artists = Recording["artists"] as? [[String: Any]]
+            if let artists = recording["artists"] as? [[String: Any]]
             {
-                Artist = Artists.compactMap { $0["name"] as? String }.joined(separator: ", ")
+                artist = artists.compactMap { $0["name"] as? String }.joined(separator: ", ")
             }
 
-            let Combined = "\(Artist)|\(Title)"
-            guard !Title.isEmpty, Combined != self.LastICYTitle else
+            let combined = "\(artist)|\(title)"
+            guard !title.isEmpty, combined != self.lastIcyTitle else
             {
                 return
             }
-            self.LastICYTitle = Combined
-            let ResolvedArtist = Artist.isEmpty ? "Taiga Stream" : Artist
-            let ResolvedTitle  = Title.isEmpty  ? "Stream \(self.CurrentStream)" : Title
-            DispatchQueue.main.async {
-                self.UpdateNowPlayingInfo(artist: ResolvedArtist, title: ResolvedTitle)
-                self.FetchArtwork(artist: ResolvedArtist, title: ResolvedTitle)
+            self.lastIcyTitle = combined
+            let resolvedArtist = artist.isEmpty ? "Taiga Stream" : artist
+            let resolvedTitle  = title.isEmpty  ? "Stream \(self.currentStream)" : title
+            DispatchQueue.main.async
+            {
+                self.updateNowPlayingInfo(artist: resolvedArtist, title: resolvedTitle)
+                self.fetchArtwork(artist: resolvedArtist, title: resolvedTitle)
             }
         }
         .resume()
     }
 
-    private func PollBBCRadioMetadata(APIURL: URL)
+    private func pollBbcRadioMetadata(apiUrl: URL)
     {
-        var Request = URLRequest(url: APIURL)
-        Request.setValue("application/json", forHTTPHeaderField: "Accept")
-        URLSession.shared.dataTask(with: Request)
+        var request = URLRequest(url: apiUrl)
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        URLSession.shared.dataTask(with: request)
         {
-            [weak self] Data, _, Error in
+            [weak self] data, _, error in
             guard let self = self,
-                  let Data = Data,
-                  Error == nil,
-                  let JSON = try? JSONSerialization.jsonObject(with: Data) as? [String: Any],
-                  let DataArray = JSON["data"] as? [[String: Any]],
-                  let NowPlaying = DataArray.first(where: {($0["offset"] as? [String: Any])?["now_playing"] as? Bool == true}) ?? DataArray.first,
-                  let Titles = NowPlaying["titles"] as? [String: Any]
+                  let data = data,
+                  error == nil,
+                  let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  let dataArray = json["data"] as? [[String: Any]],
+                  let nowPlaying = dataArray.first(where: {($0["offset"] as? [String: Any])?["now_playing"] as? Bool == true}) ?? dataArray.first,
+                  let titles = nowPlaying["titles"] as? [String: Any]
             else
             {
                 return
             }
 
-            let Artist = (Titles["primary"] as? String ?? "").trimmingCharacters(in: .whitespaces)
-            let Title  = (Titles["secondary"] as? String ?? "").trimmingCharacters(in: .whitespaces)
-            let Combined = "\(Artist)|\(Title)"
-            guard !Title.isEmpty, Combined != self.LastICYTitle else
+            let artist = (titles["primary"] as? String ?? "").trimmingCharacters(in: .whitespaces)
+            let title  = (titles["secondary"] as? String ?? "").trimmingCharacters(in: .whitespaces)
+            let combined = "\(artist)|\(title)"
+            guard !title.isEmpty, combined != self.lastIcyTitle else
             {
                 return
             }
             
-            self.LastICYTitle = Combined
-            let ResolvedArtist = Artist.isEmpty ? "Taiga Stream" : Artist
-            let ResolvedTitle  = Title.isEmpty  ? "Stream \(self.CurrentStream)" : Title
+            self.lastIcyTitle = combined
+            let resolvedArtist = artist.isEmpty ? "Taiga Stream" : artist
+            let resolvedTitle  = title.isEmpty  ? "Stream \(self.currentStream)" : title
             DispatchQueue.main.async
             {
-                self.UpdateNowPlayingInfo(artist: ResolvedArtist, title: ResolvedTitle)
-                self.FetchArtwork(artist: ResolvedArtist, title: ResolvedTitle)
+                self.updateNowPlayingInfo(artist: resolvedArtist, title: resolvedTitle)
+                self.fetchArtwork(artist: resolvedArtist, title: resolvedTitle)
             }
         }
         .resume()
     }
     
-    private func PollICYMetadata(StatusURL: URL, MountPath: String)
+    private func pollIcyMetadata(statusUrl: URL, mountPath: String)
     {
-        URLSession.shared.dataTask(with: StatusURL)
+        URLSession.shared.dataTask(with: statusUrl)
         {
-            [weak self] Data, _, Error in
+            [weak self] data, _, error in
             guard let self = self,
-                  let Data = Data,
-                  Error == nil,
-                  let JSON = try? JSONSerialization.jsonObject(with: Data) as? [String: Any],
-                  let Icestats = JSON["icestats"] as? [String: Any]
+                  let data = data,
+                  error == nil,
+                  let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  let iceStats = json["icestats"] as? [String: Any]
             else
             {
                 return
             }
 
-            var Sources: [[String: Any]] = []
-            if let Array = Icestats["source"] as? [[String: Any]]
+            var sources: [[String: Any]] = []
+            if let array = iceStats["source"] as? [[String: Any]]
             {
-                Sources = Array
+                sources = array
             }
-            else if let single = Icestats["source"] as? [String: Any]
+            else if let single = iceStats["source"] as? [String: Any]
             {
-                Sources = [single]
+                sources = [single]
             }
 
-            let Match = Sources.first { ($0["listenurl"] as? String)?.hasSuffix(MountPath) == true } ?? Sources.first
+            let match = sources.first { ($0["listenurl"] as? String)?.hasSuffix(mountPath) == true } ?? sources.first
 
-            guard let Source = Match,
-                  let RawTitle = Source["title"] as? String
+            guard let source = match,
+                  let rawTitle = source["title"] as? String
             else
             {
                 return
             }
 
-            let Title = RawTitle.trimmingCharacters(in: .whitespaces)
-            guard !Title.isEmpty, Title != self.LastICYTitle else { return }
-            self.LastICYTitle = Title
-            let Parts = Title.components(separatedBy: " - ")
-            let Artist: String
-            let SongTitle: String
+            let title = rawTitle.trimmingCharacters(in: .whitespaces)
+            guard !title.isEmpty, title != self.lastIcyTitle else { return }
+            self.lastIcyTitle = title
+            let parts = title.components(separatedBy: " - ")
+            let artist: String
+            let songTitle: String
 
-            if Parts.count >= 2
+            if parts.count >= 2
             {
-                Artist = self.CleanMetadataString(Parts[0].trimmingCharacters(in: .whitespaces))
-                SongTitle = self.CleanMetadataString(Parts.dropFirst().joined(separator: " - ").trimmingCharacters(in: .whitespaces))
+                artist = self.cleanMetadataString(parts[0].trimmingCharacters(in: .whitespaces))
+                songTitle = self.cleanMetadataString(parts.dropFirst().joined(separator: " - ").trimmingCharacters(in: .whitespaces))
             }
             else
             {
-                Artist = "Taiga Stream"
-                SongTitle = self.CleanMetadataString(Title)
+                artist = "Taiga Stream"
+                songTitle = self.cleanMetadataString(title)
             }
 
-            let ResolvedArtist = Artist.isEmpty ? "Taiga Stream" : Artist
-            let ResolvedTitle  = SongTitle.isEmpty ? "Stream \(self.CurrentStream)" : SongTitle
-            DispatchQueue.main.async {
-                self.UpdateNowPlayingInfo(artist: ResolvedArtist, title: ResolvedTitle)
-                self.FetchArtwork(artist: ResolvedArtist, title: ResolvedTitle)
+            let resolvedArtist = artist.isEmpty ? "Taiga Stream" : artist
+            let resolvedTitle  = songTitle.isEmpty ? "Stream \(self.currentStream)" : songTitle
+            DispatchQueue.main.async
+            {
+                self.updateNowPlayingInfo(artist: resolvedArtist, title: resolvedTitle)
+                self.fetchArtwork(artist: resolvedArtist, title: resolvedTitle)
             }
         }
         .resume()
     }
     
-    private func CleanMetadataString(_ Artist: String) -> String
+    private func cleanMetadataString(_ artist: String) -> String
     {
-        let ISRCPattern = #"\s*-\s*[A-Z][A-Z0-9]{7,11}$"#
-        var Cleaned = Artist
+        let isrcPattern = #"\s*-\s*[A-Z][A-Z0-9]{7,11}$"#
+        var cleaned = artist
         
-        if let Range = Cleaned.range(of: ISRCPattern, options: .regularExpression)
+        if let range = cleaned.range(of: isrcPattern, options: .regularExpression)
         {
-            Cleaned = String(Cleaned[Cleaned.startIndex..<Range.lowerBound])
+            cleaned = String(cleaned[cleaned.startIndex..<range.lowerBound])
         }
         
-        let TrailingHyphenPattern = #"\s*-\s*$"#
+        let trailingHyphenPattern = #"\s*-\s*$"#
         
-        if let Range = Cleaned.range(of: TrailingHyphenPattern, options: .regularExpression)
+        if let range = cleaned.range(of: trailingHyphenPattern, options: .regularExpression)
         {
-            Cleaned = String(Cleaned[Cleaned.startIndex..<Range.lowerBound])
+            cleaned = String(cleaned[cleaned.startIndex..<range.lowerBound])
         }
         
-        let BracketedCodePattern = #"\s*\[[A-Za-z0-9]{3,4}\]\s*$"#
+        let bracketedCodePattern = #"\s*\[[A-Za-z0-9]{3,4}\]\s*$"#
 
-        if let Range = Cleaned.range(of: BracketedCodePattern, options: .regularExpression)
+        if let range = cleaned.range(of: bracketedCodePattern, options: .regularExpression)
         {
-            Cleaned = String(Cleaned[Cleaned.startIndex..<Range.lowerBound])
+            cleaned = String(cleaned[cleaned.startIndex..<range.lowerBound])
         }
         
-        return Cleaned.trimmingCharacters(in: .whitespaces)
+        return cleaned.trimmingCharacters(in: .whitespaces)
     }
     
-    private func JunkMetadata(_ value: String) -> Bool
+    private func junkMetadata(_ value: String) -> Bool
     {
-        let TrimmedValue = value.trimmingCharacters(in: .whitespaces)
-        if TrimmedValue.isEmpty
+        let trimmedValue = value.trimmingCharacters(in: .whitespaces)
+        if trimmedValue.isEmpty
         {
             return true
         }
         
-        let StationIDPattern = #"^zc\d+$"#
-        if TrimmedValue.range(of: StationIDPattern, options: [.regularExpression, .caseInsensitive]) != nil
+        let stationIdPattern = #"^zc\d+$"#
+        if trimmedValue.range(of: stationIdPattern, options: [.regularExpression, .caseInsensitive]) != nil
         {
             return true
         }
         
-        let TechnicalIDPattern = #"^[a-z0-9]*_[a-z0-9_]+$"#
-        if TrimmedValue.range(of: TechnicalIDPattern, options: [.regularExpression, .caseInsensitive]) != nil
+        let technicalIdPattern = #"^[a-z0-9]*_[a-z0-9_]+$"#
+        if trimmedValue.range(of: technicalIdPattern, options: [.regularExpression, .caseInsensitive]) != nil
         {
             return true
         }
         
-        if TrimmedValue.contains("/") || TrimmedValue.contains("://")
+        if trimmedValue.contains("/") || trimmedValue.contains("://")
         {
             return true
         }
         
-        let AdMarkerPattern = #"(?i)(spot\s+block|ad\s+break|commercial\s+break)"#
+        let adMarkerPattern = #"(?i)(spot\s+block|ad\s+break|commercial\s+break)"#
 
-        if TrimmedValue.range(of: AdMarkerPattern, options: .regularExpression) != nil
+        if trimmedValue.range(of: adMarkerPattern, options: .regularExpression) != nil
         {
             return true
         }
         
-        let XMLAttributePattern = #"\w+\s*=\s*""#
+        let xmlAttributePattern = #"\w+\s*=\s*""#
 
-        if TrimmedValue.range(of: XMLAttributePattern, options: .regularExpression) != nil
+        if trimmedValue.range(of: xmlAttributePattern, options: .regularExpression) != nil
         {
             return true
         }
@@ -493,147 +468,147 @@ public class PlayStreamData: NSObject, ObservableObject
         return false
     }
     
-    private func ParseMetadata(_ MetadataItems: [AVMetadataItem])
+    private func parseMetadata(_ metadataItems: [AVMetadataItem])
     {
         Task
         {
-            var Artist = ""
-            var Title = ""
-            for Item in MetadataItems
+            var artist = ""
+            var title = ""
+            for item in metadataItems
             {
-                if Item.commonKey == .commonKeyArtist,
-                   let Value = try? await Item.load(.stringValue)
+                if item.commonKey == .commonKeyArtist,
+                   let value = try? await item.load(.stringValue)
                 {
-                    let cleaned = CleanMetadataString(Value)
-                    Artist = JunkMetadata(cleaned) ? "" : cleaned
+                    let cleaned = cleanMetadataString(value)
+                    artist = junkMetadata(cleaned) ? "" : cleaned
                 }
 
-                else if Item.commonKey == .commonKeyTitle, let Value = try? await Item.load(.stringValue)
+                else if item.commonKey == .commonKeyTitle, let value = try? await item.load(.stringValue)
                 {
-                    let Parts = Value.components(separatedBy: " - ")
-                    let ISRCPattern = #"^[A-Z][A-Z0-9]{7,11}$"#
-                    let LastPart = Parts.last?.trimmingCharacters(in: .whitespaces) ?? ""
-                    let LastIsISRC = LastPart.range(of: ISRCPattern, options: .regularExpression) != nil
-                    let LastIsEmpty = LastPart.isEmpty
+                    let parts = value.components(separatedBy: " - ")
+                    let isrcPattern = #"^[A-Z][A-Z0-9]{7,11}$"#
+                    let lastPart = parts.last?.trimmingCharacters(in: .whitespaces) ?? ""
+                    let lastIsIsrc = lastPart.range(of: isrcPattern, options: .regularExpression) != nil
+                    let lastIsEmpty = lastPart.isEmpty
                     
-                    if LastIsISRC || LastIsEmpty
+                    if lastIsIsrc || lastIsEmpty
                     {
-                        let CleanParts = Parts.dropLast().map
+                        let cleanParts = parts.dropLast().map
                         {
                             $0.trimmingCharacters(in: .whitespaces)
                         }
-                        Title = CleanMetadataString(CleanParts.first ?? "")
-                        Artist = CleanMetadataString(CleanParts.dropFirst().joined(separator: " - "))
+                        title = cleanMetadataString(cleanParts.first ?? "")
+                        artist = cleanMetadataString(cleanParts.dropFirst().joined(separator: " - "))
                     }
                     
-                    else if Parts.count >= 2
+                    else if parts.count >= 2
                     {
-                        Artist = CleanMetadataString(Parts[0].trimmingCharacters(in: .whitespaces))
-                        Title = CleanMetadataString(Parts.dropFirst().joined(separator: " - ").trimmingCharacters(in: .whitespaces))
+                        artist = cleanMetadataString(parts[0].trimmingCharacters(in: .whitespaces))
+                        title = cleanMetadataString(parts.dropFirst().joined(separator: " - ").trimmingCharacters(in: .whitespaces))
                     }
                     
                     else
                     {
-                        Title = CleanMetadataString(Value)
+                        title = cleanMetadataString(value)
                     }
                 }
                 
-                if JunkMetadata(Title)
+                if junkMetadata(title)
                 {
-                    Title = ""
+                    title = ""
                 }
                 
-                if JunkMetadata(Artist)
+                if junkMetadata(artist)
                 {
-                    Artist = ""
+                    artist = ""
                 }
             }
             
-            let ResolvedArtist = Artist.isEmpty ? "Taiga Stream" : Artist
-            let ResolvedTitle  = Title.isEmpty  ? "Stream \(CurrentStream)" : Title
+            let resolvedArtist = artist.isEmpty ? "Taiga Stream" : artist
+            let resolvedTitle  = title.isEmpty  ? "Stream \(currentStream)" : title
             
             await MainActor.run
             {
-                UpdateNowPlayingInfo(artist: ResolvedArtist, title: ResolvedTitle)
-                FetchArtwork(artist: ResolvedArtist, title: ResolvedTitle)
+                updateNowPlayingInfo(artist: resolvedArtist, title: resolvedTitle)
+                fetchArtwork(artist: resolvedArtist, title: resolvedTitle)
             }
         }
     }
     
-    public var FallbackArtworkSet = false
+    var isFallbackArtworkSet = false
     
-    private func FetchArtwork(artist: String, title: String)
+    private func fetchArtwork(artist: String, title: String)
     {
-        guard artist != "Taiga Stream" || title != "Stream \(CurrentStream)" else
+        guard artist != "Taiga Stream" || title != "Stream \(currentStream)" else
         {
-            if !FallbackArtworkSet
+            if !isFallbackArtworkSet
             {
-                SetFallbackArtwork()
-                FallbackArtworkSet = true
+                setFallbackArtwork()
+                isFallbackArtworkSet = true
             }
             
             return
         }
         
-        FallbackArtworkSet = false
-        let NowPlayingQuery = "\(artist) \(title)"
+        isFallbackArtworkSet = false
+        let nowPlayingQuery = "\(artist) \(title)"
             .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-        let URLString = "https://itunes.apple.com/search?term=\(NowPlayingQuery)&entity=song&limit=1"
+        let urlString = "https://itunes.apple.com/search?term=\(nowPlayingQuery)&entity=song&limit=1"
         
-        guard let SearchURL = URL(string: URLString) else
+        guard let searchUrl = URL(string: urlString) else
         {
-            SetFallbackArtwork()
+            setFallbackArtwork()
             return
         }
         
-        URLSession.shared.dataTask(with: SearchURL)
+        URLSession.shared.dataTask(with: searchUrl)
         {
-            [weak self] Data, _, Error in
+            [weak self] data, _, error in
             guard let self = self,
-                  let Data = Data,
-                  Error == nil,
-                  let JSON = try? JSONSerialization.jsonObject(with: Data) as? [String: Any],
-                  let Results = JSON["results"] as? [[String: Any]],
-                  let FirstResult = Results.first,
-                  let ArtworkString = FirstResult["artworkUrl100"] as? String
+                  let data = data,
+                  error == nil,
+                  let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  let results = json["results"] as? [[String: Any]],
+                  let firstResult = results.first,
+                  let artworkString = firstResult["artworkUrl100"] as? String
             else
             {
                 DispatchQueue.main.async
                 {
-                    self?.SetFallbackArtwork()
+                    self?.setFallbackArtwork()
                 }
                 return
             }
             
-            let HighResArtworkString = ArtworkString.replacingOccurrences(of: "100x100bb", with: "600x600bb")
-            guard let ArtworkURL = URL(string: HighResArtworkString) else
+            let highResArtworkString = artworkString.replacingOccurrences(of: "100x100bb", with: "600x600bb")
+            guard let artworkUrl = URL(string: highResArtworkString) else
             {
                 DispatchQueue.main.async
                 {
-                    self.SetFallbackArtwork()
+                    self.setFallbackArtwork()
                 }
                 return
             }
             
-            URLSession.shared.dataTask(with: ArtworkURL)
+            URLSession.shared.dataTask(with: artworkUrl)
             {
-                [weak self] ImageData, _, ImageError in
+                [weak self] imageData, _, imageError in
                 guard let self = self,
-                      let ImageData = ImageData,
-                      ImageError == nil,
-                      let ArtworkImage = UIImage(data: ImageData)
+                      let imageData = imageData,
+                      imageError == nil,
+                      let artworkImage = UIImage(data: imageData)
                 else
                 {
                     DispatchQueue.main.async
                     {
-                        self?.SetFallbackArtwork()
+                        self?.setFallbackArtwork()
                     }
                     return
                 }
                 
                 DispatchQueue.main.async
                 {
-                    self.ApplyArtwork(ArtworkImage)
+                    self.applyArtwork(artworkImage)
                 }
             }
             .resume()
@@ -641,179 +616,179 @@ public class PlayStreamData: NSObject, ObservableObject
         .resume()
     }
     
-    private func ApplyArtwork(_ Image: UIImage)
+    private func applyArtwork(_ Image: UIImage)
     {
-        let Artwork = MPMediaItemArtwork(boundsSize: Image.size)
+        let artwork = MPMediaItemArtwork(boundsSize: Image.size)
         {
             _ in Image
         }
         
-        if var NowPlayingInfo = MPNowPlayingInfoCenter.default().nowPlayingInfo
+        if var nowPlayingInfo = MPNowPlayingInfoCenter.default().nowPlayingInfo
         {
-            NowPlayingInfo[MPMediaItemPropertyArtwork] = Artwork
-            MPNowPlayingInfoCenter.default().nowPlayingInfo = NowPlayingInfo
+            nowPlayingInfo[MPMediaItemPropertyArtwork] = artwork
+            MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
         }
     }
     
-    internal func SetFallbackArtwork()
+    func setFallbackArtwork()
     {
-        let AppIcon = AppIconImage() ?? UIImage(systemName: "radio")
-        guard let Icon = AppIcon else
+        let appIcon = appIconImage() ?? UIImage(systemName: "radio")
+        guard let icon = appIcon else
         {
             return
         }
-        ApplyArtwork(Icon)
+        applyArtwork(icon)
     }
     
-    private func AppIconImage() -> UIImage?
+    private func appIconImage() -> UIImage?
     {
         guard
-            let Icons = Bundle.main.infoDictionary?["CFBundleIcons"] as? [String: Any],
-            let PrimaryIcon = Icons["CFBundlePrimaryIcon"] as? [String: Any],
-            let IconFiles = PrimaryIcon["CFBundleIconFiles"] as? [String],
-            let LastIcon = IconFiles.last
+            let icons = Bundle.main.infoDictionary?["CFBundleIcons"] as? [String: Any],
+            let primaryIcon = icons["CFBundlePrimaryIcon"] as? [String: Any],
+            let iconFiles = primaryIcon["CFBundleIconFiles"] as? [String],
+            let lastIcon = iconFiles.last
         else
         {
             return nil
         }
-        return UIImage(named: LastIcon)
+        return UIImage(named: lastIcon)
     }
     
-    public func PlayerObservers()
+    private func playerObservers()
     {
-        PlayerCancellables.removeAll()
+        playerCancellables.removeAll()
         
-        PlayStream.publisher(for: \.timeControlStatus)
+        audioPlayer.publisher(for: \.timeControlStatus)
             .receive(on: DispatchQueue.main)
             .sink
         {
-            [weak self] StreamStatus in
-            if StreamStatus == .paused
+            [weak self] streamStatus in
+            if streamStatus == .paused
             {
-                self?.Playing = false
+                self?.isPlaying = false
             }
-            else if StreamStatus == .playing
+            else if streamStatus == .playing
             {
-                self?.Playing = true
+                self?.isPlaying = true
             }
         }
-        .store(in: &PlayerCancellables)
+        .store(in: &playerCancellables)
         
-        PlayStream.publisher(for: \.currentItem?.status)
+        audioPlayer.publisher(for: \.currentItem?.status)
             .receive(on: DispatchQueue.main)
             .sink
         {
-            [weak self] StreamStatus in
-            if StreamStatus == .failed
+            [weak self] streamStatus in
+            if streamStatus == .failed
             {
-                self?.Playing = false
+                self?.isPlaying = false
             }
         }
-        .store(in: &PlayerCancellables)
+        .store(in: &playerCancellables)
         
         NotificationCenter.default.publisher(for: .AVPlayerItemFailedToPlayToEndTime)
             .receive(on: DispatchQueue.main)
             .sink
         {
-            [weak self] _ in self?.Playing = false
+            [weak self] _ in self?.isPlaying = false
         }
-        .store(in: &PlayerCancellables)
+        .store(in: &playerCancellables)
         
         NotificationCenter.default.publisher(for: .AVPlayerItemPlaybackStalled)
             .receive(on: DispatchQueue.main)
             .sink
         {
-            [weak self] _ in self?.Playing = false
+            [weak self] _ in self?.isPlaying = false
         }
-        .store(in: &PlayerCancellables)
+        .store(in: &playerCancellables)
     }
     
-    public func SessionObservers()
+    private func sessionObservers()
     {
-        SessionCancellables.removeAll()
+        sessionCancellables.removeAll()
         
         NotificationCenter.default.publisher(for: AVAudioSession.interruptionNotification)
             .receive(on: DispatchQueue.main)
             .sink
         {
-            [weak self] StreamNotification in
-            guard let StreamUserInfo = StreamNotification.userInfo,
-                  let StreamTypeValue = StreamUserInfo[AVAudioSessionInterruptionTypeKey] as? UInt,
-                  let StreamType = AVAudioSession.InterruptionType(rawValue: StreamTypeValue) else
+            [weak self] streamNotification in
+            guard let streamUserInfo = streamNotification.userInfo,
+                  let streamTypeValue = streamUserInfo[AVAudioSessionInterruptionTypeKey] as? UInt,
+                  let streamType = AVAudioSession.InterruptionType(rawValue: streamTypeValue) else
             {
                 return
             }
-            if StreamType == .began
+            if streamType == .began
             {
-                self?.Playing = false
-                self?.PlayStream.pause()
+                self?.isPlaying = false
+                self?.audioPlayer.pause()
             }
         }
-        .store(in: &SessionCancellables)
+        .store(in: &sessionCancellables)
         
         NotificationCenter.default.publisher(for: AVAudioSession.silenceSecondaryAudioHintNotification)
             .receive(on: DispatchQueue.main)
             .sink
         {
-            [weak self] StreamNotification in
-            guard let StreamUserInfo = StreamNotification.userInfo,
-                  let StreamTypeValue = StreamUserInfo[AVAudioSessionSilenceSecondaryAudioHintTypeKey] as? UInt,
-                  let StreamType = AVAudioSession.SilenceSecondaryAudioHintType(rawValue: StreamTypeValue) else
+            [weak self] streamNotification in
+            guard let streamUserInfo = streamNotification.userInfo,
+                  let streamTypeValue = streamUserInfo[AVAudioSessionSilenceSecondaryAudioHintTypeKey] as? UInt,
+                  let streamType = AVAudioSession.SilenceSecondaryAudioHintType(rawValue: streamTypeValue) else
             {
                 return
             }
-            if StreamType == .begin
+            if streamType == .begin
             {
-                self?.Playing = false
-                self?.PlayStream.pause()
+                self?.isPlaying = false
+                self?.audioPlayer.pause()
             }
         }
-        .store(in: &SessionCancellables)
+        .store(in: &sessionCancellables)
         
         NotificationCenter.default.publisher(for: AVAudioSession.routeChangeNotification)
             .receive(on: DispatchQueue.main)
             .sink
         {
-            [weak self] StreamNotification in
-            guard let StreamUserInfo = StreamNotification.userInfo,
-                  let StreamTypeValue = StreamUserInfo[AVAudioSessionRouteChangeReasonKey] as? UInt,
-                  let StreamType = AVAudioSession.RouteChangeReason(rawValue: StreamTypeValue) else
+            [weak self] streamNotification in
+            guard let streamUserInfo = streamNotification.userInfo,
+                  let streamTypeValue = streamUserInfo[AVAudioSessionRouteChangeReasonKey] as? UInt,
+                  let streamType = AVAudioSession.RouteChangeReason(rawValue: streamTypeValue) else
             {
                 return
             }
-            if StreamType == .categoryChange
+            if streamType == .categoryChange
             {
                 if AVAudioSession.sharedInstance().secondaryAudioShouldBeSilencedHint
                 {
-                    self?.Playing = false
-                    self?.PlayStream.pause()
+                    self?.isPlaying = false
+                    self?.audioPlayer.pause()
                 }
             }
         }
-        .store(in: &SessionCancellables)
+        .store(in: &sessionCancellables)
         
         NotificationCenter.default.publisher(for: AVAudioSession.mediaServicesWereLostNotification)
             .sink
         {
             [weak self] _ in
-            self?.Playing = false
-            self?.PlayStream.pause()
+            self?.isPlaying = false
+            self?.audioPlayer.pause()
         }
-        .store(in: &SessionCancellables)
+        .store(in: &sessionCancellables)
         
         NotificationCenter.default.publisher(for: AVAudioSession.mediaServicesWereResetNotification)
             .sink
         {
             [weak self] _ in
-            self?.Playing = false
-            self?.PlayStream.pause()
+            self?.isPlaying = false
+            self?.audioPlayer.pause()
         }
-        .store(in: &SessionCancellables)
+        .store(in: &sessionCancellables)
     }
     
-    public func StartPlaybackHeartbeat()
+    func startPlaybackHeartbeat()
     {
-        PlaybackHeartbeat = Timer.publish(every: 1.0, on: .main, in: .common)
+        playbackHeartbeat = Timer.publish(every: 1.0, on: .main, in: .common)
             .autoconnect()
             .sink
         {
@@ -822,17 +797,17 @@ public class PlayStreamData: NSObject, ObservableObject
             {
                 return
             }
-            let actuallyPlaying = self.PlayStream.timeControlStatus == .playing
-            if !actuallyPlaying && self.Playing
+            let actuallyPlaying = self.audioPlayer.timeControlStatus == .playing
+            if !actuallyPlaying && self.isPlaying
             {
-                self.Playing = false
+                self.isPlaying = false
             }
         }
     }
     
-    public func StopPlaybackHeartbeat()
+    func stopPlaybackHeartbeat()
     {
-        PlaybackHeartbeat = nil
+        playbackHeartbeat = nil
     }
 }
 
@@ -843,1238 +818,361 @@ extension PlayStreamData: AVPlayerItemMetadataOutputPushDelegate
         didOutputTimedMetadataGroups groups: [AVTimedMetadataGroup],
         from track: AVPlayerItemTrack?)
     {
-        let MetadataItems = groups.flatMap
+        let metadataItems = groups.flatMap
         {
             $0.items
         }
-        ParseMetadata(MetadataItems)
+        parseMetadata(metadataItems)
     }
 }
 
-public class PlayStreamButton
+class PlayStreamButton
 {
-    static let PlayStreamButtonShared = PlayStreamButton()
+    static let shared = PlayStreamButton()
     
-    private func StartStream(_ StreamURL: URL, StreamNumber: Int)
+    private func startStream(_ streamUrl: URL, streamNumber: Int)
     {
-        let NewStreamItem = AVPlayerItem(url: StreamURL)
-        let Data = PlayStreamData.SharedResource
+        let newStreamItem = AVPlayerItem(url: streamUrl)
+        let data = PlayStreamData.shared
         
         try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
         try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
         try? AVAudioSession.sharedInstance().setActive(true)
         
-        Data.PlayStream.replaceCurrentItem(with: NewStreamItem)
-        Data.PlayStream.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
-        Data.CurrentStream = StreamNumber
-        Data.FallbackArtworkSet = false
-        Data.UpdateNowPlayingInfo(title: "Stream \(StreamNumber)")
-        Data.SetFallbackArtwork()
-        Data.FallbackArtworkSet = true
-        Data.ObserveStreamMetadata()
-        Data.PlayStream.play()
-        Data.StartPlaybackHeartbeat()
-        Data.StartICYPolling(StreamURL: StreamURL)
+        data.audioPlayer.replaceCurrentItem(with: newStreamItem)
+        data.audioPlayer.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
+        data.currentStream = streamNumber
+        data.isFallbackArtworkSet = false
+        data.updateNowPlayingInfo(title: "Stream \(streamNumber)")
+        data.setFallbackArtwork()
+        data.isFallbackArtworkSet = true
+        data.observeStreamMetadata()
+        data.audioPlayer.play()
+        data.startPlaybackHeartbeat()
+        data.startIcyPolling(streamUrl: streamUrl)
     }
     
-    private func PlayButtonAction(StreamURL: URL, StreamNumber: Int)
+    private func playButtonAction(streamUrl: URL, streamNumber: Int)
     {
-        let Data = PlayStreamData.SharedResource
-        if Data.Playing && Data.CurrentStream == StreamNumber
+        let data = PlayStreamData.shared
+        if data.isPlaying && data.currentStream == streamNumber
         {
-            Data.PlayStream.pause()
-            Data.StopPlaybackHeartbeat()
-            Data.StopICYPolling()
+            data.audioPlayer.pause()
+            data.stopPlaybackHeartbeat()
+            data.stopIcyPolling()
             try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+            data.clearNowPlayingInfo()
         }
         else
         {
             try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
-            StartStream(StreamURL, StreamNumber: StreamNumber)
+            startStream(streamUrl, streamNumber: streamNumber)
         }
     }
     
-    public func PlayButton1_Click()
+    public func playButtonClick(streamNumber: Int)
     {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream1) else
+        guard let url = URL(string: PlayStreamData.shared.streams[streamNumber - 1]) else
         {
             return
         }
-        PlayButtonAction(StreamURL: URL, StreamNumber: 1)
+        playButtonAction(streamUrl: url, streamNumber: streamNumber)
+    }
+}
+
+private func makeStreamControl(streamNumber: Int) -> some ControlWidgetConfiguration
+{
+    let kind = "xyz.andrewmichaelpowell.taigastream.stream\(streamNumber)"
+    return StaticControlConfiguration(kind: kind)
+    {
+        let streamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
+        let streamStatus = (streamState?.bool(forKey: "PlayingKey") ?? false)
+                && (streamState?.integer(forKey: "CurrentStreamKey") ?? 0) == streamNumber
+        return ControlWidgetToggle(isOn: streamStatus, action: PlayStreamToggleIntent(streamNumber: streamNumber))
+        {
+            Label("Stream \(streamNumber)", systemImage: "\(streamNumber).circle")
+        }
+    }
+    .displayName("Stream \(streamNumber)")
+}
+
+
+
+struct PlayStreamToggleIntent: SetValueIntent, AudioPlaybackIntent
+{
+    static let title: LocalizedStringResource = "Play Stream"
+    @Parameter(title: "Stream Number") var streamNumber: Int
+    @Parameter(title: "Stream Status") var value: Bool
+
+    init(streamNumber: Int)
+    {
+        self.streamNumber = streamNumber
     }
     
-    public func PlayButton2_Click()
+    init()
     {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream2) else
-        {
-            return
-        }
-        PlayButtonAction(StreamURL: URL, StreamNumber: 2)
-    }
-    
-    public func PlayButton3_Click()
-    {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream3) else
-        {
-            return
-        }
-        PlayButtonAction(StreamURL: URL, StreamNumber: 3)
-    }
-    
-    public func PlayButton4_Click()
-    {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream4) else
-        {
-            return
-        }
-        PlayButtonAction(StreamURL: URL, StreamNumber: 4)
-    }
-    
-    public func PlayButton5_Click()
-    {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream5) else
-        {
-            return
-        }
-        PlayButtonAction(StreamURL: URL, StreamNumber: 5)
-    }
-    
-    public func PlayButton6_Click()
-    {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream6) else
-        {
-            return
-        }
-        PlayButtonAction(StreamURL: URL, StreamNumber: 6)
-    }
-    
-    public func PlayButton7_Click()
-    {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream7) else
-        {
-            return
-        }
-        PlayButtonAction(StreamURL: URL, StreamNumber: 7)
-    }
-    
-    public func PlayButton8_Click()
-    {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream8) else
-        {
-            return
-        }
-        PlayButtonAction(StreamURL: URL, StreamNumber: 8)
-    }
-    
-    public func PlayButton9_Click()
-    {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream9) else
-        {
-            return
-        }
-        PlayButtonAction(StreamURL: URL, StreamNumber: 9)
-    }
-    
-    public func PlayButton10_Click()
-    {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream10) else
-        {
-            return
-        }
-        PlayButtonAction(StreamURL: URL, StreamNumber: 10)
-    }
-    
-    public func PlayButton11_Click()
-    {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream11) else
-        {
-            return
-        }
-        PlayButtonAction(StreamURL: URL, StreamNumber: 11)
-    }
-    
-    public func PlayButton12_Click()
-    {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream12) else
-        {
-            return
-        }
-        PlayButtonAction(StreamURL: URL, StreamNumber: 12)
-    }
-    
-    public func PlayButton13_Click()
-    {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream13) else
-        {
-            return
-        }
-        PlayButtonAction(StreamURL: URL, StreamNumber: 13)
-    }
-    
-    public func PlayButton14_Click()
-    {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream14) else
-        {
-            return
-        }
-        PlayButtonAction(StreamURL: URL, StreamNumber: 14)
-    }
-    
-    public func PlayButton15_Click()
-    {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream15) else
-        {
-            return
-        }
-        PlayButtonAction(StreamURL: URL, StreamNumber: 15)
-    }
-    
-    public func PlayButton16_Click()
-    {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream16) else
-        {
-            return
-        }
-        PlayButtonAction(StreamURL: URL, StreamNumber: 16)
-    }
-    
-    public func PlayButton17_Click()
-    {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream17) else
-        {
-            return
-        }
-        PlayButtonAction(StreamURL: URL, StreamNumber: 17)
-    }
-    
-    public func PlayButton18_Click()
-    {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream18) else
-        {
-            return
-        }
-        PlayButtonAction(StreamURL: URL, StreamNumber: 18)
-    }
-    
-    public func PlayButton19_Click()
-    {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream19) else
-        {
-            return
-        }
-        PlayButtonAction(StreamURL: URL, StreamNumber: 19)
-    }
-    
-    public func PlayButton20_Click()
-    {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream20) else
-        {
-            return
-        }
-        PlayButtonAction(StreamURL: URL, StreamNumber: 20)
-    }
-    
-    public func PlayButton21_Click()
-    {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream21) else
-        {
-            return
-        }
-        PlayButtonAction(StreamURL: URL, StreamNumber: 21)
-    }
-    
-    public func PlayButton22_Click()
-    {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream22) else
-        {
-            return
-        }
-        PlayButtonAction(StreamURL: URL, StreamNumber: 22)
-    }
-    
-    public func PlayButton23_Click()
-    {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream23) else
-        {
-            return
-        }
-        PlayButtonAction(StreamURL: URL, StreamNumber: 23)
-    }
-    
-    public func PlayButton24_Click()
-    {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream24) else
-        {
-            return
-        }
-        PlayButtonAction(StreamURL: URL, StreamNumber: 24)
+        self.streamNumber = 1
     }
 
-    public func PlayButton25_Click()
-    {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream25) else
-        {
-            return
-        }
-        PlayButtonAction(StreamURL: URL, StreamNumber: 25)
-    }
-
-    public func PlayButton26_Click()
-    {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream26) else
-        {
-            return
-        }
-        PlayButtonAction(StreamURL: URL, StreamNumber: 26)
-    }
-
-    public func PlayButton27_Click()
-    {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream27) else
-        {
-            return
-        }
-        PlayButtonAction(StreamURL: URL, StreamNumber: 27)
-    }
-
-    public func PlayButton28_Click()
-    {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream28) else
-        {
-            return
-        }
-        PlayButtonAction(StreamURL: URL, StreamNumber: 28)
-    }
-
-    public func PlayButton29_Click()
-    {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream29) else
-        {
-            return
-        }
-        PlayButtonAction(StreamURL: URL, StreamNumber: 29)
-    }
-
-    public func PlayButton30_Click()
-    {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream30) else
-        {
-            return
-        }
-        PlayButtonAction(StreamURL: URL, StreamNumber: 30)
-    }
-
-    public func PlayButton31_Click()
-    {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream31) else
-        {
-            return
-        }
-        PlayButtonAction(StreamURL: URL, StreamNumber: 31)
-    }
-    
-    public func PlayButton32_Click()
-    {
-        guard let URL = URL(string: PlayStreamData.SharedResource.Stream32) else
-        {
-            return
-        }
-        PlayButtonAction(StreamURL: URL, StreamNumber: 32)
-    }
-}
-
-struct TaigaStreamWidgetControl1: ControlWidget
-{
-    var body: some ControlWidgetConfiguration
-    {
-        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream1")
-        {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
-            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 1
-            return ControlWidgetToggle(isOn: ButtonState, action: PlayStream1ToggleIntent())
-            {
-                Label("Stream 1", systemImage: "1.circle")
-            }
-        }
-        .displayName("Stream 1")
-    }
-}
-
-struct PlayStream1ToggleIntent: SetValueIntent, AudioPlaybackIntent
-{
-    static let title: LocalizedStringResource = "Stream 1"
-    @Parameter(title: "Is On") var value: Bool
     @MainActor func perform() async throws -> some IntentResult
     {
-        PlayStreamButton.PlayStreamButtonShared.PlayButton1_Click()
+        PlayStreamButton.shared.playButtonClick(streamNumber: streamNumber)
         return .result()
     }
 }
 
-struct TaigaStreamWidgetControl2: ControlWidget
+struct WidgetControl1: ControlWidget
 {
     var body: some ControlWidgetConfiguration
     {
-        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream2")
-        {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
-            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 2
-            return ControlWidgetToggle(isOn: ButtonState, action: PlayStream2ToggleIntent())
-            {
-                Label("Stream 2", systemImage: "2.circle")
-            }
-        }
-        .displayName("Stream 2")
+        makeStreamControl(streamNumber: 1)
     }
 }
 
-struct PlayStream2ToggleIntent: SetValueIntent, AudioPlaybackIntent
-{
-    static let title: LocalizedStringResource = "Stream 2"
-    @Parameter(title: "Is On") var value: Bool
-    @MainActor func perform() async throws -> some IntentResult
-    {
-        PlayStreamButton.PlayStreamButtonShared.PlayButton2_Click()
-        return .result()
-    }
-}
-
-struct TaigaStreamWidgetControl3: ControlWidget
+struct WidgetControl2: ControlWidget
 {
     var body: some ControlWidgetConfiguration
     {
-        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream3")
-        {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
-            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 3
-            return ControlWidgetToggle(isOn: ButtonState, action: PlayStream3ToggleIntent())
-            {
-                Label("Stream 3", systemImage: "3.circle")
-            }
-        }
-        .displayName("Stream 3")
+        makeStreamControl(streamNumber: 2)
     }
 }
 
-struct PlayStream3ToggleIntent: SetValueIntent, AudioPlaybackIntent
-{
-    static let title: LocalizedStringResource = "Stream 3"
-    @Parameter(title: "Is On") var value: Bool
-    @MainActor func perform() async throws -> some IntentResult
-    {
-        PlayStreamButton.PlayStreamButtonShared.PlayButton3_Click()
-        return .result()
-    }
-}
-
-struct TaigaStreamWidgetControl4: ControlWidget
+struct WidgetControl3: ControlWidget
 {
     var body: some ControlWidgetConfiguration
     {
-        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream4")
-        {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
-            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 4
-            return ControlWidgetToggle(isOn: ButtonState, action: PlayStream4ToggleIntent())
-            {
-                Label("Stream 4", systemImage: "4.circle")
-            }
-        }
-        .displayName("Stream 4")
+        makeStreamControl(streamNumber: 3)
     }
 }
 
-struct PlayStream4ToggleIntent: SetValueIntent, AudioPlaybackIntent
-{
-    static let title: LocalizedStringResource = "Stream 4"
-    @Parameter(title: "Is On") var value: Bool
-    @MainActor func perform() async throws -> some IntentResult
-    {
-        PlayStreamButton.PlayStreamButtonShared.PlayButton4_Click()
-        return .result()
-    }
-}
-
-struct TaigaStreamWidgetControl5: ControlWidget
+struct WidgetControl4: ControlWidget
 {
     var body: some ControlWidgetConfiguration
     {
-        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream5")
-        {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
-            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 5
-            return ControlWidgetToggle(isOn: ButtonState, action: PlayStream5ToggleIntent())
-            {
-                Label("Stream 5", systemImage: "5.circle")
-            }
-        }
-        .displayName("Stream 5")
+        makeStreamControl(streamNumber: 4)
     }
 }
 
-struct PlayStream5ToggleIntent: SetValueIntent, AudioPlaybackIntent
-{
-    static let title: LocalizedStringResource = "Stream 5"
-    @Parameter(title: "Is On") var value: Bool
-    @MainActor func perform() async throws -> some IntentResult
-    {
-        PlayStreamButton.PlayStreamButtonShared.PlayButton5_Click()
-        return .result()
-    }
-}
-
-struct TaigaStreamWidgetControl6: ControlWidget
+struct WidgetControl5: ControlWidget
 {
     var body: some ControlWidgetConfiguration
     {
-        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream6")
-        {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
-            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 6
-            return ControlWidgetToggle(isOn: ButtonState, action: PlayStream6ToggleIntent())
-            {
-                Label("Stream 6", systemImage: "6.circle")
-            }
-        }
-        .displayName("Stream 6")
+        makeStreamControl(streamNumber: 5)
     }
 }
 
-struct PlayStream6ToggleIntent: SetValueIntent, AudioPlaybackIntent
-{
-    static let title: LocalizedStringResource = "Stream 6"
-    @Parameter(title: "Is On") var value: Bool
-    @MainActor func perform() async throws -> some IntentResult
-    {
-        PlayStreamButton.PlayStreamButtonShared.PlayButton6_Click()
-        return .result()
-    }
-}
-
-struct TaigaStreamWidgetControl7: ControlWidget
+struct WidgetControl6: ControlWidget
 {
     var body: some ControlWidgetConfiguration
     {
-        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream7")
-        {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
-            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 7
-            return ControlWidgetToggle(isOn: ButtonState, action: PlayStream7ToggleIntent())
-            {
-                Label("Stream 7", systemImage: "7.circle")
-            }
-        }
-        .displayName("Stream 7")
+        makeStreamControl(streamNumber: 6)
     }
 }
 
-struct PlayStream7ToggleIntent: SetValueIntent, AudioPlaybackIntent
-{
-    static let title: LocalizedStringResource = "Stream 7"
-    @Parameter(title: "Is On") var value: Bool
-    @MainActor func perform() async throws -> some IntentResult
-    {
-        PlayStreamButton.PlayStreamButtonShared.PlayButton7_Click()
-        return .result()
-    }
-}
-
-struct TaigaStreamWidgetControl8: ControlWidget
+struct WidgetControl7: ControlWidget
 {
     var body: some ControlWidgetConfiguration
     {
-        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream8")
-        {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
-            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 8
-            return ControlWidgetToggle(isOn: ButtonState, action: PlayStream8ToggleIntent())
-            {
-                Label("Stream 8", systemImage: "8.circle")
-            }
-        }
-        .displayName("Stream 8")
+        makeStreamControl(streamNumber: 7)
     }
 }
 
-struct PlayStream8ToggleIntent: SetValueIntent, AudioPlaybackIntent
-{
-    static let title: LocalizedStringResource = "Stream 8"
-    @Parameter(title: "Is On") var value: Bool
-    @MainActor func perform() async throws -> some IntentResult
-    {
-        PlayStreamButton.PlayStreamButtonShared.PlayButton8_Click()
-        return .result()
-    }
-}
-
-struct TaigaStreamWidgetControl9: ControlWidget
+struct WidgetControl8: ControlWidget
 {
     var body: some ControlWidgetConfiguration
     {
-        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream9")
-        {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
-            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 9
-            return ControlWidgetToggle(isOn: ButtonState, action: PlayStream9ToggleIntent())
-            {
-                Label("Stream 9", systemImage: "9.circle")
-            }
-        }
-        .displayName("Stream 9")
+        makeStreamControl(streamNumber: 8)
     }
 }
 
-struct PlayStream9ToggleIntent: SetValueIntent, AudioPlaybackIntent
-{
-    static let title: LocalizedStringResource = "Stream 9"
-    @Parameter(title: "Is On") var value: Bool
-    @MainActor func perform() async throws -> some IntentResult
-    {
-        PlayStreamButton.PlayStreamButtonShared.PlayButton9_Click()
-        return .result()
-    }
-}
-
-struct TaigaStreamWidgetControl10: ControlWidget
+struct WidgetControl9: ControlWidget
 {
     var body: some ControlWidgetConfiguration
     {
-        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream10")
-        {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
-            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 10
-            return ControlWidgetToggle(isOn: ButtonState, action: PlayStream10ToggleIntent())
-            {
-                Label("Stream 10", systemImage: "10.circle")
-            }
-        }
-        .displayName("Stream 10")
+        makeStreamControl(streamNumber: 9)
     }
 }
 
-struct PlayStream10ToggleIntent: SetValueIntent, AudioPlaybackIntent
-{
-    static let title: LocalizedStringResource = "Stream 10"
-    @Parameter(title: "Is On") var value: Bool
-    @MainActor func perform() async throws -> some IntentResult
-    {
-        PlayStreamButton.PlayStreamButtonShared.PlayButton10_Click()
-        return .result()
-    }
-}
-
-struct TaigaStreamWidgetControl11: ControlWidget
+struct WidgetControl10: ControlWidget
 {
     var body: some ControlWidgetConfiguration
     {
-        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream11")
-        {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
-            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 11
-            return ControlWidgetToggle(isOn: ButtonState, action: PlayStream11ToggleIntent())
-            {
-                Label("Stream 11", systemImage: "11.circle")
-            }
-        }
-        .displayName("Stream 11")
+        makeStreamControl(streamNumber: 10)
     }
 }
 
-struct PlayStream11ToggleIntent: SetValueIntent, AudioPlaybackIntent
-{
-    static let title: LocalizedStringResource = "Stream 11"
-    @Parameter(title: "Is On") var value: Bool
-    @MainActor func perform() async throws -> some IntentResult
-    {
-        PlayStreamButton.PlayStreamButtonShared.PlayButton11_Click()
-        return .result()
-    }
-}
-
-struct TaigaStreamWidgetControl12: ControlWidget
+struct WidgetControl11: ControlWidget
 {
     var body: some ControlWidgetConfiguration
     {
-        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream12")
-        {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
-            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 12
-            return ControlWidgetToggle(isOn: ButtonState, action: PlayStream12ToggleIntent())
-            {
-                Label("Stream 12", systemImage: "12.circle")
-            }
-        }
-        .displayName("Stream 12")
+        makeStreamControl(streamNumber: 11)
     }
 }
 
-struct PlayStream12ToggleIntent: SetValueIntent, AudioPlaybackIntent
-{
-    static let title: LocalizedStringResource = "Stream 12"
-    @Parameter(title: "Is On") var value: Bool
-    @MainActor func perform() async throws -> some IntentResult
-    {
-        PlayStreamButton.PlayStreamButtonShared.PlayButton12_Click()
-        return .result()
-    }
-}
-
-struct TaigaStreamWidgetControl13: ControlWidget
+struct WidgetControl12: ControlWidget
 {
     var body: some ControlWidgetConfiguration
     {
-        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream13")
-        {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
-            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 13
-            return ControlWidgetToggle(isOn: ButtonState, action: PlayStream13ToggleIntent())
-            {
-                Label("Stream 13", systemImage: "13.circle")
-            }
-        }
-        .displayName("Stream 13")
+        makeStreamControl(streamNumber: 12)
     }
 }
 
-struct PlayStream13ToggleIntent: SetValueIntent, AudioPlaybackIntent
-{
-    static let title: LocalizedStringResource = "Stream 13"
-    @Parameter(title: "Is On") var value: Bool
-    @MainActor func perform() async throws -> some IntentResult
-    {
-        PlayStreamButton.PlayStreamButtonShared.PlayButton13_Click()
-        return .result()
-    }
-}
-
-struct TaigaStreamWidgetControl14: ControlWidget
+struct WidgetControl13: ControlWidget
 {
     var body: some ControlWidgetConfiguration
     {
-        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream14")
-        {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
-            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 14
-            return ControlWidgetToggle(isOn: ButtonState, action: PlayStream14ToggleIntent())
-            {
-                Label("Stream 14", systemImage: "14.circle")
-            }
-        }
-        .displayName("Stream 14")
+        makeStreamControl(streamNumber: 13)
     }
 }
 
-struct PlayStream14ToggleIntent: SetValueIntent, AudioPlaybackIntent
-{
-    static let title: LocalizedStringResource = "Stream 14"
-    @Parameter(title: "Is On") var value: Bool
-    @MainActor func perform() async throws -> some IntentResult
-    {
-        PlayStreamButton.PlayStreamButtonShared.PlayButton14_Click()
-        return .result()
-    }
-}
-
-struct TaigaStreamWidgetControl15: ControlWidget
+struct WidgetControl14: ControlWidget
 {
     var body: some ControlWidgetConfiguration
     {
-        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream15")
-        {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
-            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 15
-            return ControlWidgetToggle(isOn: ButtonState, action: PlayStream15ToggleIntent())
-            {
-                Label("Stream 15", systemImage: "15.circle")
-            }
-        }
-        .displayName("Stream 15")
+        makeStreamControl(streamNumber: 14)
     }
 }
 
-struct PlayStream15ToggleIntent: SetValueIntent, AudioPlaybackIntent
-{
-    static let title: LocalizedStringResource = "Stream 15"
-    @Parameter(title: "Is On") var value: Bool
-    @MainActor func perform() async throws -> some IntentResult
-    {
-        PlayStreamButton.PlayStreamButtonShared.PlayButton15_Click()
-        return .result()
-    }
-}
-
-struct TaigaStreamWidgetControl16: ControlWidget
+struct WidgetControl15: ControlWidget
 {
     var body: some ControlWidgetConfiguration
     {
-        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream16")
-        {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
-            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 16
-            return ControlWidgetToggle(isOn: ButtonState, action: PlayStream16ToggleIntent())
-            {
-                Label("Stream 16", systemImage: "16.circle")
-            }
-        }
-        .displayName("Stream 16")
+        makeStreamControl(streamNumber: 15)
     }
 }
 
-struct PlayStream16ToggleIntent: SetValueIntent, AudioPlaybackIntent
-{
-    static let title: LocalizedStringResource = "Stream 16"
-    @Parameter(title: "Is On") var value: Bool
-    @MainActor func perform() async throws -> some IntentResult
-    {
-        PlayStreamButton.PlayStreamButtonShared.PlayButton16_Click()
-        return .result()
-    }
-}
-
-struct TaigaStreamWidgetControl17: ControlWidget
+struct WidgetControl16: ControlWidget
 {
     var body: some ControlWidgetConfiguration
     {
-        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream17")
-        {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
-            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 17
-            return ControlWidgetToggle(isOn: ButtonState, action: PlayStream17ToggleIntent())
-            {
-                Label("Stream 17", systemImage: "17.circle")
-            }
-        }
-        .displayName("Stream 17")
+        makeStreamControl(streamNumber: 16)
     }
 }
 
-struct PlayStream17ToggleIntent: SetValueIntent, AudioPlaybackIntent
-{
-    static let title: LocalizedStringResource = "Stream 17"
-    @Parameter(title: "Is On") var value: Bool
-    @MainActor func perform() async throws -> some IntentResult
-    {
-        PlayStreamButton.PlayStreamButtonShared.PlayButton17_Click()
-        return .result()
-    }
-}
-
-struct TaigaStreamWidgetControl18: ControlWidget
+struct WidgetControl17: ControlWidget
 {
     var body: some ControlWidgetConfiguration
     {
-        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream18")
-        {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
-            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 18
-            return ControlWidgetToggle(isOn: ButtonState, action: PlayStream18ToggleIntent())
-            {
-                Label("Stream 18", systemImage: "18.circle")
-            }
-        }
-        .displayName("Stream 18")
+        makeStreamControl(streamNumber: 17)
     }
 }
 
-struct PlayStream18ToggleIntent: SetValueIntent, AudioPlaybackIntent
-{
-    static let title: LocalizedStringResource = "Stream 18"
-    @Parameter(title: "Is On") var value: Bool
-    @MainActor func perform() async throws -> some IntentResult
-    {
-        PlayStreamButton.PlayStreamButtonShared.PlayButton18_Click()
-        return .result()
-    }
-}
-
-struct TaigaStreamWidgetControl19: ControlWidget
+struct WidgetControl18: ControlWidget
 {
     var body: some ControlWidgetConfiguration
     {
-        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream19")
-        {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
-            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 19
-            return ControlWidgetToggle(isOn: ButtonState, action: PlayStream19ToggleIntent())
-            {
-                Label("Stream 19", systemImage: "19.circle")
-            }
-        }
-        .displayName("Stream 19")
+        makeStreamControl(streamNumber: 18)
     }
 }
 
-struct PlayStream19ToggleIntent: SetValueIntent, AudioPlaybackIntent
-{
-    static let title: LocalizedStringResource = "Stream 19"
-    @Parameter(title: "Is On") var value: Bool
-    @MainActor func perform() async throws -> some IntentResult
-    {
-        PlayStreamButton.PlayStreamButtonShared.PlayButton19_Click()
-        return .result()
-    }
-}
-
-struct TaigaStreamWidgetControl20: ControlWidget
+struct WidgetControl19: ControlWidget
 {
     var body: some ControlWidgetConfiguration
     {
-        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream20")
-        {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
-            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 20
-            return ControlWidgetToggle(isOn: ButtonState, action: PlayStream20ToggleIntent())
-            {
-                Label("Stream 20", systemImage: "20.circle")
-            }
-        }
-        .displayName("Stream 20")
+        makeStreamControl(streamNumber: 19)
     }
 }
 
-struct PlayStream20ToggleIntent: SetValueIntent, AudioPlaybackIntent
-{
-    static let title: LocalizedStringResource = "Stream 20"
-    @Parameter(title: "Is On") var value: Bool
-    @MainActor func perform() async throws -> some IntentResult
-    {
-        PlayStreamButton.PlayStreamButtonShared.PlayButton20_Click()
-        return .result()
-    }
-}
-
-struct TaigaStreamWidgetControl21: ControlWidget
+struct WidgetControl20: ControlWidget
 {
     var body: some ControlWidgetConfiguration
     {
-        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream21")
-        {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
-            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 21
-            return ControlWidgetToggle(isOn: ButtonState, action: PlayStream21ToggleIntent())
-            {
-                Label("Stream 21", systemImage: "21.circle")
-            }
-        }
-        .displayName("Stream 21")
+        makeStreamControl(streamNumber: 20)
     }
 }
 
-struct PlayStream21ToggleIntent: SetValueIntent, AudioPlaybackIntent
-{
-    static let title: LocalizedStringResource = "Stream 21"
-    @Parameter(title: "Is On") var value: Bool
-    @MainActor func perform() async throws -> some IntentResult
-    {
-        PlayStreamButton.PlayStreamButtonShared.PlayButton21_Click()
-        return .result()
-    }
-}
-
-struct TaigaStreamWidgetControl22: ControlWidget
+struct WidgetControl21: ControlWidget
 {
     var body: some ControlWidgetConfiguration
     {
-        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream22")
-        {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
-            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 22
-            return ControlWidgetToggle(isOn: ButtonState, action: PlayStream22ToggleIntent())
-            {
-                Label("Stream 22", systemImage: "22.circle")
-            }
-        }
-        .displayName("Stream 22")
+        makeStreamControl(streamNumber: 21)
     }
 }
 
-struct PlayStream22ToggleIntent: SetValueIntent, AudioPlaybackIntent
-{
-    static let title: LocalizedStringResource = "Stream 22"
-    @Parameter(title: "Is On") var value: Bool
-    @MainActor func perform() async throws -> some IntentResult
-    {
-        PlayStreamButton.PlayStreamButtonShared.PlayButton22_Click()
-        return .result()
-    }
-}
-
-struct TaigaStreamWidgetControl23: ControlWidget
+struct WidgetControl22: ControlWidget
 {
     var body: some ControlWidgetConfiguration
     {
-        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream23")
-        {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
-            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 23
-            return ControlWidgetToggle(isOn: ButtonState, action: PlayStream23ToggleIntent())
-            {
-                Label("Stream 23", systemImage: "23.circle")
-            }
-        }
-        .displayName("Stream 23")
+        makeStreamControl(streamNumber: 22)
     }
 }
 
-struct PlayStream23ToggleIntent: SetValueIntent, AudioPlaybackIntent
-{
-    static let title: LocalizedStringResource = "Stream 23"
-    @Parameter(title: "Is On") var value: Bool
-    @MainActor func perform() async throws -> some IntentResult
-    {
-        PlayStreamButton.PlayStreamButtonShared.PlayButton23_Click()
-        return .result()
-    }
-}
-
-struct TaigaStreamWidgetControl24: ControlWidget
+struct WidgetControl23: ControlWidget
 {
     var body: some ControlWidgetConfiguration
     {
-        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream24")
-        {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
-            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 24
-            return ControlWidgetToggle(isOn: ButtonState, action: PlayStream24ToggleIntent())
-            {
-                Label("Stream 24", systemImage: "24.circle")
-            }
-        }
-        .displayName("Stream 24")
+        makeStreamControl(streamNumber: 23)
     }
 }
 
-struct PlayStream24ToggleIntent: SetValueIntent, AudioPlaybackIntent
-{
-    static let title: LocalizedStringResource = "Stream 24"
-    @Parameter(title: "Is On") var value: Bool
-    @MainActor func perform() async throws -> some IntentResult
-    {
-        PlayStreamButton.PlayStreamButtonShared.PlayButton24_Click()
-        return .result()
-    }
-}
-
-struct TaigaStreamWidgetControl25: ControlWidget
+struct WidgetControl24: ControlWidget
 {
     var body: some ControlWidgetConfiguration
     {
-        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream25")
-        {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
-            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 25
-            return ControlWidgetToggle(isOn: ButtonState, action: PlayStream25ToggleIntent())
-            {
-                Label("Stream 25", systemImage: "25.circle")
-            }
-        }
-        .displayName("Stream 25")
+        makeStreamControl(streamNumber: 24)
     }
 }
 
-struct PlayStream25ToggleIntent: SetValueIntent, AudioPlaybackIntent
-{
-    static let title: LocalizedStringResource = "Stream 25"
-    @Parameter(title: "Is On") var value: Bool
-    @MainActor func perform() async throws -> some IntentResult
-    {
-        PlayStreamButton.PlayStreamButtonShared.PlayButton25_Click()
-        return .result()
-    }
-}
-
-struct TaigaStreamWidgetControl26: ControlWidget
+struct WidgetControl25: ControlWidget
 {
     var body: some ControlWidgetConfiguration
     {
-        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream26")
-        {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
-            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 26
-            return ControlWidgetToggle(isOn: ButtonState, action: PlayStream26ToggleIntent())
-            {
-                Label("Stream 26", systemImage: "26.circle")
-            }
-        }
-        .displayName("Stream 26")
+        makeStreamControl(streamNumber: 25)
     }
 }
 
-struct PlayStream26ToggleIntent: SetValueIntent, AudioPlaybackIntent
-{
-    static let title: LocalizedStringResource = "Stream 26"
-    @Parameter(title: "Is On") var value: Bool
-    @MainActor func perform() async throws -> some IntentResult
-    {
-        PlayStreamButton.PlayStreamButtonShared.PlayButton26_Click()
-        return .result()
-    }
-}
-
-struct TaigaStreamWidgetControl27: ControlWidget
+struct WidgetControl26: ControlWidget
 {
     var body: some ControlWidgetConfiguration
     {
-        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream27")
-        {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
-            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 27
-            return ControlWidgetToggle(isOn: ButtonState, action: PlayStream27ToggleIntent())
-            {
-                Label("Stream 27", systemImage: "27.circle")
-            }
-        }
-        .displayName("Stream 27")
+        makeStreamControl(streamNumber: 26)
     }
 }
 
-struct PlayStream27ToggleIntent: SetValueIntent, AudioPlaybackIntent
-{
-    static let title: LocalizedStringResource = "Stream 27"
-    @Parameter(title: "Is On") var value: Bool
-    @MainActor func perform() async throws -> some IntentResult
-    {
-        PlayStreamButton.PlayStreamButtonShared.PlayButton27_Click()
-        return .result()
-    }
-}
-
-struct TaigaStreamWidgetControl28: ControlWidget
+struct WidgetControl27: ControlWidget
 {
     var body: some ControlWidgetConfiguration
     {
-        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream28")
-        {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
-            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 28
-            return ControlWidgetToggle(isOn: ButtonState, action: PlayStream28ToggleIntent())
-            {
-                Label("Stream 28", systemImage: "28.circle")
-            }
-        }
-        .displayName("Stream 28")
+        makeStreamControl(streamNumber: 27)
     }
 }
 
-struct PlayStream28ToggleIntent: SetValueIntent, AudioPlaybackIntent
-{
-    static let title: LocalizedStringResource = "Stream 28"
-    @Parameter(title: "Is On") var value: Bool
-    @MainActor func perform() async throws -> some IntentResult
-    {
-        PlayStreamButton.PlayStreamButtonShared.PlayButton28_Click()
-        return .result()
-    }
-}
-
-struct TaigaStreamWidgetControl29: ControlWidget
+struct WidgetControl28: ControlWidget
 {
     var body: some ControlWidgetConfiguration
     {
-        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream29")
-        {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
-            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 29
-            return ControlWidgetToggle(isOn: ButtonState, action: PlayStream29ToggleIntent())
-            {
-                Label("Stream 29", systemImage: "29.circle")
-            }
-        }
-        .displayName("Stream 29")
+        makeStreamControl(streamNumber: 28)
     }
 }
 
-struct PlayStream29ToggleIntent: SetValueIntent, AudioPlaybackIntent
-{
-    static let title: LocalizedStringResource = "Stream 29"
-    @Parameter(title: "Is On") var value: Bool
-    @MainActor func perform() async throws -> some IntentResult
-    {
-        PlayStreamButton.PlayStreamButtonShared.PlayButton29_Click()
-        return .result()
-    }
-}
-
-struct TaigaStreamWidgetControl30: ControlWidget
+struct WidgetControl29: ControlWidget
 {
     var body: some ControlWidgetConfiguration
     {
-        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream30")
-        {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
-            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 30
-            return ControlWidgetToggle(isOn: ButtonState, action: PlayStream30ToggleIntent())
-            {
-                Label("Stream 30", systemImage: "30.circle")
-            }
-        }
-        .displayName("Stream 30")
+        makeStreamControl(streamNumber: 29)
     }
 }
 
-struct PlayStream30ToggleIntent: SetValueIntent, AudioPlaybackIntent
-{
-    static let title: LocalizedStringResource = "Stream 30"
-    @Parameter(title: "Is On") var value: Bool
-    @MainActor func perform() async throws -> some IntentResult
-    {
-        PlayStreamButton.PlayStreamButtonShared.PlayButton30_Click()
-        return .result()
-    }
-}
-
-struct TaigaStreamWidgetControl31: ControlWidget
+struct WidgetControl30: ControlWidget
 {
     var body: some ControlWidgetConfiguration
     {
-        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream31")
-        {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
-            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 31
-            return ControlWidgetToggle(isOn: ButtonState, action: PlayStream31ToggleIntent())
-            {
-                Label("Stream 31", systemImage: "31.circle")
-            }
-        }
-        .displayName("Stream 31")
+        makeStreamControl(streamNumber: 30)
     }
 }
 
-struct PlayStream31ToggleIntent: SetValueIntent, AudioPlaybackIntent
-{
-    static let title: LocalizedStringResource = "Stream 31"
-    @Parameter(title: "Is On") var value: Bool
-    @MainActor func perform() async throws -> some IntentResult
-    {
-        PlayStreamButton.PlayStreamButtonShared.PlayButton31_Click()
-        return .result()
-    }
-}
-
-struct TaigaStreamWidgetControl32: ControlWidget
+struct WidgetControl31: ControlWidget
 {
     var body: some ControlWidgetConfiguration
     {
-        StaticControlConfiguration(kind: "xyz.andrewmichaelpowell.taigastream.stream32")
-        {
-            let StreamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
-            let ButtonState = (StreamState?.bool(forKey: "PlayingKey") ?? false) && (StreamState?.integer(forKey: "CurrentStreamKey") ?? 0) == 32
-            return ControlWidgetToggle(isOn: ButtonState, action: PlayStream32ToggleIntent())
-            {
-                Label("Stream 32", systemImage: "32.circle")
-            }
-        }
-        .displayName("Stream 32")
+        makeStreamControl(streamNumber: 31)
     }
 }
 
-struct PlayStream32ToggleIntent: SetValueIntent, AudioPlaybackIntent
+struct WidgetControl32: ControlWidget
 {
-    static let title: LocalizedStringResource = "Stream 32"
-    @Parameter(title: "Is On") var value: Bool
-    @MainActor func perform() async throws -> some IntentResult
+    var body: some ControlWidgetConfiguration
     {
-        PlayStreamButton.PlayStreamButtonShared.PlayButton32_Click()
-        return .result()
+        makeStreamControl(streamNumber: 32)
     }
 }
