@@ -8,9 +8,9 @@ import Combine
 import MediaPlayer
 import WidgetKit
 
-public class PlayStreamData: NSObject, ObservableObject
+public class StreamData: NSObject, ObservableObject
 {
-    static let shared = PlayStreamData()
+    static let shared = StreamData()
     let streamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
     var playerCancellables = Set<AnyCancellable>()
     var sessionCancellables = Set<AnyCancellable>()
@@ -811,7 +811,7 @@ public class PlayStreamData: NSObject, ObservableObject
     }
 }
 
-extension PlayStreamData: AVPlayerItemMetadataOutputPushDelegate
+extension StreamData: AVPlayerItemMetadataOutputPushDelegate
 {
     public func metadataOutput(
         _ output: AVPlayerItemMetadataOutput,
@@ -826,14 +826,14 @@ extension PlayStreamData: AVPlayerItemMetadataOutputPushDelegate
     }
 }
 
-class PlayStreamButton
+class PlayStream
 {
-    static let shared = PlayStreamButton()
+    static let shared = PlayStream()
     
     private func startStream(_ streamUrl: URL, streamNumber: Int)
     {
         let newStreamItem = AVPlayerItem(url: streamUrl)
-        let data = PlayStreamData.shared
+        let data = StreamData.shared
         
         try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
         try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
@@ -854,7 +854,7 @@ class PlayStreamButton
     
     private func playButtonAction(streamUrl: URL, streamNumber: Int)
     {
-        let data = PlayStreamData.shared
+        let data = StreamData.shared
         if data.isPlaying && data.currentStream == streamNumber
         {
             data.audioPlayer.pause()
@@ -870,9 +870,9 @@ class PlayStreamButton
         }
     }
     
-    public func playButtonClick(streamNumber: Int)
+    public func play(streamNumber: Int)
     {
-        guard let url = URL(string: PlayStreamData.shared.streams[streamNumber - 1]) else
+        guard let url = URL(string: StreamData.shared.streams[streamNumber - 1]) else
         {
             return
         }
@@ -916,7 +916,7 @@ struct PlayStreamToggleIntent: SetValueIntent, AudioPlaybackIntent
     
     @MainActor func perform() async throws -> some IntentResult
     {
-        PlayStreamButton.shared.playButtonClick(streamNumber: streamNumber)
+        PlayStream.shared.play(streamNumber: streamNumber)
         return .result()
     }
 }

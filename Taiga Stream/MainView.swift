@@ -5,7 +5,7 @@ import SwiftUI
 
 struct MainView: View
 {
-    @ObservedObject var playStreamDataShared = PlayStreamData.shared
+    @ObservedObject var streamDataShared = StreamData.shared
     
     let color1 = Color(red: 36/255.0, green: 36/255.0, blue: 40/255.0, opacity: 1.0)
     let color2 = Color(red: 2/255.0, green: 218/255.0, blue: 195/255.0, opacity: 1.0)
@@ -21,8 +21,8 @@ struct MainView: View
                 HStack
                 {
                     TextField(
-                        playStreamDataShared.streams[streamNumber - 1],
-                        text: $playStreamDataShared.streams[streamNumber - 1]
+                        streamDataShared.streams[streamNumber - 1],
+                        text: $streamDataShared.streams[streamNumber - 1]
                     )
                     .font(.body)
                     .padding()
@@ -31,10 +31,10 @@ struct MainView: View
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .autocapitalization(.none)
                     .disableAutocorrection(true)
-                    .onChange(of: playStreamDataShared.streams[streamNumber - 1])
+                    .onChange(of: streamDataShared.streams[streamNumber - 1])
                     {
                         NSUbiquitousKeyValueStore.default.set(
-                            playStreamDataShared.streams[streamNumber - 1],
+                            streamDataShared.streams[streamNumber - 1],
                             forKey: "Stream\(streamNumber)Key"
                         )
                     }
@@ -53,11 +53,11 @@ struct MainView: View
 struct PlayButton: View
 {
     let streamNumber: Int
-    @ObservedObject var data = PlayStreamData.shared
+    @ObservedObject var data = StreamData.shared
     
-    let Color1 = Color(red: 36/255.0, green: 36/255.0, blue: 40/255.0, opacity: 1.0)
-    let Color2 = Color(red: 2/255.0, green: 218/255.0, blue: 195/255.0, opacity: 1.0)
-    let Color3 = Color(red: 72/255.0, green: 72/255.0, blue: 80/255.0, opacity: 1.0)
+    let color1 = Color(red: 36/255.0, green: 36/255.0, blue: 40/255.0, opacity: 1.0)
+    let color2 = Color(red: 2/255.0, green: 218/255.0, blue: 195/255.0, opacity: 1.0)
+    let color3 = Color(red: 72/255.0, green: 72/255.0, blue: 80/255.0, opacity: 1.0)
     
     private var playingStatus: Bool
     {
@@ -71,7 +71,7 @@ struct PlayButton: View
     
     var body: some View
     {
-        Button(action: { PlayStreamButton.shared.playButtonClick(streamNumber: streamNumber) })
+        Button(action: { PlayStream.shared.play(streamNumber: streamNumber) })
         {
             if playingStatus
             {
@@ -83,13 +83,13 @@ struct PlayButton: View
             {
                 Text("\(streamNumber)")
                     .font(.title3)
-                    .foregroundColor(dataStatus ? Color3 : .white)
+                    .foregroundColor(dataStatus ? color3 : .white)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
         }
         .frame(width: 50, height: 50)
         .buttonStyle(.borderedProminent)
         .buttonBorderShape(.circle)
-        .tint(playingStatus ? Color2 : Color1)
+        .tint(playingStatus ? color2 : color1)
     }
 }
