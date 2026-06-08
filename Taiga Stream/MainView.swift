@@ -59,12 +59,12 @@ struct PlayButton: View
     let color2 = Color(red: 2/255.0, green: 218/255.0, blue: 195/255.0, opacity: 1.0)
     let color3 = Color(red: 72/255.0, green: 72/255.0, blue: 80/255.0, opacity: 1.0)
     
-    private var playingStatus: Bool
+    private var isPlaying: Bool
     {
         data.isPlaying && data.currentStream == streamNumber && data.streams[streamNumber - 1] != ""
     }
     
-    private var dataStatus: Bool
+    private var isConfigured: Bool
     {
         data.streams[streamNumber - 1] == ""
     }
@@ -73,7 +73,7 @@ struct PlayButton: View
     {
         Button(action: { PlayStream.shared.play(streamNumber: streamNumber) })
         {
-            if playingStatus
+            if isPlaying
             {
                 Text(Image(systemName: "stop.fill"))
                     .font(.title3)
@@ -83,13 +83,13 @@ struct PlayButton: View
             {
                 Text("\(streamNumber)")
                     .font(.title3)
-                    .foregroundColor(dataStatus ? color3 : .white)
+                    .foregroundColor(isConfigured ? color3 : .white)
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
         }
         .frame(width: 50, height: 50)
         .buttonStyle(.borderedProminent)
         .buttonBorderShape(.circle)
-        .tint(playingStatus ? color2 : color1)
+        .tint(isPlaying ? color2 : color1)
     }
 }
