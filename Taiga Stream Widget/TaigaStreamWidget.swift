@@ -105,7 +105,20 @@ public class StreamData: NSObject, ObservableObject
             }
             return .success
         }
-        commandCenter.pauseCommand.isEnabled = false
+        commandCenter.pauseCommand.isEnabled = true
+        commandCenter.pauseCommand.addTarget
+        {
+            [weak self] _ in
+            guard let self = self else
+            {
+                return .commandFailed
+            }
+            
+            self.audioPlayer.pause()
+            try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+            self.clearNowPlayingInfo()
+            return .success
+        }
         commandCenter.skipForwardCommand.isEnabled = false
         commandCenter.skipForwardCommand.preferredIntervals = []
         commandCenter.skipBackwardCommand.isEnabled = false
@@ -203,6 +216,24 @@ public class StreamData: NSObject, ObservableObject
         let streamString = streamUrl.absoluteString
         let apiUrlString = streamMetadataApis.first(where: { streamString.contains($0.key) })?.value
         
+        if streamString.contains("somafm.com"), let host = streamUrl.host, host.contains("somafm"), !streamUrl.pathComponents.isEmpty
+        {
+            let mountName = streamUrl.pathComponents
+                .first(where: { !$0.isEmpty && $0 != "/" }) ?? ""
+            let channel = mountName.components(separatedBy: "-").first ?? ""
+            if !channel.isEmpty, let somaApi = URL(string: "https://somafm.com/songs/\(channel).json")
+            {
+                pollSomaFmMetadata(apiUrl: somaApi)
+                icyPollTimer = Timer.publish(every: 15.0, on: .main, in: .common)
+                    .autoconnect()
+                    .sink
+                {
+                    [weak self] _ in self?.pollSomaFmMetadata(apiUrl: somaApi)
+                }
+                return
+            }
+        }
+        
         if let apiUrlString = apiUrlString, let apiUrl = URL(string: apiUrlString)
         {
             if apiUrlString.contains("rms.api.bbc.co.uk")
@@ -223,6 +254,16 @@ public class StreamData: NSObject, ObservableObject
                     .sink
                 {
                     [weak self] _ in self?.pollAbcRadioMetadata(apiUrl: apiUrl)
+                }
+            }
+            else if apiUrlString.contains("somafm.com")
+            {
+                pollSomaFmMetadata(apiUrl: apiUrl)
+                icyPollTimer = Timer.publish(every: 15.0, on: .main, in: .common)
+                    .autoconnect()
+                    .sink
+                {
+                    [weak self] _ in self?.pollSomaFmMetadata(apiUrl: apiUrl)
                 }
             }
         }
@@ -318,6 +359,42 @@ public class StreamData: NSObject, ObservableObject
             
             let artist = (titles["primary"] as? String ?? "").trimmingCharacters(in: .whitespaces)
             let title  = (titles["secondary"] as? String ?? "").trimmingCharacters(in: .whitespaces)
+            let combined = "\(artist)|\(title)"
+            guard !title.isEmpty, combined != self.lastIcyTitle else
+            {
+                return
+            }
+            
+            self.lastIcyTitle = combined
+            let resolvedArtist = artist.isEmpty ? "Taiga Stream" : artist
+            let resolvedTitle  = title.isEmpty  ? "Stream \(self.currentStream)" : title
+            DispatchQueue.main.async
+            {
+                self.updateNowPlayingInfo(artist: resolvedArtist, title: resolvedTitle)
+                self.fetchArtwork(artist: resolvedArtist, title: resolvedTitle)
+            }
+        }
+        .resume()
+    }
+    
+    private func pollSomaFmMetadata(apiUrl: URL)
+    {
+        URLSession.shared.dataTask(with: apiUrl)
+        {
+            [weak self] data, _, error in
+            guard let self = self,
+                  let data = data,
+                  error == nil,
+                  let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  let songs = json["songs"] as? [[String: Any]],
+                  let first = songs.first
+            else
+            {
+                return
+            }
+            
+            let title  = (first["title"] as? String ?? "").trimmingCharacters(in: .whitespaces)
+            let artist = (first["artist"] as? String ?? "").trimmingCharacters(in: .whitespaces)
             let combined = "\(artist)|\(title)"
             guard !title.isEmpty, combined != self.lastIcyTitle else
             {
