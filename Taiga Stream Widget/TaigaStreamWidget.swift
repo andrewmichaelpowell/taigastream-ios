@@ -45,7 +45,7 @@ public class StreamData: NSObject, ObservableObject
             {
                 ControlCenter.shared.reloadAllControls()
             }
-            updateNowPlayingPlaybackState()
+            updatePlaybackState()
         }
     }
     
@@ -60,10 +60,10 @@ public class StreamData: NSObject, ObservableObject
         super.init()
         playerObservers()
         sessionObservers()
-        setupRemoteCommandCenter()
+        setupCommandCenter()
     }
     
-    private func setupRemoteCommandCenter()
+    private func setupCommandCenter()
     {
         let commandCenter = MPRemoteCommandCenter.shared()
         commandCenter.playCommand.isEnabled = true
@@ -80,7 +80,7 @@ public class StreamData: NSObject, ObservableObject
             [weak self] _ in
             self?.audioPlayer.pause()
             try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
-            self?.clearNowPlayingInfo()
+            self?.clearNowPlaying()
             return .success
         }
         
@@ -97,7 +97,7 @@ public class StreamData: NSObject, ObservableObject
             {
                 self.audioPlayer.pause()
                 try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
-                self.clearNowPlayingInfo()
+                self.clearNowPlaying()
             }
             else
             {
@@ -116,7 +116,7 @@ public class StreamData: NSObject, ObservableObject
             
             self.audioPlayer.pause()
             try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
-            self.clearNowPlayingInfo()
+            self.clearNowPlaying()
             return .success
         }
         commandCenter.skipForwardCommand.isEnabled = false
@@ -128,7 +128,7 @@ public class StreamData: NSObject, ObservableObject
         commandCenter.changePlaybackPositionCommand.isEnabled = false
     }
     
-    func updateNowPlayingInfo(artist: String = "", title: String = "")
+    func updateNowPlaying(artist: String = "", title: String = "")
     {
         let existingArtwork = MPNowPlayingInfoCenter.default().nowPlayingInfo?[MPMediaItemPropertyArtwork]
         var nowPlayingInfo = [String: Any]()
@@ -146,27 +146,27 @@ public class StreamData: NSObject, ObservableObject
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
     }
     
-    private func updateNowPlayingPlaybackState()
+    private func updatePlaybackState()
     {
-        if var NowPlayingInfo = MPNowPlayingInfoCenter.default().nowPlayingInfo
+        if var nowPlaying = MPNowPlayingInfoCenter.default().nowPlayingInfo
         {
-            NowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = isPlaying ? 1.0 : 0.0
-            MPNowPlayingInfoCenter.default().nowPlayingInfo = NowPlayingInfo
+            nowPlaying[MPNowPlayingInfoPropertyPlaybackRate] = isPlaying ? 1.0 : 0.0
+            MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlaying
         }
         else
         {
-            updateNowPlayingInfo()
+            updateNowPlaying()
         }
     }
     
-    func clearNowPlayingInfo()
+    func clearNowPlaying()
     {
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
     }
     
     private var metadataOutput: AVPlayerItemMetadataOutput?
     
-    func observeStreamMetadata()
+    func observeMetadata()
     {
         if let existingOutput = metadataOutput
         {
@@ -181,7 +181,7 @@ public class StreamData: NSObject, ObservableObject
     
     public typealias metadataApiFetcher = (URL) -> String?
     
-    private let streamMetadataApis: [String: String] =
+    private let metadataApis: [String: String] =
     [
         "bbc_1xtra" : "https://rms.api.bbc.co.uk/v2/services/bbc_1xtra/segments/latest?experience=domestic&offset=0&limit=1",
         "bbc_6music" : "https://rms.api.bbc.co.uk/v2/services/bbc_6music/segments/latest?experience=domestic&offset=0&limit=1",
@@ -214,7 +214,7 @@ public class StreamData: NSObject, ObservableObject
         stopIcyPolling()
         lastIcyTitle = ""
         let streamString = streamUrl.absoluteString
-        let apiUrlString = streamMetadataApis.first(where: { streamString.contains($0.key) })?.value
+        let apiUrlString = metadataApis.first(where: { streamString.contains($0.key) })?.value
         
         if streamString.contains("somafm.com"), let host = streamUrl.host, host.contains("somafm"), !streamUrl.pathComponents.isEmpty
         {
@@ -331,7 +331,7 @@ public class StreamData: NSObject, ObservableObject
             let resolvedTitle  = title.isEmpty  ? "Stream \(self.currentStream)" : title
             DispatchQueue.main.async
             {
-                self.updateNowPlayingInfo(artist: resolvedArtist, title: resolvedTitle)
+                self.updateNowPlaying(artist: resolvedArtist, title: resolvedTitle)
                 self.fetchArtwork(artist: resolvedArtist, title: resolvedTitle)
             }
         }
@@ -370,7 +370,7 @@ public class StreamData: NSObject, ObservableObject
             let resolvedTitle  = title.isEmpty  ? "Stream \(self.currentStream)" : title
             DispatchQueue.main.async
             {
-                self.updateNowPlayingInfo(artist: resolvedArtist, title: resolvedTitle)
+                self.updateNowPlaying(artist: resolvedArtist, title: resolvedTitle)
                 self.fetchArtwork(artist: resolvedArtist, title: resolvedTitle)
             }
         }
@@ -406,7 +406,7 @@ public class StreamData: NSObject, ObservableObject
             let resolvedTitle  = title.isEmpty  ? "Stream \(self.currentStream)" : title
             DispatchQueue.main.async
             {
-                self.updateNowPlayingInfo(artist: resolvedArtist, title: resolvedTitle)
+                self.updateNowPlaying(artist: resolvedArtist, title: resolvedTitle)
                 self.fetchArtwork(artist: resolvedArtist, title: resolvedTitle)
             }
         }
@@ -469,7 +469,7 @@ public class StreamData: NSObject, ObservableObject
             let resolvedTitle  = songTitle.isEmpty ? "Stream \(self.currentStream)" : songTitle
             DispatchQueue.main.async
             {
-                self.updateNowPlayingInfo(artist: resolvedArtist, title: resolvedTitle)
+                self.updateNowPlaying(artist: resolvedArtist, title: resolvedTitle)
                 self.fetchArtwork(artist: resolvedArtist, title: resolvedTitle)
             }
         }
@@ -606,7 +606,7 @@ public class StreamData: NSObject, ObservableObject
             
             await MainActor.run
             {
-                updateNowPlayingInfo(artist: resolvedArtist, title: resolvedTitle)
+                updateNowPlaying(artist: resolvedArtist, title: resolvedTitle)
                 fetchArtwork(artist: resolvedArtist, title: resolvedTitle)
             }
         }
@@ -920,10 +920,10 @@ class PlayStream
         data.audioPlayer.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
         data.currentStream = streamNumber
         data.isFallbackArtworkSet = false
-        data.updateNowPlayingInfo(title: "Stream \(streamNumber)")
+        data.updateNowPlaying(title: "Stream \(streamNumber)")
         data.setFallbackArtwork()
         data.isFallbackArtworkSet = true
-        data.observeStreamMetadata()
+        data.observeMetadata()
         data.audioPlayer.play()
         data.startPlaybackHeartbeat()
         data.startIcyPolling(streamUrl: streamUrl)
@@ -938,7 +938,7 @@ class PlayStream
             data.stopPlaybackHeartbeat()
             data.stopIcyPolling()
             try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
-            data.clearNowPlayingInfo()
+            data.clearNowPlaying()
         }
         else
         {
