@@ -59,7 +59,7 @@
 		3E690E0E2FB017B7006C88F6 /* Exceptions for "Taiga Stream Widget" folder in "Taiga Stream" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				TaigaStreamWidget.swift,
+				WidgetView.swift,
 			);
 			target = 3E1F17802F938D4B00DDE7E4 /* Taiga Stream */;
 		};

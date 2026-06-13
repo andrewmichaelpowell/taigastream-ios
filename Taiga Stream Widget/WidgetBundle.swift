@@ -5,7 +5,7 @@ import SwiftUI
 import WidgetKit
 
 @main
-struct WidgetBundle: WidgetBundle
+struct ControlButtons: WidgetBundle
 {
 	@WidgetBundleBuilder
 	var body: some Widget
