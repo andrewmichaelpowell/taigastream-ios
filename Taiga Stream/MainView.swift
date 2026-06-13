@@ -5,7 +5,7 @@ import SwiftUI
 
 struct MainView: View
 {
-	@ObservedObject var streamDataShared = StreamData.shared
+	@ObservedObject var streamData = StreamData.shared
 	
 	let color1 = Color(red: 36/255.0, green: 36/255.0, blue: 40/255.0, opacity: 1.0)
 	let color2 = Color(red: 2/255.0, green: 218/255.0, blue: 195/255.0, opacity: 1.0)
@@ -21,8 +21,8 @@ struct MainView: View
 				HStack
 				{
 					TextField(
-						streamDataShared.streams[streamNumber - 1],
-						text: $streamDataShared.streams[streamNumber - 1]
+						streamData.streams[streamNumber - 1],
+						text: $streamData.streams[streamNumber - 1]
 					)
 					.font(.body)
 					.padding()
@@ -31,10 +31,10 @@ struct MainView: View
 					.frame(maxWidth: .infinity, alignment: .leading)
 					.autocapitalization(.none)
 					.disableAutocorrection(true)
-					.onChange(of: streamDataShared.streams[streamNumber - 1])
+					.onChange(of: streamData.streams[streamNumber - 1])
 					{
 						NSUbiquitousKeyValueStore.default.set(
-							streamDataShared.streams[streamNumber - 1],
+							streamData.streams[streamNumber - 1],
 							forKey: "Stream\(streamNumber)Key"
 						)
 					}
