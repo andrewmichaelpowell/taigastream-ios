@@ -118,6 +118,7 @@
 				3E1F17822F938D4B00DDE7E4 /* Products */,
 			);
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		3E1F17822F938D4B00DDE7E4 /* Products */ = {
 			isa = PBXGroup;
