@@ -8,9 +8,9 @@ import Combine
 import MediaPlayer
 import WidgetKit
 
-public class StreamData: NSObject, ObservableObject
+public class StreamInfo: NSObject, ObservableObject
 {
-	static let shared = StreamData()
+	static let shared = StreamInfo()
 	let streamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")!
 	var playerCancellables = Set<AnyCancellable>()
 	var sessionCancellables = Set<AnyCancellable>()
@@ -888,7 +888,7 @@ public class StreamData: NSObject, ObservableObject
 	}
 }
 
-extension StreamData: AVPlayerItemMetadataOutputPushDelegate
+extension StreamInfo: AVPlayerItemMetadataOutputPushDelegate
 {
 	public func metadataOutput(
 		_ output: AVPlayerItemMetadataOutput,
@@ -910,7 +910,7 @@ class PlayStream
 	private func startStream(_ streamUrl: URL, streamNumber: Int)
 	{
 		let newStreamItem = AVPlayerItem(url: streamUrl)
-		let data = StreamData.shared
+		let data = StreamInfo.shared
 		
 		try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
 		try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
@@ -929,9 +929,9 @@ class PlayStream
 		data.startIcyPolling(streamUrl: streamUrl)
 	}
 	
-	private func playButtonAction(streamUrl: URL, streamNumber: Int)
+	private func playAction(streamUrl: URL, streamNumber: Int)
 	{
-		let data = StreamData.shared
+		let data = StreamInfo.shared
 		if data.isPlaying && data.currentStream == streamNumber
 		{
 			data.audioPlayer.pause()
@@ -949,15 +949,15 @@ class PlayStream
 	
 	public func play(streamNumber: Int)
 	{
-		guard let url = URL(string: StreamData.shared.streams[streamNumber - 1]) else
+		guard let url = URL(string: StreamInfo.shared.streams[streamNumber - 1]) else
 		{
 			return
 		}
-		playButtonAction(streamUrl: url, streamNumber: streamNumber)
+		playAction(streamUrl: url, streamNumber: streamNumber)
 	}
 }
 
-private func makeStreamControl(streamNumber: Int) -> some ControlWidgetConfiguration
+private func configureControl(streamNumber: Int) -> some ControlWidgetConfiguration
 {
 	let kind = "xyz.andrewmichaelpowell.taigastream.stream\(streamNumber)"
 	return StaticControlConfiguration(kind: kind)
@@ -965,7 +965,7 @@ private func makeStreamControl(streamNumber: Int) -> some ControlWidgetConfigura
 		let streamState = UserDefaults(suiteName: "group.xyz.andrewmichaelpowell.taigastream")
 		let streamStatus = (streamState?.bool(forKey: "PlayingKey") ?? false)
 		&& (streamState?.integer(forKey: "CurrentStreamKey") ?? 0) == streamNumber
-		return ControlWidgetToggle(isOn: streamStatus, action: PlayStreamToggleIntent(streamNumber: streamNumber))
+		return ControlWidgetToggle(isOn: streamStatus, action: ToggleIntent(streamNumber: streamNumber))
 		{
 			Label("Stream \(streamNumber)", systemImage: "\(streamNumber).circle")
 		}
@@ -975,7 +975,7 @@ private func makeStreamControl(streamNumber: Int) -> some ControlWidgetConfigura
 
 
 
-struct PlayStreamToggleIntent: SetValueIntent, AudioPlaybackIntent
+struct ToggleIntent: SetValueIntent, AudioPlaybackIntent
 {
 	static let title: LocalizedStringResource = "Play Stream"
 	@Parameter(title: "Stream Number") var streamNumber: Int
@@ -998,258 +998,258 @@ struct PlayStreamToggleIntent: SetValueIntent, AudioPlaybackIntent
 	}
 }
 
-struct WidgetControl1: ControlWidget
+struct Control1: ControlWidget
 {
 	var body: some ControlWidgetConfiguration
 	{
-		makeStreamControl(streamNumber: 1)
+		configureControl(streamNumber: 1)
 	}
 }
 
-struct WidgetControl2: ControlWidget
+struct Control2: ControlWidget
 {
 	var body: some ControlWidgetConfiguration
 	{
-		makeStreamControl(streamNumber: 2)
+		configureControl(streamNumber: 2)
 	}
 }
 
-struct WidgetControl3: ControlWidget
+struct Control3: ControlWidget
 {
 	var body: some ControlWidgetConfiguration
 	{
-		makeStreamControl(streamNumber: 3)
+		configureControl(streamNumber: 3)
 	}
 }
 
-struct WidgetControl4: ControlWidget
+struct Control4: ControlWidget
 {
 	var body: some ControlWidgetConfiguration
 	{
-		makeStreamControl(streamNumber: 4)
+		configureControl(streamNumber: 4)
 	}
 }
 
-struct WidgetControl5: ControlWidget
+struct Control5: ControlWidget
 {
 	var body: some ControlWidgetConfiguration
 	{
-		makeStreamControl(streamNumber: 5)
+		configureControl(streamNumber: 5)
 	}
 }
 
-struct WidgetControl6: ControlWidget
+struct Control6: ControlWidget
 {
 	var body: some ControlWidgetConfiguration
 	{
-		makeStreamControl(streamNumber: 6)
+		configureControl(streamNumber: 6)
 	}
 }
 
-struct WidgetControl7: ControlWidget
+struct Control7: ControlWidget
 {
 	var body: some ControlWidgetConfiguration
 	{
-		makeStreamControl(streamNumber: 7)
+		configureControl(streamNumber: 7)
 	}
 }
 
-struct WidgetControl8: ControlWidget
+struct Control8: ControlWidget
 {
 	var body: some ControlWidgetConfiguration
 	{
-		makeStreamControl(streamNumber: 8)
+		configureControl(streamNumber: 8)
 	}
 }
 
-struct WidgetControl9: ControlWidget
+struct Control9: ControlWidget
 {
 	var body: some ControlWidgetConfiguration
 	{
-		makeStreamControl(streamNumber: 9)
+		configureControl(streamNumber: 9)
 	}
 }
 
-struct WidgetControl10: ControlWidget
+struct Control10: ControlWidget
 {
 	var body: some ControlWidgetConfiguration
 	{
-		makeStreamControl(streamNumber: 10)
+		configureControl(streamNumber: 10)
 	}
 }
 
-struct WidgetControl11: ControlWidget
+struct Control11: ControlWidget
 {
 	var body: some ControlWidgetConfiguration
 	{
-		makeStreamControl(streamNumber: 11)
+		configureControl(streamNumber: 11)
 	}
 }
 
-struct WidgetControl12: ControlWidget
+struct Control12: ControlWidget
 {
 	var body: some ControlWidgetConfiguration
 	{
-		makeStreamControl(streamNumber: 12)
+		configureControl(streamNumber: 12)
 	}
 }
 
-struct WidgetControl13: ControlWidget
+struct Control13: ControlWidget
 {
 	var body: some ControlWidgetConfiguration
 	{
-		makeStreamControl(streamNumber: 13)
+		configureControl(streamNumber: 13)
 	}
 }
 
-struct WidgetControl14: ControlWidget
+struct Control14: ControlWidget
 {
 	var body: some ControlWidgetConfiguration
 	{
-		makeStreamControl(streamNumber: 14)
+		configureControl(streamNumber: 14)
 	}
 }
 
-struct WidgetControl15: ControlWidget
+struct Control15: ControlWidget
 {
 	var body: some ControlWidgetConfiguration
 	{
-		makeStreamControl(streamNumber: 15)
+		configureControl(streamNumber: 15)
 	}
 }
 
-struct WidgetControl16: ControlWidget
+struct Control16: ControlWidget
 {
 	var body: some ControlWidgetConfiguration
 	{
-		makeStreamControl(streamNumber: 16)
+		configureControl(streamNumber: 16)
 	}
 }
 
-struct WidgetControl17: ControlWidget
+struct Control17: ControlWidget
 {
 	var body: some ControlWidgetConfiguration
 	{
-		makeStreamControl(streamNumber: 17)
+		configureControl(streamNumber: 17)
 	}
 }
 
-struct WidgetControl18: ControlWidget
+struct Control18: ControlWidget
 {
 	var body: some ControlWidgetConfiguration
 	{
-		makeStreamControl(streamNumber: 18)
+		configureControl(streamNumber: 18)
 	}
 }
 
-struct WidgetControl19: ControlWidget
+struct Control19: ControlWidget
 {
 	var body: some ControlWidgetConfiguration
 	{
-		makeStreamControl(streamNumber: 19)
+		configureControl(streamNumber: 19)
 	}
 }
 
-struct WidgetControl20: ControlWidget
+struct Control20: ControlWidget
 {
 	var body: some ControlWidgetConfiguration
 	{
-		makeStreamControl(streamNumber: 20)
+		configureControl(streamNumber: 20)
 	}
 }
 
-struct WidgetControl21: ControlWidget
+struct Control21: ControlWidget
 {
 	var body: some ControlWidgetConfiguration
 	{
-		makeStreamControl(streamNumber: 21)
+		configureControl(streamNumber: 21)
 	}
 }
 
-struct WidgetControl22: ControlWidget
+struct Control22: ControlWidget
 {
 	var body: some ControlWidgetConfiguration
 	{
-		makeStreamControl(streamNumber: 22)
+		configureControl(streamNumber: 22)
 	}
 }
 
-struct WidgetControl23: ControlWidget
+struct Control23: ControlWidget
 {
 	var body: some ControlWidgetConfiguration
 	{
-		makeStreamControl(streamNumber: 23)
+		configureControl(streamNumber: 23)
 	}
 }
 
-struct WidgetControl24: ControlWidget
+struct Control24: ControlWidget
 {
 	var body: some ControlWidgetConfiguration
 	{
-		makeStreamControl(streamNumber: 24)
+		configureControl(streamNumber: 24)
 	}
 }
 
-struct WidgetControl25: ControlWidget
+struct Control25: ControlWidget
 {
 	var body: some ControlWidgetConfiguration
 	{
-		makeStreamControl(streamNumber: 25)
+		configureControl(streamNumber: 25)
 	}
 }
 
-struct WidgetControl26: ControlWidget
+struct Control26: ControlWidget
 {
 	var body: some ControlWidgetConfiguration
 	{
-		makeStreamControl(streamNumber: 26)
+		configureControl(streamNumber: 26)
 	}
 }
 
-struct WidgetControl27: ControlWidget
+struct Control27: ControlWidget
 {
 	var body: some ControlWidgetConfiguration
 	{
-		makeStreamControl(streamNumber: 27)
+		configureControl(streamNumber: 27)
 	}
 }
 
-struct WidgetControl28: ControlWidget
+struct Control28: ControlWidget
 {
 	var body: some ControlWidgetConfiguration
 	{
-		makeStreamControl(streamNumber: 28)
+		configureControl(streamNumber: 28)
 	}
 }
 
-struct WidgetControl29: ControlWidget
+struct Control29: ControlWidget
 {
 	var body: some ControlWidgetConfiguration
 	{
-		makeStreamControl(streamNumber: 29)
+		configureControl(streamNumber: 29)
 	}
 }
 
-struct WidgetControl30: ControlWidget
+struct Control30: ControlWidget
 {
 	var body: some ControlWidgetConfiguration
 	{
-		makeStreamControl(streamNumber: 30)
+		configureControl(streamNumber: 30)
 	}
 }
 
-struct WidgetControl31: ControlWidget
+struct Control31: ControlWidget
 {
 	var body: some ControlWidgetConfiguration
 	{
-		makeStreamControl(streamNumber: 31)
+		configureControl(streamNumber: 31)
 	}
 }
 
-struct WidgetControl32: ControlWidget
+struct Control32: ControlWidget
 {
 	var body: some ControlWidgetConfiguration
 	{
-		makeStreamControl(streamNumber: 32)
+		configureControl(streamNumber: 32)
 	}
 }
