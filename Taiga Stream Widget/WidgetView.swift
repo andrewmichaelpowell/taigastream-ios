@@ -50,7 +50,7 @@ public class StreamInfo: NSObject, ObservableObject
 	}
 	
 	@Published var audioPlayer = AVPlayer()
-	@Published var streams: [String] = (1...32).map
+	@Published var stream: [String] = (1...32).map
 	{
 		NSUbiquitousKeyValueStore.default.string(forKey: "Stream\($0)Key") ?? ""
 	}
@@ -60,10 +60,10 @@ public class StreamInfo: NSObject, ObservableObject
 		super.init()
 		playerObservers()
 		sessionObservers()
-		setupCommandCenter()
+		commandCenter()
 	}
 	
-	private func setupCommandCenter()
+	private func commandCenter()
 	{
 		let commandCenter = MPRemoteCommandCenter.shared()
 		commandCenter.playCommand.isEnabled = true
@@ -949,7 +949,7 @@ class PlayStream
 	
 	public func play(streamNumber: Int)
 	{
-		guard let url = URL(string: StreamInfo.shared.streams[streamNumber - 1]) else
+		guard let url = URL(string: StreamInfo.shared.stream[streamNumber - 1]) else
 		{
 			return
 		}

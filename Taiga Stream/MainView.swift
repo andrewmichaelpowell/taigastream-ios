@@ -21,8 +21,8 @@ struct MainView: View
 				HStack
 				{
 					TextField(
-						streamInfo.streams[streamNumber - 1],
-						text: $streamInfo.streams[streamNumber - 1]
+						streamInfo.stream[streamNumber - 1],
+						text: $streamInfo.stream[streamNumber - 1]
 					)
 					.font(.body)
 					.padding()
@@ -31,10 +31,10 @@ struct MainView: View
 					.frame(maxWidth: .infinity, alignment: .leading)
 					.autocapitalization(.none)
 					.disableAutocorrection(true)
-					.onChange(of: streamInfo.streams[streamNumber - 1])
+					.onChange(of: streamInfo.stream[streamNumber - 1])
 					{
 						NSUbiquitousKeyValueStore.default.set(
-							streamInfo.streams[streamNumber - 1],
+							streamInfo.stream[streamNumber - 1],
 							forKey: "Stream\(streamNumber)Key"
 						)
 					}
@@ -53,7 +53,7 @@ struct MainView: View
 struct PlayButton: View
 {
 	let streamNumber: Int
-	@ObservedObject var data = StreamInfo.shared
+	@ObservedObject var streamInfo = StreamInfo.shared
 	
 	let color1 = Color(red: 36/255.0, green: 36/255.0, blue: 40/255.0, opacity: 1.0)
 	let color2 = Color(red: 2/255.0, green: 218/255.0, blue: 195/255.0, opacity: 1.0)
@@ -61,12 +61,12 @@ struct PlayButton: View
 	
 	private var isPlaying: Bool
 	{
-		data.isPlaying && data.currentStream == streamNumber && data.streams[streamNumber - 1] != ""
+		streamInfo.isPlaying && streamInfo.currentStream == streamNumber && streamInfo.stream[streamNumber - 1] != ""
 	}
 	
 	private var isConfigured: Bool
 	{
-		data.streams[streamNumber - 1] == ""
+		streamInfo.stream[streamNumber - 1] == ""
 	}
 	
 	var body: some View
