@@ -16,6 +16,7 @@ public class StreamInfo: NSObject, ObservableObject
 	var sessionCancellables = Set<AnyCancellable>()
 	var metadataCancellable: AnyCancellable?
 	var playbackHeartbeat: AnyCancellable?
+	var currentStreamUrl: URL?
 	
 	var currentStream: Int
 	{
@@ -73,7 +74,7 @@ public class StreamInfo: NSObject, ObservableObject
 			guard let self = self else { return .commandFailed }
 			self.audioPlayer.play()
 			
-			if let currentItem = self.audioPlayer.currentItem, let streamUrl = (currentItem.asset as? AVURLAsset)?.url
+			if let streamUrl = self.currentStreamUrl
 			{
 				self.startPlaybackHeartbeat()
 				self.observeMetadata()
@@ -112,8 +113,7 @@ public class StreamInfo: NSObject, ObservableObject
 			else
 			{
 				self.audioPlayer.play()
-				if let currentItem = self.audioPlayer.currentItem,
-				   let streamUrl = (currentItem.asset as? AVURLAsset)?.url
+				if let streamUrl = self.currentStreamUrl
 				{
 					self.startPlaybackHeartbeat()
 					self.observeMetadata()
@@ -1061,6 +1061,7 @@ class PlayStream
 		data.audioPlayer.replaceCurrentItem(with: newStreamItem)
 		data.audioPlayer.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
 		data.currentStream = streamNumber
+		data.currentStreamUrl = streamUrl
 		data.isFallbackArtworkSet = false
 		data.updateNowPlaying(title: "Stream \(streamNumber)")
 		data.setFallbackArtwork()
