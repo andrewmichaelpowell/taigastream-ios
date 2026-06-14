@@ -70,7 +70,15 @@ public class StreamInfo: NSObject, ObservableObject
 		commandCenter.playCommand.addTarget
 		{
 			[weak self] _ in
-			self?.audioPlayer.play()
+			guard let self = self else { return .commandFailed }
+			self.audioPlayer.play()
+			
+			if let currentItem = self.audioPlayer.currentItem, let streamUrl = (currentItem.asset as? AVURLAsset)?.url
+			{
+				self.startPlaybackHeartbeat()
+				self.observeMetadata()
+				self.startIcyPolling(streamUrl: streamUrl)
+			}
 			return .success
 		}
 		
@@ -96,15 +104,25 @@ public class StreamInfo: NSObject, ObservableObject
 			if self.isPlaying
 			{
 				self.audioPlayer.pause()
+				self.stopPlaybackHeartbeat()
+				self.stopIcyPolling()
 				try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
 				self.clearNowPlaying()
 			}
 			else
 			{
 				self.audioPlayer.play()
+				if let currentItem = self.audioPlayer.currentItem,
+				   let streamUrl = (currentItem.asset as? AVURLAsset)?.url
+				{
+					self.startPlaybackHeartbeat()
+					self.observeMetadata()
+					self.startIcyPolling(streamUrl: streamUrl)
+				}
 			}
 			return .success
 		}
+		
 		commandCenter.pauseCommand.isEnabled = true
 		commandCenter.pauseCommand.addTarget
 		{
@@ -119,6 +137,7 @@ public class StreamInfo: NSObject, ObservableObject
 			self.clearNowPlaying()
 			return .success
 		}
+		
 		commandCenter.skipForwardCommand.isEnabled = false
 		commandCenter.skipForwardCommand.preferredIntervals = []
 		commandCenter.skipBackwardCommand.isEnabled = false
@@ -188,6 +207,36 @@ public class StreamInfo: NSObject, ObservableObject
 		"bbc_radio_one" : "https://rms.api.bbc.co.uk/v2/services/bbc_radio_one/segments/latest?experience=domestic&offset=0&limit=1",
 		"bbc_radio_two" : "https://rms.api.bbc.co.uk/v2/services/bbc_radio_two/segments/latest?experience=domestic&offset=0&limit=1",
 		"bbc_radio_three" : "https://rms.api.bbc.co.uk/v2/services/bbc_radio_three/segments/latest?experience=domestic&offset=0&limit=1",
+		"icecast.radiofrance.fr/fb100pour100annees80" : "https://api.radiofrance.fr/livemeta/live/5602/transistor_musical_player",
+		"icecast.radiofrance.fr/fbchansonfrancaise" : "https://api.radiofrance.fr/livemeta/live/5601/transistor_musical_player",
+		"icecast.radiofrance.fr/fip-hifi" : "https://api.radiofrance.fr/livemeta/live/7/transistor_musical_player",
+		"icecast.radiofrance.fr/fip-midfi" : "https://api.radiofrance.fr/livemeta/live/7/transistor_musical_player",
+		"icecast.radiofrance.fr/fipcultes" : "https://api.radiofrance.fr/livemeta/live/709/transistor_musical_player",
+		"icecast.radiofrance.fr/fipelectro" : "https://api.radiofrance.fr/livemeta/live/74/transistor_musical_player",
+		"icecast.radiofrance.fr/fipgroove" : "https://api.radiofrance.fr/livemeta/live/66/transistor_musical_player",
+		"icecast.radiofrance.fr/fiphiphop" : "https://api.radiofrance.fr/livemeta/live/95/transistor_musical_player",
+		"icecast.radiofrance.fr/fipjazz" : "https://api.radiofrance.fr/livemeta/live/65/transistor_musical_player",
+		"icecast.radiofrance.fr/fipmetal" : "https://api.radiofrance.fr/livemeta/live/77/transistor_musical_player",
+		"icecast.radiofrance.fr/fipmonde" : "https://api.radiofrance.fr/livemeta/live/69/transistor_musical_player",
+		"icecast.radiofrance.fr/fipnouveautes" : "https://api.radiofrance.fr/livemeta/live/70/transistor_musical_player",
+		"icecast.radiofrance.fr/fippop" : "https://api.radiofrance.fr/livemeta/live/78/transistor_musical_player",
+		"icecast.radiofrance.fr/fipreggae" : "https://api.radiofrance.fr/livemeta/live/71/transistor_musical_player",
+		"icecast.radiofrance.fr/fiprock" : "https://api.radiofrance.fr/livemeta/live/64/transistor_musical_player",
+		"icecast.radiofrance.fr/fipsacrefrancais" : "https://api.radiofrance.fr/livemeta/live/96/transistor_musical_player",
+		"icecast.radiofrance.fr/franceinterlamusiqueinter" : "https://api.radiofrance.fr/livemeta/live/1101/transistor_musical_player",
+		"icecast.radiofrance.fr/francemusiquebaroque" : "https://api.radiofrance.fr/livemeta/live/408/transistor_musical_player",
+		"icecast.radiofrance.fr/francemusiqueclassiquelove" : "https://api.radiofrance.fr/livemeta/live/411/transistor_musical_player",
+		"icecast.radiofrance.fr/francemusiqueclassiqueplus" : "https://api.radiofrance.fr/livemeta/live/402/transistor_musical_player",
+		"icecast.radiofrance.fr/francemusiqueconcertsradiofrance" : "https://api.radiofrance.fr/livemeta/live/403/transistor_musical_player",
+		"icecast.radiofrance.fr/francemusiqueeasyclassique" : "https://api.radiofrance.fr/livemeta/live/401/transistor_musical_player",
+		"icecast.radiofrance.fr/francemusiquelajazz" : "https://api.radiofrance.fr/livemeta/live/407/transistor_musical_player",
+		"icecast.radiofrance.fr/francemusiquelacontemporaine" : "https://api.radiofrance.fr/livemeta/live/406/transistor_musical_player",
+		"icecast.radiofrance.fr/francemusiquelalabo" : "https://api.radiofrance.fr/livemeta/live/405/transistor_musical_player",
+		"icecast.radiofrance.fr/francemusiquecoramonde" : "https://api.radiofrance.fr/livemeta/live/404/transistor_musical_player",
+		"icecast.radiofrance.fr/francemusiqueopera" : "https://api.radiofrance.fr/livemeta/live/409/transistor_musical_player",
+		"icecast.radiofrance.fr/francemusiquepianozen" : "https://api.radiofrance.fr/livemeta/live/410/transistor_musical_player",
+		"icecast.radiofrance.fr/mouv-hifi" : "https://api.radiofrance.fr/livemeta/live/6/transistor_mouv_player",
+		"icecast.radiofrance.fr/mouv-midfi" : "https://api.radiofrance.fr/livemeta/live/6/transistor_mouv_player",
 		"streamguys1.com/live/abccountry" : "https://music.abcradio.net.au/api/v1/plays/country/now.json",
 		"streamguys1.com/live/abcjazz" : "https://music.abcradio.net.au/api/v1/plays/jazz/now.json",
 		"streamguys1.com/live/classicfmnsw" : "https://music.abcradio.net.au/api/v1/plays/classic/now.json",
@@ -196,14 +245,14 @@ public class StreamInfo: NSObject, ObservableObject
 		"streamguys1.com/live/triplejnsw" : "https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
 		"streamguys1.com/live/triplejhottest" : "https://music.abcradio.net.au/api/v1/plays/h100/now.json",
 		"streamguys1.com/live/triplejunearthed" : "https://music.abcradio.net.au/api/v1/plays/unearthed/now.json",
-		"streaming.abc-cdn.net.au/audio/hls/abccountry.m3u8" : "https://music.abcradio.net.au/api/v1/plays/country/now.json",
-		"streaming.abc-cdn.net.au/audio/hls/abcjazz.m3u8" : "https://music.abcradio.net.au/api/v1/plays/jazz/now.json",
-		"streaming.abc-cdn.net.au/audio/hls/classicfmnsw.m3u8" : "https://music.abcradio.net.au/api/v1/plays/classic/now.json",
-		"streaming.abc-cdn.net.au/audio/hls/classic2.m3u8" : "https://music.abcradio.net.au/api/v1/plays/classic2/now.json",
-		"streaming.abc-cdn.net.au/audio/hls/doublejnsw.m3u8" : "https://music.abcradio.net.au/api/v1/plays/doublej/now.json",
-		"streaming.abc-cdn.net.au/audio/hls/triplejnsw.m3u8" : "https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
-		"streaming.abc-cdn.net.au/audio/hls/triplejhottest.m3u8" : "https://music.abcradio.net.au/api/v1/plays/h100/now.json",
-		"streaming.abc-cdn.net.au/audio/hls/triplejunearthed.m3u8" : "https://music.abcradio.net.au/api/v1/plays/unearthed/now.json",
+		"streaming.abc-cdn.net.au/audio/hls/abccountry" : "https://music.abcradio.net.au/api/v1/plays/country/now.json",
+		"streaming.abc-cdn.net.au/audio/hls/abcjazz" : "https://music.abcradio.net.au/api/v1/plays/jazz/now.json",
+		"streaming.abc-cdn.net.au/audio/hls/classicfmnsw" : "https://music.abcradio.net.au/api/v1/plays/classic/now.json",
+		"streaming.abc-cdn.net.au/audio/hls/classic2" : "https://music.abcradio.net.au/api/v1/plays/classic2/now.json",
+		"streaming.abc-cdn.net.au/audio/hls/doublejnsw" : "https://music.abcradio.net.au/api/v1/plays/doublej/now.json",
+		"streaming.abc-cdn.net.au/audio/hls/triplejnsw" : "https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
+		"streaming.abc-cdn.net.au/audio/hls/triplejhottest" : "https://music.abcradio.net.au/api/v1/plays/h100/now.json",
+		"streaming.abc-cdn.net.au/audio/hls/triplejunearthed" : "https://music.abcradio.net.au/api/v1/plays/unearthed/now.json",
 	]
 	
 	private var icyPollTimer: AnyCancellable?
@@ -255,6 +304,10 @@ public class StreamInfo: NSObject, ObservableObject
 				{
 					[weak self] _ in self?.pollAbcRadioMetadata(apiUrl: apiUrl)
 				}
+			}
+			else if apiUrlString.contains("api.radiofrance.fr")
+			{
+				pollRadioFranceMetadata(apiUrl: apiUrl)
 			}
 			else if apiUrlString.contains("somafm.com")
 			{
@@ -368,6 +421,95 @@ public class StreamInfo: NSObject, ObservableObject
 			self.lastIcyTitle = combined
 			let resolvedArtist = artist.isEmpty ? "Taiga Stream" : artist
 			let resolvedTitle  = title.isEmpty  ? "Stream \(self.currentStream)" : title
+			DispatchQueue.main.async
+			{
+				self.updateNowPlaying(artist: resolvedArtist, title: resolvedTitle)
+				self.fetchArtwork(artist: resolvedArtist, title: resolvedTitle)
+			}
+		}
+		.resume()
+	}
+	
+	private func pollRadioFranceMetadata(apiUrl: URL)
+	{
+		var request = URLRequest(url: apiUrl)
+		request.setValue("application/json", forHTTPHeaderField: "Accept")
+		URLSession.shared.dataTask(with: request)
+		{
+			[weak self] data, _, error in
+			guard let self = self,
+				  let data = data,
+				  error == nil,
+				  let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
+			else
+			{
+				return
+			}
+			
+			if let delay = json["delayToRefresh"] as? TimeInterval
+			{
+				let refreshInterval = max(delay / 1000, 10)
+				DispatchQueue.main.async
+				{
+					self.icyPollTimer = Timer.publish(every: refreshInterval, on: .main, in: .common)
+						.autoconnect()
+						.sink
+					{
+						[weak self] _ in self?.pollRadioFranceMetadata(apiUrl: apiUrl)
+					}
+				}
+			}
+			
+			let nowBlock  = json["now"]  as? [String: Any]
+			let nextArray = json["next"] as? [[String: Any]]
+			let nextBlock = nextArray?.first
+			let block: [String: Any]?
+			
+			if nowBlock?["favoriteUuid"] is String
+			{
+				block = nowBlock
+			}
+			else if nextBlock?["favoriteUuid"] is String
+			{
+				block = nextBlock
+			}
+			else
+			{
+				block = nowBlock
+			}
+			
+			guard let activeBlock = block else { return }
+			
+			let firstLine  = (activeBlock["firstLine"]  as? String ?? "").trimmingCharacters(in: .whitespaces)
+			let secondLine = (activeBlock["secondLine"] as? String ?? "").trimmingCharacters(in: .whitespaces)
+			let parts = secondLine.components(separatedBy: " • ")
+			let artist: String
+			let title: String
+			
+			if parts.count >= 2
+			{
+				artist = self.cleanMetadataString(parts[0].trimmingCharacters(in: .whitespaces))
+				title  = self.cleanMetadataString(parts.dropFirst().joined(separator: " • ").trimmingCharacters(in: .whitespaces))
+			}
+			else
+			{
+				artist = ""
+				title  = self.cleanMetadataString(firstLine)
+			}
+			
+			let combined = "\(artist)|\(title)"
+			guard !title.isEmpty,
+				  !self.junkMetadata(title),
+				  combined != self.lastIcyTitle
+			else
+			{
+				return
+			}
+			
+			self.lastIcyTitle = combined
+			let resolvedArtist = artist.isEmpty || self.junkMetadata(artist) ? "Taiga Stream" : artist
+			let resolvedTitle  = title.isEmpty ? "Stream \(self.currentStream)" : title
+			
 			DispatchQueue.main.async
 			{
 				self.updateNowPlaying(artist: resolvedArtist, title: resolvedTitle)
