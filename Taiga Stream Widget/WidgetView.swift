@@ -232,8 +232,16 @@ public class StreamInfo: NSObject, ObservableObject {
 				"https://api.radiofrance.fr/livemeta/live/64/transistor_musical_player",
 			"icecast.radiofrance.fr/fipsacrefrancais":
 				"https://api.radiofrance.fr/livemeta/live/96/transistor_musical_player",
+			"icecast.radiofrance.fr/franceinter-hifi":
+				"https://api.radiofrance.fr/livemeta/live/1/transistor_inter_player",
+			"icecast.radiofrance.fr/franceinter-midfi":
+				"https://api.radiofrance.fr/livemeta/live/1/transistor_inter_player",
 			"icecast.radiofrance.fr/franceinterlamusiqueinter":
 				"https://api.radiofrance.fr/livemeta/live/1101/transistor_musical_player",
+			"icecast.radiofrance.fr/francemusique-hifi":
+				"https://api.radiofrance.fr/livemeta/live/4/transistor_musique_player",
+			"icecast.radiofrance.fr/francemusique-midfi":
+				"https://api.radiofrance.fr/livemeta/live/4/transistor_musique_player",
 			"icecast.radiofrance.fr/francemusiquebaroque":
 				"https://api.radiofrance.fr/livemeta/live/408/transistor_musical_player",
 			"icecast.radiofrance.fr/francemusiqueclassiquelove":
@@ -260,6 +268,32 @@ public class StreamInfo: NSObject, ObservableObject {
 				"https://api.radiofrance.fr/livemeta/live/6/transistor_mouv_player",
 			"icecast.radiofrance.fr/mouv-midfi":
 				"https://api.radiofrance.fr/livemeta/live/6/transistor_mouv_player",
+			"nrk-live-radio-world.akamaized.net/p1":
+				"https://psapi.nrk.no/channels/p1/liveelements",
+			"nrk-live-radio-world.akamaized.net/p1pluss":
+				"https://psapi.nrk.no/channels/p1pluss/liveelements",
+			"nrk-live-radio-world.akamaized.net/p2":
+				"https://psapi.nrk.no/channels/p2/liveelements",
+			"nrk-live-radio-world.akamaized.net/p3":
+				"https://psapi.nrk.no/channels/p3/liveelements",
+			"nrk-live-radio-world.akamaized.net/p3musikk":
+				"https://psapi.nrk.no/channels/p3musikk/liveelements",
+			"nrk-live-radio-world.akamaized.net/mp3":
+				"https://psapi.nrk.no/channels/mp3/liveelements",
+			"nrk-live-radio-world.akamaized.net/nyheter":
+				"https://psapi.nrk.no/channels/nyheter/liveelements",
+			"nrk-live-radio-world.akamaized.net/radio_super":
+				"https://psapi.nrk.no/channels/radio_super/liveelements",
+			"nrk-live-radio-world.akamaized.net/klassisk":
+				"https://psapi.nrk.no/channels/klassisk/liveelements",
+			"nrk-live-radio-world.akamaized.net/sapmi":
+				"https://psapi.nrk.no/channels/sapmi/liveelements",
+			"nrk-live-radio-world.akamaized.net/jazz":
+				"https://psapi.nrk.no/channels/jazz/liveelements",
+			"nrk-live-radio-world.akamaized.net/folkemusikk":
+				"https://psapi.nrk.no/channels/folkemusikk/liveelements",
+			"nrk-live-radio-world.akamaized.net/sport":
+				"https://psapi.nrk.no/channels/sport/liveelements",
 			"streamguys1.com/live/abccountry":
 				"https://music.abcradio.net.au/api/v1/plays/country/now.json",
 			"streamguys1.com/live/abcjazz":
@@ -356,6 +390,18 @@ public class StreamInfo: NSObject, ObservableObject {
 				.sink {
 					[weak self] _ in self?.pollAbcRadioMetadata(apiUrl: apiUrl)
 				}
+			} else if apiUrlString.contains("psapi.nrk.no") {
+				pollNrkMetadata(apiUrl: apiUrl)
+				icyPollTimer = Timer.publish(
+					every: 15.0,
+					on: .main,
+					in: .common
+				)
+				.autoconnect()
+				.sink {
+					[weak self] _ in self?.pollNrkMetadata(apiUrl: apiUrl)
+				}
+
 			} else if apiUrlString.contains("api.radiofrance.fr") {
 				pollRadioFranceMetadata(apiUrl: apiUrl)
 			} else if apiUrlString.contains("somafm.com") {
@@ -486,6 +532,97 @@ public class StreamInfo: NSObject, ObservableObject {
 					title: resolvedTitle
 				)
 				self.fetchArtwork(artist: resolvedArtist, title: resolvedTitle)
+			}
+		}
+		.resume()
+	}
+
+	private func pollNrkMetadata(apiUrl: URL) {
+		var request = URLRequest(url: apiUrl)
+		request.setValue("application/json", forHTTPHeaderField: "Accept")
+		URLSession.shared.dataTask(with: request) {
+			[weak self] data, _, error in
+			guard let self = self,
+				let data = data,
+				error == nil,
+				let elements = try? JSONSerialization.jsonObject(with: data)
+					as? [[String: Any]]
+			else {
+				return
+			}
+
+			let musicElements = elements.filter {
+				($0["type"] as? String) == "Music"
+			}
+
+			let current =
+				musicElements.first {
+					($0["relativeTimeType"] as? String) == "Present"
+				}
+				?? musicElements.last {
+					($0["relativeTimeType"] as? String) == "Past"
+				}
+
+			guard let element = current else { return }
+
+			let title = (element["title"] as? String ?? "")
+				.trimmingCharacters(in: .whitespaces)
+			let artist = (element["description"] as? String ?? "")
+				.trimmingCharacters(in: .whitespaces)
+
+			guard !title.isEmpty else { return }
+
+			let combined = "\(artist)|\(title)"
+			guard combined != self.lastIcyTitle else { return }
+			self.lastIcyTitle = combined
+
+			let resolvedArtist = artist.isEmpty ? "Taiga Stream" : artist
+			let resolvedTitle =
+				title.isEmpty ? "Stream \(self.currentStream)" : title
+
+			if let imageUrlString = element["imageUrl"] as? String,
+				!imageUrlString.isEmpty,
+				let imageUrl = URL(string: imageUrlString)
+			{
+				URLSession.shared.dataTask(with: imageUrl) {
+					[weak self] imageData, _, imageError in
+					guard let self = self,
+						let imageData = imageData,
+						imageError == nil,
+						let artworkImage = UIImage(data: imageData)
+					else {
+						DispatchQueue.main.async {
+							self?.updateNowPlaying(
+								artist: resolvedArtist,
+								title: resolvedTitle
+							)
+							self?.fetchArtwork(
+								artist: resolvedArtist,
+								title: resolvedTitle
+							)
+						}
+						return
+					}
+					DispatchQueue.main.async {
+						self.updateNowPlaying(
+							artist: resolvedArtist,
+							title: resolvedTitle
+						)
+						self.applyArtwork(artworkImage)
+					}
+				}
+				.resume()
+			} else {
+				DispatchQueue.main.async {
+					self.updateNowPlaying(
+						artist: resolvedArtist,
+						title: resolvedTitle
+					)
+					self.fetchArtwork(
+						artist: resolvedArtist,
+						title: resolvedTitle
+					)
+				}
 			}
 		}
 		.resume()
@@ -690,23 +827,11 @@ public class StreamInfo: NSObject, ObservableObject {
 			}
 
 			self.lastIcyTitle = title
-			let parts = title.components(separatedBy: " - ")
-			let artist: String
-			let songTitle: String
-
-			if parts.count >= 2 {
-				artist = self.cleanMetadataString(
-					parts[0].trimmingCharacters(in: .whitespaces)
-				)
-				songTitle = self.cleanMetadataString(
-					parts.dropFirst().joined(separator: " - ")
-						.trimmingCharacters(in: .whitespaces)
-				)
-			} else {
-				artist = "Taiga Stream"
-				songTitle = self.cleanMetadataString(title)
-			}
-
+			let (parsedArtist, parsedTitle) = self.splitArtistTitle(from: title)
+			let artist = parsedArtist
+			let songTitle =
+				parsedTitle.isEmpty
+				? self.cleanMetadataString(title) : parsedTitle
 			let resolvedArtist = artist.isEmpty ? "Taiga Stream" : artist
 			let resolvedTitle =
 				songTitle.isEmpty ? "Stream \(self.currentStream)" : songTitle
@@ -721,10 +846,45 @@ public class StreamInfo: NSObject, ObservableObject {
 		.resume()
 	}
 
+	private func splitArtistTitle(from raw: String) -> (
+		artist: String, title: String
+	) {
+		let separators = [" — ", " – ", " - ", " / ", " · "]
+
+		for separator in separators {
+			let parts = raw.components(separatedBy: separator)
+			if parts.count >= 2 {
+				let artist = cleanMetadataString(
+					parts[0].trimmingCharacters(in: .whitespaces)
+				)
+				let title = cleanMetadataString(
+					parts.dropFirst().joined(separator: separator)
+						.trimmingCharacters(in: .whitespaces)
+				)
+				if !artist.isEmpty && !title.isEmpty {
+					return (artist, title)
+				}
+			}
+		}
+
+		return (
+			"", cleanMetadataString(raw.trimmingCharacters(in: .whitespaces))
+		)
+	}
+
 	private func cleanMetadataString(_ artist: String) -> String {
-		let isrcPattern = #"\s*-\s*[A-Z][A-Z0-9]{7,11}$"#
 		var cleaned = artist
 
+		let hostedPlatformPrefixPattern =
+			#"(?i)^(visit us at [^\s]+\s*-\s*|\[[^\]]+\]\s*)"#
+		if let range = cleaned.range(
+			of: hostedPlatformPrefixPattern,
+			options: .regularExpression
+		) {
+			cleaned = String(cleaned[range.upperBound...])
+		}
+
+		let isrcPattern = #"\s*-\s*[A-Z][A-Z0-9]{7,11}$"#
 		if let range = cleaned.range(
 			of: isrcPattern,
 			options: .regularExpression
@@ -832,16 +992,18 @@ public class StreamInfo: NSObject, ObservableObject {
 						artist = cleanMetadataString(
 							cleanParts.dropFirst().joined(separator: " - ")
 						)
-					} else if parts.count >= 2 {
-						artist = cleanMetadataString(
-							parts[0].trimmingCharacters(in: .whitespaces)
-						)
-						title = cleanMetadataString(
-							parts.dropFirst().joined(separator: " - ")
-								.trimmingCharacters(in: .whitespaces)
-						)
 					} else {
-						title = cleanMetadataString(value)
+						let (parsedArtist, parsedTitle) = splitArtistTitle(
+							from: value
+						)
+						if !parsedArtist.isEmpty {
+							artist = parsedArtist
+							title = parsedTitle
+						} else {
+							title =
+								parsedTitle.isEmpty
+								? cleanMetadataString(value) : parsedTitle
+						}
 					}
 				}
 
