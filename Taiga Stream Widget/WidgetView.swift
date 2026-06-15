@@ -338,6 +338,19 @@ public class StreamInfo: NSObject, ObservableObject {
 		let apiUrlString = metadataApis.first(where: {
 			streamString.contains($0.key)
 		})?.value
+		
+		if let components = URLComponents(url: streamUrl, resolvingAgainstBaseURL: false),
+		   let queryItems = components.queryItems,
+		   let network = queryItems.first(where: { $0.name == "network" })?.value,
+		   let channelId = queryItems.first(where: { $0.name == "channel_id" })?.value,
+		   ["di", "jazzradio", "rockradio", "radiotunes", "classicalradio", "zenradio"].contains(network)
+		{
+			pollAudioAddictMetadata(network: network, channelId: channelId)
+			icyPollTimer = Timer.publish(every: 15.0, on: .main, in: .common)
+				.autoconnect()
+				.sink { [weak self] _ in self?.pollAudioAddictMetadata(network: network, channelId: channelId) }
+			return
+		}
 
 		if streamString.contains("somafm.com"), let host = streamUrl.host,
 			host.contains("somafm"), !streamUrl.pathComponents.isEmpty
@@ -720,6 +733,42 @@ public class StreamInfo: NSObject, ObservableObject {
 		.resume()
 	}
 
+	private func pollAudioAddictMetadata(network: String, channelId: String) {
+		guard let apiUrl = URL(string: "https://api.audioaddict.com/v1/\(network)/currently_playing") else { return }
+
+		URLSession.shared.dataTask(with: apiUrl) { [weak self] data, _, error in
+			guard let self = self,
+				  let data = data,
+				  error == nil,
+				  let channels = try? JSONSerialization.jsonObject(with: data) as? [[String: Any]]
+			else { return }
+
+			guard let match = channels.first(where: {
+				if let id = $0["channel_id"] as? Int { return String(id) == channelId }
+				if let id = $0["channel_id"] as? String { return id == channelId }
+				return false
+			}),
+			let track = match["track"] as? [String: Any]
+			else { return }
+
+			let artist = (track["display_artist"] as? String ?? "").trimmingCharacters(in: .whitespaces)
+			let title  = (track["display_title"]  as? String ?? "").trimmingCharacters(in: .whitespaces)
+			let combined = "\(artist)|\(title)"
+
+			guard !title.isEmpty, combined != self.lastIcyTitle else { return }
+			self.lastIcyTitle = combined
+
+			let resolvedArtist = artist.isEmpty ? "Taiga Stream" : artist
+			let resolvedTitle  = title.isEmpty  ? "Stream \(self.currentStream)" : title
+
+			DispatchQueue.main.async {
+				self.updateNowPlaying(artist: resolvedArtist, title: resolvedTitle)
+				self.fetchArtwork(artist: resolvedArtist, title: resolvedTitle)
+			}
+		}
+		.resume()
+	}
+	
 	private func pollSomaFmMetadata(apiUrl: URL) {
 		URLSession.shared.dataTask(with: apiUrl) {
 			[weak self] data, _, error in
@@ -849,7 +898,7 @@ public class StreamInfo: NSObject, ObservableObject {
 	private func splitArtistTitle(from raw: String) -> (
 		artist: String, title: String
 	) {
-		let separators = [" — ", " – ", " - ", " / ", " · "]
+		let separators = [" — ", " – ", " - ", " / ", " · ", " | "]
 
 		for separator in separators {
 			let parts = raw.components(separatedBy: separator)
