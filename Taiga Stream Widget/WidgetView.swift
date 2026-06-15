@@ -352,6 +352,24 @@ public class StreamInfo: NSObject, ObservableObject {
 			return
 		}
 
+		if streamString.contains("streamabc.net"),
+		   let pathFirst = streamUrl.pathComponents.first(where: { !$0.isEmpty && $0 != "/" })
+		{
+			let parts = pathFirst.components(separatedBy: "-")
+			let channelKey = parts.prefix(while: {
+				Int($0) == nil && $0 != "mp3" && $0 != "aac" && $0 != "hls" &&
+				!["32","40","48","56","64","96","128","192","256","320"].contains($0)
+			}).joined(separator: "-")
+
+			if !channelKey.isEmpty {
+				pollStreamAbcMetadata(channelKey: channelKey)
+				icyPollTimer = Timer.publish(every: 15.0, on: .main, in: .common)
+					.autoconnect()
+					.sink { [weak self] _ in self?.pollStreamAbcMetadata(channelKey: channelKey) }
+				return
+			}
+		}
+		
 		if streamString.contains("somafm.com"), let host = streamUrl.host,
 			host.contains("somafm"), !streamUrl.pathComponents.isEmpty
 		{
@@ -764,6 +782,65 @@ public class StreamInfo: NSObject, ObservableObject {
 			DispatchQueue.main.async {
 				self.updateNowPlaying(artist: resolvedArtist, title: resolvedTitle)
 				self.fetchArtwork(artist: resolvedArtist, title: resolvedTitle)
+			}
+		}
+		.resume()
+	}
+
+	private func pollStreamAbcMetadata(channelKey: String) {
+		guard let apiUrl = URL(string: "https://playerservices.streamabc.net/api/getsong?channelid=\(channelKey)&callback=") else { return }
+
+		URLSession.shared.dataTask(with: apiUrl) { [weak self] data, _, error in
+			guard let self = self,
+				  let data = data,
+				  error == nil
+			else { return }
+
+			// Response may be JSONP wrapped: callback({...}) or just {...}
+			var jsonData = data
+			if let text = String(data: data, encoding: .utf8) {
+				var stripped = text.trimmingCharacters(in: .whitespaces)
+				if let start = stripped.firstIndex(of: "{"), let end = stripped.lastIndex(of: "}") {
+					stripped = String(stripped[start...end])
+					jsonData = stripped.data(using: .utf8) ?? data
+				}
+			}
+
+			guard let json = try? JSONSerialization.jsonObject(with: jsonData) as? [String: Any]
+			else { return }
+
+			let artist = (json["artist"] as? String ?? "").trimmingCharacters(in: .whitespaces)
+			let title  = (json["song"]   as? String ?? "").trimmingCharacters(in: .whitespaces)
+			let combined = "\(artist)|\(title)"
+
+			guard !title.isEmpty, combined != self.lastIcyTitle else { return }
+			self.lastIcyTitle = combined
+
+			let resolvedArtist = artist.isEmpty ? "Taiga Stream" : artist
+			let resolvedTitle  = title.isEmpty  ? "Stream \(self.currentStream)" : title
+
+			DispatchQueue.main.async {
+				self.updateNowPlaying(artist: resolvedArtist, title: resolvedTitle)
+
+				// StreamABC provides iTunes artwork in the meta array
+				if let metaArray = json["meta"] as? [[String: Any]],
+				   let itunes = metaArray.first(where: { ($0["type"] as? String) == "itunes" }),
+				   let artworkUrlString = itunes["largeimage"] as? String ?? itunes["image"] as? String,
+				   let artworkUrl = URL(string: artworkUrlString) {
+					URLSession.shared.dataTask(with: artworkUrl) { [weak self] imageData, _, imageError in
+						guard let self = self,
+							  let imageData = imageData,
+							  imageError == nil,
+							  let image = UIImage(data: imageData)
+						else {
+							DispatchQueue.main.async { self?.fetchArtwork(artist: resolvedArtist, title: resolvedTitle) }
+							return
+						}
+						DispatchQueue.main.async { self.applyArtwork(image) }
+					}.resume()
+				} else {
+					self.fetchArtwork(artist: resolvedArtist, title: resolvedTitle)
+				}
 			}
 		}
 		.resume()
