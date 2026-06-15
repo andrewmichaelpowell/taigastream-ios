@@ -78,6 +78,8 @@ public class StreamInfo: NSObject, ObservableObject {
 		commandCenter.stopCommand.addTarget {
 			[weak self] _ in
 			self?.audioPlayer.pause()
+			self?.stopPlaybackHeartbeat()
+			self?.stopIcyPolling()
 			try? AVAudioSession.sharedInstance().setActive(
 				false,
 				options: .notifyOthersOnDeactivation
@@ -116,11 +118,10 @@ public class StreamInfo: NSObject, ObservableObject {
 		commandCenter.pauseCommand.isEnabled = true
 		commandCenter.pauseCommand.addTarget {
 			[weak self] _ in
-			guard let self = self else {
-				return .commandFailed
-			}
-
+			guard let self = self else { return .commandFailed }
 			self.audioPlayer.pause()
+			self.stopPlaybackHeartbeat()
+			self.stopIcyPolling()
 			try? AVAudioSession.sharedInstance().setActive(
 				false,
 				options: .notifyOthersOnDeactivation
@@ -338,38 +339,61 @@ public class StreamInfo: NSObject, ObservableObject {
 		let apiUrlString = metadataApis.first(where: {
 			streamString.contains($0.key)
 		})?.value
-		
-		if let components = URLComponents(url: streamUrl, resolvingAgainstBaseURL: false),
-		   let queryItems = components.queryItems,
-		   let network = queryItems.first(where: { $0.name == "network" })?.value,
-		   let channelId = queryItems.first(where: { $0.name == "channel_id" })?.value,
-		   ["di", "jazzradio", "rockradio", "radiotunes", "classicalradio", "zenradio"].contains(network)
+
+		if let components = URLComponents(
+			url: streamUrl,
+			resolvingAgainstBaseURL: false
+		),
+			let queryItems = components.queryItems,
+			let network = queryItems.first(where: { $0.name == "network" })?
+				.value,
+			let channelId = queryItems.first(where: { $0.name == "channel_id" }
+			)?.value,
+			[
+				"di", "jazzradio", "rockradio", "radiotunes", "classicalradio",
+				"zenradio",
+			].contains(network)
 		{
 			pollAudioAddictMetadata(network: network, channelId: channelId)
 			icyPollTimer = Timer.publish(every: 15.0, on: .main, in: .common)
 				.autoconnect()
-				.sink { [weak self] _ in self?.pollAudioAddictMetadata(network: network, channelId: channelId) }
+				.sink { [weak self] _ in
+					self?.pollAudioAddictMetadata(
+						network: network,
+						channelId: channelId
+					)
+				}
 			return
 		}
 
 		if streamString.contains("streamabc.net"),
-		   let pathFirst = streamUrl.pathComponents.first(where: { !$0.isEmpty && $0 != "/" })
+			let host = streamUrl.host,
+			host.contains("rtl"),
+			let pathFirst = streamUrl.pathComponents.first(where: {
+				!$0.isEmpty && $0 != "/"
+			})
 		{
 			let parts = pathFirst.components(separatedBy: "-")
-			let channelKey = parts.prefix(while: {
-				Int($0) == nil && $0 != "mp3" && $0 != "aac" && $0 != "hls" &&
-				!["32","40","48","56","64","96","128","192","256","320"].contains($0)
+			let channelKey = parts.dropFirst().prefix(while: {
+				Int($0) == nil && $0 != "mp3" && $0 != "aac"
+					&& !["128", "64", "192", "320"].contains($0)
 			}).joined(separator: "-")
 
 			if !channelKey.isEmpty {
-				pollStreamAbcMetadata(channelKey: channelKey)
-				icyPollTimer = Timer.publish(every: 15.0, on: .main, in: .common)
-					.autoconnect()
-					.sink { [weak self] _ in self?.pollStreamAbcMetadata(channelKey: channelKey) }
+				pollRtlRadioMetadata(channelKey: channelKey)
+				icyPollTimer = Timer.publish(
+					every: 15.0,
+					on: .main,
+					in: .common
+				)
+				.autoconnect()
+				.sink { [weak self] _ in
+					self?.pollRtlRadioMetadata(channelKey: channelKey)
+				}
 				return
 			}
 		}
-		
+
 		if streamString.contains("somafm.com"), let host = streamUrl.host,
 			host.contains("somafm"), !streamUrl.pathComponents.isEmpty
 		{
@@ -752,100 +776,140 @@ public class StreamInfo: NSObject, ObservableObject {
 	}
 
 	private func pollAudioAddictMetadata(network: String, channelId: String) {
-		guard let apiUrl = URL(string: "https://api.audioaddict.com/v1/\(network)/currently_playing") else { return }
+		guard
+			let apiUrl = URL(
+				string:
+					"https://api.audioaddict.com/v1/\(network)/currently_playing"
+			)
+		else { return }
 
 		URLSession.shared.dataTask(with: apiUrl) { [weak self] data, _, error in
 			guard let self = self,
-				  let data = data,
-				  error == nil,
-				  let channels = try? JSONSerialization.jsonObject(with: data) as? [[String: Any]]
+				let data = data,
+				error == nil,
+				let channels = try? JSONSerialization.jsonObject(with: data)
+					as? [[String: Any]]
 			else { return }
 
-			guard let match = channels.first(where: {
-				if let id = $0["channel_id"] as? Int { return String(id) == channelId }
-				if let id = $0["channel_id"] as? String { return id == channelId }
-				return false
-			}),
-			let track = match["track"] as? [String: Any]
+			guard
+				let match = channels.first(where: {
+					if let id = $0["channel_id"] as? Int {
+						return String(id) == channelId
+					}
+					if let id = $0["channel_id"] as? String {
+						return id == channelId
+					}
+					return false
+				}),
+				let track = match["track"] as? [String: Any]
 			else { return }
 
-			let artist = (track["display_artist"] as? String ?? "").trimmingCharacters(in: .whitespaces)
-			let title  = (track["display_title"]  as? String ?? "").trimmingCharacters(in: .whitespaces)
+			let artist = (track["display_artist"] as? String ?? "")
+				.trimmingCharacters(in: .whitespaces)
+			let title = (track["display_title"] as? String ?? "")
+				.trimmingCharacters(in: .whitespaces)
 			let combined = "\(artist)|\(title)"
 
 			guard !title.isEmpty, combined != self.lastIcyTitle else { return }
 			self.lastIcyTitle = combined
 
 			let resolvedArtist = artist.isEmpty ? "Taiga Stream" : artist
-			let resolvedTitle  = title.isEmpty  ? "Stream \(self.currentStream)" : title
+			let resolvedTitle =
+				title.isEmpty ? "Stream \(self.currentStream)" : title
 
 			DispatchQueue.main.async {
-				self.updateNowPlaying(artist: resolvedArtist, title: resolvedTitle)
+				self.updateNowPlaying(
+					artist: resolvedArtist,
+					title: resolvedTitle
+				)
 				self.fetchArtwork(artist: resolvedArtist, title: resolvedTitle)
 			}
 		}
 		.resume()
 	}
 
-	private func pollStreamAbcMetadata(channelKey: String) {
-		guard let apiUrl = URL(string: "https://playerservices.streamabc.net/api/getsong?channelid=\(channelKey)&callback=") else { return }
+	private func pollRtlRadioMetadata(channelKey: String) {
+		guard
+			let apiUrl = URL(
+				string: "https://www.rtlradio.de/services/program-info/live/lux"
+			)
+		else { return }
 
 		URLSession.shared.dataTask(with: apiUrl) { [weak self] data, _, error in
 			guard let self = self,
-				  let data = data,
-				  error == nil
+				let data = data,
+				error == nil,
+				let channels = try? JSONSerialization.jsonObject(with: data)
+					as? [[String: Any]]
 			else { return }
 
-			// Response may be JSONP wrapped: callback({...}) or just {...}
-			var jsonData = data
-			if let text = String(data: data, encoding: .utf8) {
-				var stripped = text.trimmingCharacters(in: .whitespaces)
-				if let start = stripped.firstIndex(of: "{"), let end = stripped.lastIndex(of: "}") {
-					stripped = String(stripped[start...end])
-					jsonData = stripped.data(using: .utf8) ?? data
-				}
-			}
-
-			guard let json = try? JSONSerialization.jsonObject(with: jsonData) as? [String: Any]
+			let normalizedTarget = channelKey.replacingOccurrences(
+				of: "-",
+				with: ""
+			)
+			guard
+				let match = channels.first(where: {
+					let key = ($0["channelKey"] as? String ?? "")
+						.replacingOccurrences(of: "-", with: "")
+					return key == normalizedTarget
+				}),
+				let history = (match["playHistories"] as? [[String: Any]])?
+					.first,
+				let track = history["track"] as? [String: Any]
 			else { return }
 
-			let artist = (json["artist"] as? String ?? "").trimmingCharacters(in: .whitespaces)
-			let title  = (json["song"]   as? String ?? "").trimmingCharacters(in: .whitespaces)
+			let artist = (track["artist"] as? String ?? "").trimmingCharacters(
+				in: .whitespaces
+			)
+			let title = (track["title"] as? String ?? "").trimmingCharacters(
+				in: .whitespaces
+			)
 			let combined = "\(artist)|\(title)"
 
 			guard !title.isEmpty, combined != self.lastIcyTitle else { return }
 			self.lastIcyTitle = combined
 
 			let resolvedArtist = artist.isEmpty ? "Taiga Stream" : artist
-			let resolvedTitle  = title.isEmpty  ? "Stream \(self.currentStream)" : title
+			let resolvedTitle =
+				title.isEmpty ? "Stream \(self.currentStream)" : title
 
 			DispatchQueue.main.async {
-				self.updateNowPlaying(artist: resolvedArtist, title: resolvedTitle)
+				self.updateNowPlaying(
+					artist: resolvedArtist,
+					title: resolvedTitle
+				)
 
-				// StreamABC provides iTunes artwork in the meta array
-				if let metaArray = json["meta"] as? [[String: Any]],
-				   let itunes = metaArray.first(where: { ($0["type"] as? String) == "itunes" }),
-				   let artworkUrlString = itunes["largeimage"] as? String ?? itunes["image"] as? String,
-				   let artworkUrl = URL(string: artworkUrlString) {
-					URLSession.shared.dataTask(with: artworkUrl) { [weak self] imageData, _, imageError in
+				if let artworkUrlString = track["itunesCover"] as? String,
+					let artworkUrl = URL(string: artworkUrlString)
+				{
+					URLSession.shared.dataTask(with: artworkUrl) {
+						[weak self] imageData, _, imageError in
 						guard let self = self,
-							  let imageData = imageData,
-							  imageError == nil,
-							  let image = UIImage(data: imageData)
+							let imageData = imageData,
+							imageError == nil,
+							let image = UIImage(data: imageData)
 						else {
-							DispatchQueue.main.async { self?.fetchArtwork(artist: resolvedArtist, title: resolvedTitle) }
+							DispatchQueue.main.async {
+								self?.fetchArtwork(
+									artist: resolvedArtist,
+									title: resolvedTitle
+								)
+							}
 							return
 						}
 						DispatchQueue.main.async { self.applyArtwork(image) }
 					}.resume()
 				} else {
-					self.fetchArtwork(artist: resolvedArtist, title: resolvedTitle)
+					self.fetchArtwork(
+						artist: resolvedArtist,
+						title: resolvedTitle
+					)
 				}
 			}
 		}
 		.resume()
 	}
-	
+
 	private func pollSomaFmMetadata(apiUrl: URL) {
 		URLSession.shared.dataTask(with: apiUrl) {
 			[weak self] data, _, error in
