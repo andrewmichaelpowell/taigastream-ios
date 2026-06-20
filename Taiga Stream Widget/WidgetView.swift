@@ -17,6 +17,16 @@ protocol MetadataProvider {
 	var pollInterval: TimeInterval? { get }
 }
 
+extension URLRequest {
+	static func noCacheRequest(url: URL) -> URLRequest {
+		URLRequest(
+			url: url,
+			cachePolicy: .reloadIgnoringLocalCacheData,
+			timeoutInterval: 10
+		)
+	}
+}
+
 struct AudioAddictProvider: MetadataProvider {
 	private static let networks = [
 		"di", "jazzradio", "rockradio", "radiotunes", "classicalradio",
@@ -52,7 +62,7 @@ struct AudioAddictProvider: MetadataProvider {
 			)
 		else { return }
 
-		URLSession.shared.dataTask(with: apiUrl) { data, _, error in
+		URLSession.shared.dataTask(with: .noCacheRequest(url: apiUrl)) { data, _, error in
 			guard let data, error == nil,
 				let channels = try? JSONSerialization.jsonObject(with: data)
 					as? [[String: Any]],
@@ -111,7 +121,7 @@ struct RTLRadioProvider: MetadataProvider {
 			)
 		else { return }
 
-		URLSession.shared.dataTask(with: apiUrl) { data, _, error in
+		URLSession.shared.dataTask(with: .noCacheRequest(url: apiUrl)) { data, _, error in
 			guard let data, error == nil,
 				let channels = try? JSONSerialization.jsonObject(with: data)
 					as? [[String: Any]]
@@ -140,7 +150,7 @@ struct RTLRadioProvider: MetadataProvider {
 			if let artworkUrlString = track["itunesCover"] as? String,
 				let artworkUrl = URL(string: artworkUrlString)
 			{
-				URLSession.shared.dataTask(with: artworkUrl) {
+				URLSession.shared.dataTask(with: .noCacheRequest(url: artworkUrl)) {
 					imageData,
 					_,
 					imageError in
@@ -182,7 +192,7 @@ struct SomaFMProvider: MetadataProvider {
 		completion: @escaping (String, String) -> Void
 	) {
 		guard let apiUrl = apiUrl(from: streamUrl) else { return }
-		URLSession.shared.dataTask(with: apiUrl) { data, _, error in
+		URLSession.shared.dataTask(with: .noCacheRequest(url: apiUrl)) { data, _, error in
 			guard let data, error == nil,
 				let json = try? JSONSerialization.jsonObject(with: data)
 					as? [String: Any],
@@ -234,7 +244,7 @@ struct BBCRadioProvider: MetadataProvider {
 		completion: @escaping (String, String) -> Void
 	) {
 		guard let apiUrl = apiUrl(from: streamUrl) else { return }
-		var request = URLRequest(url: apiUrl)
+		var request = URLRequest.noCacheRequest(url: apiUrl)
 		request.setValue("application/json", forHTTPHeaderField: "Accept")
 
 		URLSession.shared.dataTask(with: request) { data, _, error in
@@ -297,7 +307,7 @@ struct NRKProvider: MetadataProvider {
 		completion: @escaping (String, String) -> Void
 	) {
 		guard let apiUrl = apiUrl(from: streamUrl) else { return }
-		var request = URLRequest(url: apiUrl)
+		var request = URLRequest.noCacheRequest(url: apiUrl)
 		request.setValue("application/json", forHTTPHeaderField: "Accept")
 
 		URLSession.shared.dataTask(with: request) { data, _, error in
@@ -328,7 +338,7 @@ struct NRKProvider: MetadataProvider {
 				!imageUrlString.isEmpty,
 				let imageUrl = URL(string: imageUrlString)
 			{
-				URLSession.shared.dataTask(with: imageUrl) {
+				URLSession.shared.dataTask(with: .noCacheRequest(url: imageUrl)) {
 					imageData,
 					_,
 					imageError in
@@ -585,7 +595,7 @@ struct ABCRadioProvider: MetadataProvider {
 		completion: @escaping (String, String) -> Void
 	) {
 		guard let apiUrl = apiUrl(from: streamUrl) else { return }
-		URLSession.shared.dataTask(with: apiUrl) { data, _, error in
+		URLSession.shared.dataTask(with: .noCacheRequest(url: apiUrl)) { data, _, error in
 			guard let data, error == nil,
 				let json = try? JSONSerialization.jsonObject(with: data)
 					as? [String: Any],
@@ -600,6 +610,71 @@ struct ABCRadioProvider: MetadataProvider {
 				artist = artists.compactMap { $0["name"] as? String }
 					.joined(separator: ", ")
 			}
+			completion(artist, title)
+		}.resume()
+	}
+
+	var pollInterval: TimeInterval? { 15 }
+}
+
+struct RTERadioProvider: MetadataProvider {
+	private static let streamToApi: [String: String] = [
+		"rte.ie/radio1" : "https://onair.radioapi.io/rte/rteradio1/onair.json",
+		"streamtheworld.com/RTE_RADIO1" : "https://onair.radioapi.io/rte/rteradio1/onair.json",
+		"rte.ie/2fm" : "https://onair.radioapi.io/rte/rte2fm/onair.json",
+		"streamtheworld.com/RTE_2FM": "https://onair.radioapi.io/rte/rte2fm/onair.json",
+		"rte.ie/lyricfm": "https://onair.radioapi.io/rte/rtelyricfm/onair.json",
+		"streamtheworld.com/RTE_LYRIC" : "https://onair.radioapi.io/rte/rtelyricfm/onair.json",
+		"rte.ie/rnag" : "https://onair.radioapi.io/rte/rteraidionagaeltachta/onair.json",
+		"streamtheworld.com/RTE_RNAG" : "https://onair.radioapi.io/rte/rteraidionagaeltachta/onair.json",
+		"icecast1.rte.ie/gold" : "https://onair.radioapi.io/rte/rtegold/onair.json",
+		"streamtheworld.com/RTE_GOLD" : "https://onair.radioapi.io/rte/rtegold/onair.json",
+	]
+
+	func matches(streamUrl: URL) -> Bool {
+		let s = streamUrl.absoluteString
+		return Self.streamToApi.keys.contains(where: { s.contains($0) })
+	}
+
+	private func apiUrl(from streamUrl: URL) -> URL? {
+		let s = streamUrl.absoluteString
+		guard let urlString = Self.streamToApi.first(where: { s.contains($0.key) })?.value
+		else { return nil }
+		return URL(string: urlString)
+	}
+
+	func poll(streamUrl: URL, completion: @escaping (String, String) -> Void) {
+		guard let apiUrl = apiUrl(from: streamUrl) else { return }
+
+		URLSession.shared.dataTask(with: .noCacheRequest(url: apiUrl)) { data, _, error in
+			guard let data, error == nil,
+				let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+				let nowplaying = json["nowplaying"] as? [[String: Any]],
+				let current = nowplaying.first(where: { ($0["status"] as? String) == "playing" })
+					?? nowplaying.first
+			else { return }
+
+			let artist = (current["artist"] as? String ?? "")
+				.trimmingCharacters(in: .whitespaces)
+			let title = (current["title"] as? String ?? "")
+				.trimmingCharacters(in: .whitespaces)
+			guard !title.isEmpty else { return }
+
+			if let imageUrlString = current["imageUrl"] as? String,
+			   !imageUrlString.isEmpty,
+			   let imageUrl = URL(string: imageUrlString)
+			{
+				URLSession.shared.dataTask(with: .noCacheRequest(url: imageUrl)) { imageData, _, imageError in
+					if let imageData, imageError == nil,
+					   let image = UIImage(data: imageData)
+					{
+						DispatchQueue.main.async {
+							StreamInfo.shared.applyArtwork(image)
+						}
+					}
+				}.resume()
+			}
+
 			completion(artist, title)
 		}.resume()
 	}
@@ -626,7 +701,7 @@ struct IcecastProvider: MetadataProvider {
 		guard let statusUrl = components.url else { return }
 		let mountPath = streamUrl.path
 
-		URLSession.shared.dataTask(with: statusUrl) { data, _, error in
+		URLSession.shared.dataTask(with: .noCacheRequest(url: statusUrl)) { data, _, error in
 			guard let data, error == nil,
 				let json = try? JSONSerialization.jsonObject(with: data)
 					as? [String: Any],
@@ -693,6 +768,7 @@ public class StreamInfo: NSObject, ObservableObject {
 	private var lastKnownArtwork: UIImage?
 	private var lastPolledTitle: String = ""
 	private var lastStreamTitle: String = ""
+	private var apiMetadataActive = false
 
 	private let metadataProviders: [MetadataProvider] = [
 		AudioAddictProvider(),
@@ -702,6 +778,7 @@ public class StreamInfo: NSObject, ObservableObject {
 		NRKProvider(),
 		RadioFranceProvider(),
 		ABCRadioProvider(),
+		RTERadioProvider(),
 		IcecastProvider(),
 	]
 
@@ -867,6 +944,7 @@ public class StreamInfo: NSObject, ObservableObject {
 		stopMetadataPolling()
 		lastPolledTitle = ""
 		lastStreamTitle = ""
+		apiMetadataActive = false
 
 		guard
 			let provider = metadataProviders.first(where: {
@@ -905,6 +983,7 @@ public class StreamInfo: NSObject, ObservableObject {
 				return
 			}
 			self.lastPolledTitle = combined
+			self.apiMetadataActive = true
 
 			let resolvedArtist = artist.isEmpty ? "Taiga Stream" : artist
 			let resolvedTitle =
@@ -926,6 +1005,7 @@ public class StreamInfo: NSObject, ObservableObject {
 		icyPollTimer = nil
 		lastPolledTitle = ""
 		lastStreamTitle = ""
+		apiMetadataActive = false
 	}
 
 	private var metadataOutput: AVPlayerItemMetadataOutput?
@@ -1039,6 +1119,7 @@ public class StreamInfo: NSObject, ObservableObject {
 	}
 
 	private func parseMetadata(_ metadataItems: [AVMetadataItem]) {
+		guard !apiMetadataActive else { return }
 		Task {
 			var artist = ""
 			var title = ""
@@ -1129,7 +1210,7 @@ public class StreamInfo: NSObject, ObservableObject {
 			return
 		}
 
-		URLSession.shared.dataTask(with: searchUrl) {
+		URLSession.shared.dataTask(with: .noCacheRequest(url: searchUrl)) {
 			[weak self] data, _, error in
 			guard let self, let data, error == nil,
 				let json = try? JSONSerialization.jsonObject(with: data)
@@ -1151,7 +1232,7 @@ public class StreamInfo: NSObject, ObservableObject {
 				return
 			}
 
-			URLSession.shared.dataTask(with: artworkUrl) {
+			URLSession.shared.dataTask(with: .noCacheRequest(url: artworkUrl)) {
 				[weak self] imageData, _, imageError in
 				guard let self, let imageData, imageError == nil,
 					let artworkImage = UIImage(data: imageData)
