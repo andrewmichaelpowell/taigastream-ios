@@ -55,7 +55,6 @@ struct MainView: View {
 			Spacer()
 		}
 		.background(.black)
-		.preferredColorScheme(.dark)
 	}
 }
 
