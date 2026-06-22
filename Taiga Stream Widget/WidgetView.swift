@@ -1387,6 +1387,20 @@ public class StreamInfo: NSObject, ObservableObject {
 				} else if item.commonKey == .commonKeyTitle,
 					let value = try? await item.load(.stringValue)
 				{
+					if value.contains("~") {
+						let parts = value.components(separatedBy: "~")
+							.map { $0.trimmingCharacters(in: .whitespaces) }
+						let parsedArtist =
+							parts.count > 0 ? cleanMetadataString(parts[0]) : ""
+						let parsedTitle =
+							parts.count > 1 ? cleanMetadataString(parts[1]) : ""
+						if !parsedArtist.isEmpty && !parsedTitle.isEmpty {
+							artist =
+								junkMetadata(parsedArtist) ? "" : parsedArtist
+							title = junkMetadata(parsedTitle) ? "" : parsedTitle
+							continue
+						}
+					}
 					let parts = value.components(separatedBy: " - ")
 					let isrcPattern = #"^[A-Z][A-Z0-9]{7,11}$"#
 					let lastPart =
