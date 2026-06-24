@@ -8,6 +8,16 @@
 		<true/>
 		<key>NSAllowsArbitraryLoadsForMedia</key>
 		<true/>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>uk5.internet-radio.com</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+		</dict>
 	</dict>
 	<key>UIBackgroundModes</key>
 	<array>
