@@ -1412,6 +1412,10 @@ public class StreamInfo: NSObject, ObservableObject {
 		) {
 			cleaned = String(cleaned[cleaned.startIndex..<range.lowerBound])
 		}
+		
+		while cleaned.contains("  ") {
+			cleaned = cleaned.replacingOccurrences(of: "  ", with: " ")
+		}
 
 		return cleaned.trimmingCharacters(in: .whitespaces)
 	}
@@ -1505,13 +1509,8 @@ public class StreamInfo: NSObject, ObservableObject {
 					}
 					let parts = value.components(separatedBy: " - ")
 					let isrcPattern = #"^[A-Z][A-Z0-9]{7,11}$"#
-					let lastPart =
-						parts.last?.trimmingCharacters(in: .whitespaces) ?? ""
-					let lastIsIsrc =
-						lastPart.range(
-							of: isrcPattern,
-							options: .regularExpression
-						) != nil
+					let lastPart = parts.last?.trimmingCharacters(in: .whitespaces) ?? ""
+					let lastIsIsrc = lastPart.range(of: isrcPattern, options: .regularExpression) != nil
 					let lastIsEmpty = lastPart.isEmpty
 
 					if lastIsIsrc || lastIsEmpty {
@@ -1539,6 +1538,16 @@ public class StreamInfo: NSObject, ObservableObject {
 
 				if junkMetadata(title) { title = "" }
 				if junkMetadata(artist) { artist = "" }
+			}
+
+			if !artist.isEmpty && title.contains(" - ") {
+				let parts = title.components(separatedBy: " - ")
+				let firstPart = cleanMetadataString(
+					parts[0].trimmingCharacters(in: .whitespaces)
+				)
+				if !firstPart.isEmpty {
+					title = firstPart
+				}
 			}
 
 			let resolvedArtist = artist.isEmpty ? "Taiga Stream" : artist
