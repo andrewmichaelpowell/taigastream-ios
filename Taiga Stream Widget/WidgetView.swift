@@ -1541,7 +1541,6 @@ public class StreamInfo: NSObject, ObservableObject {
 				if junkMetadata(artist) { artist = "" }
 			}
 
-			// Step 1: if artist field contains an embedded title, extract it
 			var artistFieldTitle = ""
 			if artist.contains(" - ") || artist.contains(" – ") || artist.contains(" — ") {
 				let (parsedArtist, parsedTitle) = splitArtistTitle(from: artist)
@@ -1550,7 +1549,6 @@ public class StreamInfo: NSObject, ObservableObject {
 					artistFieldTitle = parsedTitle
 				}
 			} else if let range = artist.range(of: #"\s*-\s*"#, options: .regularExpression) {
-				// Handle "Artist- Title" or "Artist -Title" without full spaces
 				let parsedArtist = cleanMetadataString(String(artist[..<range.lowerBound]))
 				let parsedTitle = cleanMetadataString(String(artist[range.upperBound...]))
 				if !parsedArtist.isEmpty && !parsedTitle.isEmpty {
@@ -1559,12 +1557,9 @@ public class StreamInfo: NSObject, ObservableObject {
 				}
 			}
 
-			// Step 2: if we extracted a title from the artist field, prefer it over
-			// the title field which may contain playlist/album junk
 			if !artistFieldTitle.isEmpty {
 				title = artistFieldTitle
 			} else if !artist.isEmpty && !title.isEmpty {
-				// Step 3: strip album suffix from title field
 				let separators = [" — ", " – ", " - ", " / ", " · ", " | ", "-"]
 				for separator in separators {
 					guard title.contains(separator) else { continue }
