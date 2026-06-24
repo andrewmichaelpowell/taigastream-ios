@@ -1458,7 +1458,7 @@ public class StreamInfo: NSObject, ObservableObject {
 	}
 
 	func splitArtistTitle(from raw: String) -> (artist: String, title: String) {
-		let separators = [" — ", " – ", " - ", " / ", " · ", " | "]
+		let separators = [" — ", " – ", " - ", " / ", " · ", " | ", "-"]
 		for separator in separators {
 			let parts = raw.components(separatedBy: separator)
 			if parts.count >= 2 {
@@ -1474,6 +1474,7 @@ public class StreamInfo: NSObject, ObservableObject {
 				}
 			}
 		}
+		
 		return (
 			"", cleanMetadataString(raw.trimmingCharacters(in: .whitespaces))
 		)
@@ -1540,16 +1541,50 @@ public class StreamInfo: NSObject, ObservableObject {
 				if junkMetadata(artist) { artist = "" }
 			}
 
-			if !artist.isEmpty && title.contains(" - ") {
-				let parts = title.components(separatedBy: " - ")
-				let firstPart = cleanMetadataString(
-					parts[0].trimmingCharacters(in: .whitespaces)
-				)
-				if !firstPart.isEmpty {
-					title = firstPart
+			// Step 1: if artist field contains an embedded title, extract it
+			var artistFieldTitle = ""
+			if artist.contains(" - ") || artist.contains(" – ") || artist.contains(" — ") {
+				let (parsedArtist, parsedTitle) = splitArtistTitle(from: artist)
+				if !parsedArtist.isEmpty && !parsedTitle.isEmpty {
+					artist = parsedArtist
+					artistFieldTitle = parsedTitle
+				}
+			} else if let range = artist.range(of: #"\s*-\s*"#, options: .regularExpression) {
+				// Handle "Artist- Title" or "Artist -Title" without full spaces
+				let parsedArtist = cleanMetadataString(String(artist[..<range.lowerBound]))
+				let parsedTitle = cleanMetadataString(String(artist[range.upperBound...]))
+				if !parsedArtist.isEmpty && !parsedTitle.isEmpty {
+					artist = parsedArtist
+					artistFieldTitle = parsedTitle
 				}
 			}
 
+			// Step 2: if we extracted a title from the artist field, prefer it over
+			// the title field which may contain playlist/album junk
+			if !artistFieldTitle.isEmpty {
+				title = artistFieldTitle
+			} else if !artist.isEmpty && !title.isEmpty {
+				// Step 3: strip album suffix from title field
+				let separators = [" — ", " – ", " - ", " / ", " · ", " | ", "-"]
+				for separator in separators {
+					guard title.contains(separator) else { continue }
+					let parts = title.components(separatedBy: separator)
+						.map { $0.trimmingCharacters(in: .whitespaces) }
+					guard parts.count > 1 else { continue }
+
+					let firstPart = parts[0]
+					let secondPart = parts[1]
+
+					if firstPart.caseInsensitiveCompare(artist) == .orderedSame {
+						let cleaned = cleanMetadataString(secondPart)
+						if !cleaned.isEmpty { title = cleaned; break }
+					} else {
+						let cleaned = cleanMetadataString(firstPart)
+						if !cleaned.isEmpty { title = cleaned; break }
+					}
+				}
+			}
+			
 			let resolvedArtist = artist.isEmpty ? "Taiga Stream" : artist
 			let resolvedTitle =
 				title.isEmpty ? "Stream \(currentStream)" : title
