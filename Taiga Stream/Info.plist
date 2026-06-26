@@ -10,7 +10,14 @@
 		<true/>
 		<key>NSExceptionDomains</key>
 		<dict>
-			<key>uk5.internet-radio.com</key>
+			<key>internet-radio.com</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+			<key>radiox.co.uk</key>
 			<dict>
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>
 				<true/>

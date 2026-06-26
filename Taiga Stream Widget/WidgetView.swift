@@ -27,6 +27,14 @@ extension URLRequest {
 	}
 }
 
+struct RadioStation: Codable, Equatable {
+	var url: String
+	var name: String
+	var faviconUrl: String
+
+	static let empty = RadioStation(url: "", name: "", faviconUrl: "")
+}
+
 struct AudioAddictProvider: MetadataProvider {
 	private static let networks = [
 		"di", "jazzradio", "rockradio", "radiotunes", "classicalradio",
@@ -1116,12 +1124,52 @@ public class StreamInfo: NSObject, ObservableObject {
 	var metadataCancellable: AnyCancellable?
 	var playbackHeartbeat: AnyCancellable?
 	var currentStreamUrl: URL?
+	var appIcon: UIImage? {
+		appIconImage()
+	}
 	private var lastKnownArtist: String = ""
 	private var lastKnownTitle: String = ""
 	private var lastKnownArtwork: UIImage?
 	private var lastPolledTitle: String = ""
 	private var lastStreamTitle: String = ""
 	private var apiMetadataActive = false
+
+	@Published var stations: [RadioStation] = {
+		(1...32).map { i in
+			let url =
+				NSUbiquitousKeyValueStore.default.string(
+					forKey: "Stream\(i)Key"
+				) ?? ""
+			let name =
+				NSUbiquitousKeyValueStore.default.string(
+					forKey: "StationName\(i)Key"
+				) ?? ""
+			let favicon =
+				NSUbiquitousKeyValueStore.default.string(
+					forKey: "StationFavicon\(i)Key"
+				) ?? ""
+			return RadioStation(url: url, name: name, faviconUrl: favicon)
+		}
+	}()
+
+	func saveStation(_ station: RadioStation, at index: Int) {
+		guard index >= 0 && index < 32 else { return }
+		stations[index] = station
+		stream[index] = station.url
+		NSUbiquitousKeyValueStore.default.set(
+			station.url,
+			forKey: "Stream\(index + 1)Key"
+		)
+		NSUbiquitousKeyValueStore.default.set(
+			station.name,
+			forKey: "StationName\(index + 1)Key"
+		)
+		NSUbiquitousKeyValueStore.default.set(
+			station.faviconUrl,
+			forKey: "StationFavicon\(index + 1)Key"
+		)
+		NSUbiquitousKeyValueStore.default.synchronize()
+	}
 
 	private let metadataProviders: [MetadataProvider] = [
 		AudioAddictProvider(),
@@ -1291,7 +1339,23 @@ public class StreamInfo: NSObject, ObservableObject {
 	}
 
 	func clearNowPlaying() {
-		MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
+		var stoppedInfo = [String: Any]()
+		stoppedInfo[MPNowPlayingInfoPropertyIsLiveStream] = false
+		stoppedInfo[MPNowPlayingInfoPropertyPlaybackRate] = 0.0
+		stoppedInfo[MPMediaItemPropertyTitle] = "Stream \(self.currentStream)"
+		stoppedInfo[MPMediaItemPropertyArtist] = "Taiga Stream"
+		if let icon = appIconImage() {
+			let artworkSize = CGSize(width: 600, height: 600)
+			let mediaArtwork = MPMediaItemArtwork(boundsSize: artworkSize) {
+				requestedSize in
+				let renderer = UIGraphicsImageRenderer(size: requestedSize)
+				return renderer.image { _ in
+					icon.draw(in: CGRect(origin: .zero, size: requestedSize))
+				}
+			}
+			stoppedInfo[MPMediaItemPropertyArtwork] = mediaArtwork
+		}
+		MPNowPlayingInfoCenter.default().nowPlayingInfo = stoppedInfo
 	}
 
 	private var icyPollTimer: AnyCancellable?
@@ -1412,7 +1476,7 @@ public class StreamInfo: NSObject, ObservableObject {
 		) {
 			cleaned = String(cleaned[cleaned.startIndex..<range.lowerBound])
 		}
-		
+
 		while cleaned.contains("  ") {
 			cleaned = cleaned.replacingOccurrences(of: "  ", with: " ")
 		}
@@ -1422,7 +1486,17 @@ public class StreamInfo: NSObject, ObservableObject {
 
 	func junkMetadata(_ value: String) -> Bool {
 		let trimmed = value.trimmingCharacters(in: .whitespaces)
+
 		if trimmed.isEmpty { return true }
+
+		if trimmed.range(
+			of: #"title="[^"]*",artist=""#,
+			options: .regularExpression
+		) != nil {
+			return true
+		}
+
+		if trimmed.contains("song_spot=") { return true }
 
 		if trimmed.range(
 			of: #"^zc\d+$"#,
@@ -1461,6 +1535,7 @@ public class StreamInfo: NSObject, ObservableObject {
 		let separators = [" — ", " – ", " - ", " / ", " · ", " | ", "-"]
 		for separator in separators {
 			let parts = raw.components(separatedBy: separator)
+
 			if parts.count >= 2 {
 				let artist = cleanMetadataString(
 					parts[0].trimmingCharacters(in: .whitespaces)
@@ -1469,12 +1544,13 @@ public class StreamInfo: NSObject, ObservableObject {
 					parts.dropFirst().joined(separator: separator)
 						.trimmingCharacters(in: .whitespaces)
 				)
+
 				if !artist.isEmpty && !title.isEmpty {
 					return (artist, title)
 				}
 			}
 		}
-		
+
 		return (
 			"", cleanMetadataString(raw.trimmingCharacters(in: .whitespaces))
 		)
@@ -1494,6 +1570,42 @@ public class StreamInfo: NSObject, ObservableObject {
 				} else if item.commonKey == .commonKeyTitle,
 					let value = try? await item.load(.stringValue)
 				{
+
+					if value.contains("title=") && value.contains("artist=") {
+					}
+
+					if value.contains("text=") && value.contains("song_spot=") {
+						var parsedTitle = ""
+						var parsedArtist = ""
+
+						if let textRange = value.range(
+							of: #"text="([^"]*)""#,
+							options: .regularExpression
+						) {
+							let match = String(value[textRange])
+							parsedTitle =
+								match
+								.replacingOccurrences(of: "text=\"", with: "")
+								.replacingOccurrences(of: "\"", with: "")
+								.trimmingCharacters(in: .whitespaces)
+						}
+
+						if let separatorRange = value.range(of: " - text=\"") {
+							parsedArtist = String(
+								value[..<separatorRange.lowerBound]
+							)
+							.trimmingCharacters(in: .whitespaces)
+						}
+
+						if !parsedTitle.isEmpty {
+							title = cleanMetadataString(parsedTitle)
+							if !parsedArtist.isEmpty {
+								artist = cleanMetadataString(parsedArtist)
+							}
+							continue
+						}
+					}
+
 					if value.contains("~") {
 						let parts = value.components(separatedBy: "~")
 							.map { $0.trimmingCharacters(in: .whitespaces) }
@@ -1510,8 +1622,13 @@ public class StreamInfo: NSObject, ObservableObject {
 					}
 					let parts = value.components(separatedBy: " - ")
 					let isrcPattern = #"^[A-Z][A-Z0-9]{7,11}$"#
-					let lastPart = parts.last?.trimmingCharacters(in: .whitespaces) ?? ""
-					let lastIsIsrc = lastPart.range(of: isrcPattern, options: .regularExpression) != nil
+					let lastPart =
+						parts.last?.trimmingCharacters(in: .whitespaces) ?? ""
+					let lastIsIsrc =
+						lastPart.range(
+							of: isrcPattern,
+							options: .regularExpression
+						) != nil
 					let lastIsEmpty = lastPart.isEmpty
 
 					if lastIsIsrc || lastIsEmpty {
@@ -1542,15 +1659,24 @@ public class StreamInfo: NSObject, ObservableObject {
 			}
 
 			var artistFieldTitle = ""
-			if artist.contains(" - ") || artist.contains(" – ") || artist.contains(" — ") {
+			if artist.contains(" - ") || artist.contains(" – ")
+				|| artist.contains(" — ")
+			{
 				let (parsedArtist, parsedTitle) = splitArtistTitle(from: artist)
 				if !parsedArtist.isEmpty && !parsedTitle.isEmpty {
 					artist = parsedArtist
 					artistFieldTitle = parsedTitle
 				}
-			} else if let range = artist.range(of: #"\s*-\s*"#, options: .regularExpression) {
-				let parsedArtist = cleanMetadataString(String(artist[..<range.lowerBound]))
-				let parsedTitle = cleanMetadataString(String(artist[range.upperBound...]))
+			} else if let range = artist.range(
+				of: #"\s*-\s*"#,
+				options: .regularExpression
+			) {
+				let parsedArtist = cleanMetadataString(
+					String(artist[..<range.lowerBound])
+				)
+				let parsedTitle = cleanMetadataString(
+					String(artist[range.upperBound...])
+				)
 				if !parsedArtist.isEmpty && !parsedTitle.isEmpty {
 					artist = parsedArtist
 					artistFieldTitle = parsedTitle
@@ -1560,7 +1686,9 @@ public class StreamInfo: NSObject, ObservableObject {
 			if !artistFieldTitle.isEmpty {
 				title = artistFieldTitle
 			} else if !artist.isEmpty && !title.isEmpty {
-				let separators = [" — ", " – ", " - ", " / ", " · ", " | ", "-"]
+				let separators = [
+					" — ", " – ", " - ", " / ", " · ", " | ", "-",
+				]
 				for separator in separators {
 					guard title.contains(separator) else { continue }
 					let parts = title.components(separatedBy: separator)
@@ -1570,16 +1698,23 @@ public class StreamInfo: NSObject, ObservableObject {
 					let firstPart = parts[0]
 					let secondPart = parts[1]
 
-					if firstPart.caseInsensitiveCompare(artist) == .orderedSame {
+					if firstPart.caseInsensitiveCompare(artist) == .orderedSame
+					{
 						let cleaned = cleanMetadataString(secondPart)
-						if !cleaned.isEmpty { title = cleaned; break }
+						if !cleaned.isEmpty {
+							title = cleaned
+							break
+						}
 					} else {
 						let cleaned = cleanMetadataString(firstPart)
-						if !cleaned.isEmpty { title = cleaned; break }
+						if !cleaned.isEmpty {
+							title = cleaned
+							break
+						}
 					}
 				}
 			}
-			
+
 			let resolvedArtist = artist.isEmpty ? "Taiga Stream" : artist
 			let resolvedTitle =
 				title.isEmpty ? "Stream \(currentStream)" : title
@@ -1592,6 +1727,7 @@ public class StreamInfo: NSObject, ObservableObject {
 				self.lastKnownTitle = resolvedTitle
 				updateNowPlaying(artist: resolvedArtist, title: resolvedTitle)
 				fetchArtwork(artist: resolvedArtist, title: resolvedTitle)
+
 			}
 		}
 	}
@@ -1657,7 +1793,14 @@ public class StreamInfo: NSObject, ObservableObject {
 
 	func applyArtwork(_ image: UIImage) {
 		lastKnownArtwork = image
-		let artwork = MPMediaItemArtwork(boundsSize: image.size) { _ in image }
+		let artworkSize = CGSize(width: 600, height: 600)
+		let artwork = MPMediaItemArtwork(boundsSize: artworkSize) {
+			requestedSize in
+			let renderer = UIGraphicsImageRenderer(size: requestedSize)
+			return renderer.image { _ in
+				image.draw(in: CGRect(origin: .zero, size: requestedSize))
+			}
+		}
 		if var nowPlayingInfo = MPNowPlayingInfoCenter.default().nowPlayingInfo
 		{
 			nowPlayingInfo[MPMediaItemPropertyArtwork] = artwork
