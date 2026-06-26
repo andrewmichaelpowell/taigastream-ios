@@ -556,7 +556,7 @@ struct StreamOptionsSheet: View {
 
 	@ViewBuilder
 	private func optionButton(
-		_ title: String,
+		_ title: LocalizedStringResource,
 		role: ButtonRole? = nil,
 		action: @escaping () -> Void
 	) -> some View {
