@@ -10,6 +10,13 @@
 		<true/>
 		<key>NSExceptionDomains</key>
 		<dict>
+			<key>klassikradio.de</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
 			<key>internet-radio.com</key>
 			<dict>
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>

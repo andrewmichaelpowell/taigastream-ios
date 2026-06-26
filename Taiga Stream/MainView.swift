@@ -63,6 +63,8 @@ struct FaviconView: View {
 			} else if let fallbackIcon {
 				Image(uiImage: fallbackIcon)
 					.resizable()
+					.renderingMode(.template)
+					.foregroundColor(.white)
 					.aspectRatio(contentMode: .fit)
 			} else {
 				Color.black
@@ -78,7 +80,7 @@ struct FaviconView: View {
 	}
 
 	private func loadFallbackIcon() {
-		fallbackIcon = StreamInfo.shared.appIcon
+		fallbackIcon = UIImage(systemName: "antenna.radiowaves.left.and.right")
 	}
 
 	private func loadFavicon() {
@@ -298,7 +300,7 @@ struct RadioBrowserSearchSheet: View {
 							* (currentOffset / pageSize + 1)
 							&& !isLoading
 						{
-							Button("More") {
+							Button("More Results") {
 								loadMore()
 							}
 							.frame(maxWidth: .infinity, alignment: .center)
@@ -379,7 +381,7 @@ struct RadioBrowserResultRow: View {
 						.resizable()
 						.aspectRatio(contentMode: .fit)
 				} else {
-					Image(systemName: "radio")
+					Image(systemName: "antenna.radiowaves.left.and.right")
 						.foregroundColor(.secondary)
 				}
 			}
@@ -598,7 +600,7 @@ struct ManualURLSheet: View {
 					HStack {
 						Image(systemName: "link")
 							.foregroundColor(.secondary)
-						TextField("https://", text: $manualUrl)
+						TextField("", text: $manualUrl)
 							.autocorrectionDisabled()
 							.autocapitalization(.none)
 							.onSubmit { save() }
