@@ -300,10 +300,11 @@ struct RadioBrowserSearchSheet: View {
 							* (currentOffset / pageSize + 1)
 							&& !isLoading
 						{
-							Button("More Results") {
-								loadMore()
+							Button(action: loadMore) {
+								Text("More Results")
+									.frame(maxWidth: .infinity, alignment: .leading)
+									.padding(.leading, 48)
 							}
-							.frame(maxWidth: .infinity, alignment: .center)
 						}
 						if isLoading && !results.isEmpty {
 							HStack {
