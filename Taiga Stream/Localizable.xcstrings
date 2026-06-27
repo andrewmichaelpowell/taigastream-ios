@@ -613,13 +613,13 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "أدخل الرابط"
+            "value" : "أدخل عنوان الويب"
           }
         },
         "bn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ইউআরএল লিখুন"
+            "value" : "ওয়েব ঠিকানা লিখুন"
           }
         },
         "ca" : {
@@ -703,7 +703,7 @@
         "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "הזן כתובת URL"
+            "value" : "הזן כתובת אינטרנט"
           }
         },
         "hi" : {
@@ -895,18 +895,18 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "输入 URL"
+            "value" : "输入网址"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "輸入 URL"
+            "value" : "輸入網址"
           }
         }
       }
     },
-    "More Results" : {
+    "More results" : {
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -953,19 +953,19 @@
         "en-AU" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "More Results"
+            "value" : "More results"
           }
         },
         "en-CA" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "More Results"
+            "value" : "More results"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "More Results"
+            "value" : "More results"
           }
         },
         "es" : {
@@ -1025,7 +1025,7 @@
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hasil Lainnya"
+            "value" : "Hasil lainnya"
           }
         },
         "it" : {
@@ -1067,7 +1067,7 @@
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lagi Hasil"
+            "value" : "Lagi hasil"
           }
         },
         "nb" : {
@@ -1169,7 +1169,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Daha Fazla Sonuç"
+            "value" : "Daha fazla sonuç"
           }
         },
         "uk" : {
@@ -1204,7 +1204,7 @@
         }
       }
     },
-    "No Results" : {
+    "No results" : {
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -1251,19 +1251,19 @@
         "en-AU" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No Results"
+            "value" : "No results"
           }
         },
         "en-CA" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No Results"
+            "value" : "No results"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No Results"
+            "value" : "No results"
           }
         },
         "es" : {
@@ -1323,7 +1323,7 @@
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tidak Ada Hasil"
+            "value" : "Tidak ada hasil"
           }
         },
         "it" : {
@@ -1365,7 +1365,7 @@
         "ms" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tiada Hasil"
+            "value" : "Tiada hasil"
           }
         },
         "nb" : {
@@ -1467,7 +1467,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sonuç Yok"
+            "value" : "Sonuç yok"
           }
         },
         "uk" : {
