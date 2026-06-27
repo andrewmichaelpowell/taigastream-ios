@@ -3,27 +3,33 @@
 
 import SwiftUI
 
+public let color1 = Color(
+	red: 10 / 255.0,
+	green: 10 / 255.0,
+	blue: 10 / 255.0,
+	opacity: 1.0
+)
+public let color2 = Color(
+	red: 2 / 255.0,
+	green: 218 / 255.0,
+	blue: 195 / 255.0,
+	opacity: 1.0
+)
+public let color3 = Color(
+	red: 72 / 255.0,
+	green: 72 / 255.0,
+	blue: 80 / 255.0,
+	opacity: 1.0
+)
+public let color4 = Color(
+	red: 36 / 255.0,
+	green: 36 / 255.0,
+	blue: 40 / 255.0,
+	opacity: 1.0
+)
+
 struct MainView: View {
 	@ObservedObject var streamInfo = StreamInfo.shared
-
-	let color1 = Color(
-		red: 36 / 255.0,
-		green: 36 / 255.0,
-		blue: 40 / 255.0,
-		opacity: 1.0
-	)
-	let color2 = Color(
-		red: 2 / 255.0,
-		green: 218 / 255.0,
-		blue: 195 / 255.0,
-		opacity: 1.0
-	)
-	let color3 = Color(
-		red: 72 / 255.0,
-		green: 72 / 255.0,
-		blue: 80 / 255.0,
-		opacity: 1.0
-	)
 
 	var body: some View {
 		ScrollView {
@@ -64,7 +70,7 @@ struct FaviconView: View {
 				Image(uiImage: fallbackIcon)
 					.resizable()
 					.renderingMode(.template)
-					.foregroundColor(.white)
+					.foregroundColor(station.url.isEmpty ? color4 : .white)
 					.aspectRatio(contentMode: .fit)
 			} else {
 				Color.black
@@ -210,7 +216,7 @@ struct RadioBrowserSearchSheet: View {
 				VStack(spacing: 8) {
 					HStack {
 						Image(systemName: "magnifyingglass")
-							.foregroundColor(.secondary)
+							.foregroundColor(color3)
 						TextField("", text: $searchName)
 							.autocorrectionDisabled()
 							.onSubmit {
@@ -221,12 +227,7 @@ struct RadioBrowserSearchSheet: View {
 					.background(
 						RoundedRectangle(cornerRadius: 10)
 							.fill(
-								Color(
-									red: 36 / 255,
-									green: 36 / 255,
-									blue: 40 / 255,
-									opacity: 1
-								)
+								color4
 							)
 					)
 
@@ -240,7 +241,7 @@ struct RadioBrowserSearchSheet: View {
 								.bold()
 								.foregroundColor(
 									isLoading || searchName.isEmpty
-										? .secondary : .white
+										? color3 : .white
 								)
 							Spacer()
 						}
@@ -248,12 +249,7 @@ struct RadioBrowserSearchSheet: View {
 						.background(
 							RoundedRectangle(cornerRadius: 10)
 								.fill(
-									Color(
-										red: 36 / 255,
-										green: 36 / 255,
-										blue: 40 / 255,
-										opacity: 1
-									)
+									color4
 								)
 						)
 					}
@@ -271,12 +267,7 @@ struct RadioBrowserSearchSheet: View {
 						.background(
 							RoundedRectangle(cornerRadius: 10)
 								.fill(
-									Color(
-										red: 36 / 255,
-										green: 36 / 255,
-										blue: 40 / 255,
-										opacity: 1
-									)
+									color4
 								)
 						)
 					}
@@ -285,7 +276,7 @@ struct RadioBrowserSearchSheet: View {
 				if hasSearched && results.isEmpty && !isLoading {
 					Spacer()
 					Text("No Results")
-						.foregroundColor(.secondary)
+						.foregroundColor(color3)
 					Spacer()
 				} else {
 					List {
@@ -383,7 +374,9 @@ struct RadioBrowserResultRow: View {
 						.aspectRatio(contentMode: .fit)
 				} else {
 					Image(systemName: "antenna.radiowaves.left.and.right")
-						.foregroundColor(.secondary)
+						.resizable()
+						.aspectRatio(contentMode: .fit)
+						.foregroundColor(.white)
 				}
 			}
 			.frame(width: 36, height: 36)
@@ -397,7 +390,7 @@ struct RadioBrowserResultRow: View {
 					if !station.country.isEmpty {
 						Text(station.country)
 							.font(.caption)
-							.foregroundColor(.secondary)
+							.foregroundColor(color3)
 					}
 					if !station.tags.isEmpty {
 						Text(
@@ -405,14 +398,14 @@ struct RadioBrowserResultRow: View {
 								.joined(separator: ", ")
 						)
 						.font(.caption)
-						.foregroundColor(.secondary)
+						.foregroundColor(color3)
 						.lineLimit(1)
 					}
 				}
 				if station.bitrate > 0 {
 					Text("\(station.bitrate) kbps")
 						.font(.caption2)
-						.foregroundColor(.secondary)
+						.foregroundColor(color3)
 				}
 			}
 
@@ -420,7 +413,7 @@ struct RadioBrowserResultRow: View {
 
 			Image(systemName: "chevron.right")
 				.font(.caption)
-				.foregroundColor(.secondary)
+				.foregroundColor(color3)
 		}
 		.padding(.vertical, 4)
 		.onAppear { loadFavicon() }
@@ -470,12 +463,7 @@ struct StreamSlotRow: View {
 			.background(
 				RoundedRectangle(cornerRadius: 10)
 					.fill(
-						Color(
-							red: 36 / 255,
-							green: 36 / 255,
-							blue: 40 / 255,
-							opacity: 1
-						)
+						color1
 					)
 			)
 		}
@@ -573,12 +561,7 @@ struct StreamOptionsSheet: View {
 			.background(
 				RoundedRectangle(cornerRadius: 10)
 					.fill(
-						Color(
-							red: 36 / 255,
-							green: 36 / 255,
-							blue: 40 / 255,
-							opacity: 1
-						)
+						color4
 					)
 			)
 		}
@@ -600,7 +583,7 @@ struct ManualURLSheet: View {
 				VStack(spacing: 8) {
 					HStack {
 						Image(systemName: "link")
-							.foregroundColor(.secondary)
+							.foregroundColor(color3)
 						TextField("", text: $manualUrl)
 							.autocorrectionDisabled()
 							.autocapitalization(.none)
@@ -610,12 +593,7 @@ struct ManualURLSheet: View {
 					.background(
 						RoundedRectangle(cornerRadius: 10)
 							.fill(
-								Color(
-									red: 36 / 255,
-									green: 36 / 255,
-									blue: 40 / 255,
-									opacity: 1
-								)
+								color4
 							)
 					)
 
@@ -625,7 +603,7 @@ struct ManualURLSheet: View {
 							Text("Save")
 								.bold()
 								.foregroundColor(
-									manualUrl.isEmpty ? .secondary : .white
+									manualUrl.isEmpty ? color3 : .white
 								)
 							Spacer()
 						}
@@ -633,12 +611,7 @@ struct ManualURLSheet: View {
 						.background(
 							RoundedRectangle(cornerRadius: 10)
 								.fill(
-									Color(
-										red: 36 / 255,
-										green: 36 / 255,
-										blue: 40 / 255,
-										opacity: 1
-									)
+									color4
 								)
 						)
 					}
@@ -656,12 +629,7 @@ struct ManualURLSheet: View {
 						.background(
 							RoundedRectangle(cornerRadius: 10)
 								.fill(
-									Color(
-										red: 36 / 255,
-										green: 36 / 255,
-										blue: 40 / 255,
-										opacity: 1
-									)
+									color4
 								)
 						)
 					}
@@ -691,25 +659,6 @@ struct PlayButton: View {
 	let streamNumber: Int
 	@ObservedObject var streamInfo = StreamInfo.shared
 
-	let color1 = Color(
-		red: 36 / 255.0,
-		green: 36 / 255.0,
-		blue: 40 / 255.0,
-		opacity: 1.0
-	)
-	let color2 = Color(
-		red: 2 / 255.0,
-		green: 218 / 255.0,
-		blue: 195 / 255.0,
-		opacity: 1.0
-	)
-	let color3 = Color(
-		red: 72 / 255.0,
-		green: 72 / 255.0,
-		blue: 80 / 255.0,
-		opacity: 1.0
-	)
-
 	private var isPlaying: Bool {
 		streamInfo.isPlaying && streamInfo.currentStream == streamNumber
 			&& streamInfo.stream[streamNumber - 1] != ""
@@ -728,7 +677,7 @@ struct PlayButton: View {
 			} else {
 				Text("\(streamNumber)")
 					.font(.title3)
-					.foregroundColor(isConfigured ? color3 : .white)
+					.foregroundColor(isConfigured ? color4 : .white)
 					.frame(maxWidth: .infinity, maxHeight: 50)
 			}
 		}
