@@ -1532,10 +1532,9 @@ public class StreamInfo: NSObject, ObservableObject {
 	}
 
 	func splitArtistTitle(from raw: String) -> (artist: String, title: String) {
-		let separators = [" — ", " – ", " - ", " / ", " · ", " | ", "-"]
+		let separators = [" — ", " – ", " - ", " / ", " · ", " | "]
 		for separator in separators {
 			let parts = raw.components(separatedBy: separator)
-
 			if parts.count >= 2 {
 				let artist = cleanMetadataString(
 					parts[0].trimmingCharacters(in: .whitespaces)
@@ -1544,7 +1543,21 @@ public class StreamInfo: NSObject, ObservableObject {
 					parts.dropFirst().joined(separator: separator)
 						.trimmingCharacters(in: .whitespaces)
 				)
+				if !artist.isEmpty && !title.isEmpty {
+					return (artist, title)
+				}
+			}
+		}
 
+		if raw.contains("-") {
+			let parts = raw.components(separatedBy: "-")
+			if parts.count == 2 {
+				let artist = cleanMetadataString(
+					parts[0].trimmingCharacters(in: .whitespaces)
+				)
+				let title = cleanMetadataString(
+					parts[1].trimmingCharacters(in: .whitespaces)
+				)
 				if !artist.isEmpty && !title.isEmpty {
 					return (artist, title)
 				}
@@ -1555,7 +1568,7 @@ public class StreamInfo: NSObject, ObservableObject {
 			"", cleanMetadataString(raw.trimmingCharacters(in: .whitespaces))
 		)
 	}
-
+	
 	private func parseMetadata(_ metadataItems: [AVMetadataItem]) {
 		guard !apiMetadataActive else { return }
 		Task {
