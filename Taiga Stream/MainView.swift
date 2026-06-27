@@ -275,7 +275,7 @@ struct RadioBrowserSearchSheet: View {
 				.padding()
 				if hasSearched && results.isEmpty && !isLoading {
 					Spacer()
-					Text("No Results")
+					Text("No results")
 						.foregroundColor(color3)
 					Spacer()
 				} else {
@@ -292,7 +292,7 @@ struct RadioBrowserSearchSheet: View {
 							&& !isLoading
 						{
 							Button(action: loadMore) {
-								Text("More Results")
+								Text("More results")
 									.frame(maxWidth: .infinity, alignment: .leading)
 									.padding(.leading, 48)
 							}
