@@ -44,7 +44,10 @@ struct FaviconView: View {
 				Image(uiImage: fallbackIcon)
 					.resizable()
 					.renderingMode(.template)
-					.foregroundColor(station.url.isEmpty ? Color(.quaternaryLabel) : Color(.label))
+					.foregroundColor(
+						station.url.isEmpty
+							? Color(.quaternaryLabel) : Color(.label)
+					)
 					.aspectRatio(contentMode: .fit)
 			} else {
 				Color(.systemBackground)
@@ -84,6 +87,7 @@ struct RadioBrowserStation: Identifiable {
 	let url: String
 	let faviconUrl: String
 	let country: String
+	let state: String
 	let language: String
 	let tags: String
 	let votes: Int
@@ -152,6 +156,7 @@ class RadioBrowserClient {
 					url: url,
 					faviconUrl: dict["favicon"] as? String ?? "",
 					country: dict["country"] as? String ?? "",
+					state: dict["state"] as? String ?? "",
 					language: dict["language"] as? String ?? "",
 					tags: dict["tags"] as? String ?? "",
 					votes: dict["votes"] as? Int ?? 0,
@@ -267,7 +272,10 @@ struct RadioBrowserSearchSheet: View {
 						{
 							Button(action: loadMore) {
 								Text("More results")
-									.frame(maxWidth: .infinity, alignment: .leading)
+									.frame(
+										maxWidth: .infinity,
+										alignment: .leading
+									)
 									.padding(.leading, 48)
 							}
 						}
@@ -359,21 +367,24 @@ struct RadioBrowserResultRow: View {
 				Text(station.name)
 					.font(.body)
 					.lineLimit(1)
-				HStack(spacing: 6) {
-					if !station.country.isEmpty {
-						Text(station.country)
-							.font(.caption)
-							.foregroundColor(Color(.tertiaryLabel))
-					}
-					if !station.tags.isEmpty {
-						Text(
-							station.tags.components(separatedBy: ",").prefix(2)
-								.joined(separator: ", ")
-						)
+				if !station.state.isEmpty {
+					Text(station.state)
 						.font(.caption)
 						.foregroundColor(Color(.tertiaryLabel))
 						.lineLimit(1)
-					}
+				}
+				if !station.country.isEmpty {
+					Text(station.country)
+						.font(.caption)
+						.foregroundColor(Color(.tertiaryLabel))
+						.lineLimit(1)
+				}
+				if !station.tags.isEmpty {
+					Text(station.tags.components(separatedBy: ",").prefix(2)
+						.joined(separator: ", "))
+						.font(.caption)
+						.foregroundColor(Color(.tertiaryLabel))
+						.lineLimit(1)
 				}
 				if station.bitrate > 0 {
 					Text("\(station.bitrate) kbps")
@@ -381,9 +392,7 @@ struct RadioBrowserResultRow: View {
 						.foregroundColor(Color(.tertiaryLabel))
 				}
 			}
-
 			Spacer()
-
 			Image(systemName: "chevron.right")
 				.font(.caption)
 				.foregroundColor(Color(.tertiaryLabel))
@@ -525,7 +534,9 @@ struct StreamOptionsSheet: View {
 				Spacer()
 				Text(title)
 					.bold()
-					.foregroundColor(role == .destructive ? .red : Color(.label))
+					.foregroundColor(
+						role == .destructive ? .red : Color(.label)
+					)
 				Spacer()
 			}
 			.padding()
@@ -574,7 +585,8 @@ struct ManualURLSheet: View {
 							Text("Save")
 								.bold()
 								.foregroundColor(
-									manualUrl.isEmpty ? Color(.tertiaryLabel) : Color(.label)
+									manualUrl.isEmpty
+										? Color(.tertiaryLabel) : Color(.label)
 								)
 							Spacer()
 						}
@@ -647,7 +659,9 @@ struct PlayButton: View {
 			} else {
 				Text("\(streamNumber)")
 					.font(.title3)
-					.foregroundColor(isConfigured ? Color(.quaternaryLabel) : Color(.label))
+					.foregroundColor(
+						isConfigured ? Color(.quaternaryLabel) : Color(.label)
+					)
 					.frame(maxWidth: .infinity, maxHeight: 50)
 			}
 		}
