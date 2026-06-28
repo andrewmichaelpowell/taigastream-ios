@@ -46,7 +46,7 @@ struct FaviconView: View {
 					.renderingMode(.template)
 					.foregroundColor(
 						station.url.isEmpty
-							? Color(.quaternaryLabel) : Color(.label)
+							? Color(.secondarySystemBackground) : Color(.label)
 					)
 					.aspectRatio(contentMode: .fit)
 			} else {
