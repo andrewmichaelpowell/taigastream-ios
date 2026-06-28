@@ -10,12 +10,19 @@
 		<true/>
 		<key>NSExceptionDomains</key>
 		<dict>
+			<key>wrvo.org</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
 			<key>cdn-profiles.tunein.com</key>
 			<dict>
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>
 				<true/>
 				<key>NSIncludesSubdomains</key>
-				<string></string>
+				<true/>
 			</dict>
 			<key>klassikradio.de</key>
 			<dict>
