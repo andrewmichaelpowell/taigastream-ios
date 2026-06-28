@@ -420,6 +420,7 @@ struct StreamSlotRow: View {
 	@State private var showingManualEntry = false
 	@State private var showingSearch = false
 	@State private var manualUrl = ""
+	@State private var manualName = ""
 
 	var station: RadioStation { streamInfo.stations[index] }
 
@@ -456,7 +457,8 @@ struct StreamSlotRow: View {
 				isPresented: $showingOptions,
 				showingSearch: $showingSearch,
 				showingManualEntry: $showingManualEntry,
-				manualUrl: $manualUrl
+				manualUrl: $manualUrl,
+				manualName: $manualName
 			)
 			.environmentObject(streamInfo)
 		}
@@ -471,7 +473,8 @@ struct StreamSlotRow: View {
 			ManualURLSheet(
 				slotIndex: index,
 				isPresented: $showingManualEntry,
-				manualUrl: $manualUrl
+				manualUrl: $manualUrl,
+				manualName: $manualName
 			)
 			.environmentObject(streamInfo)
 		}
@@ -484,6 +487,7 @@ struct StreamOptionsSheet: View {
 	@Binding var showingSearch: Bool
 	@Binding var showingManualEntry: Bool
 	@Binding var manualUrl: String
+	@Binding var manualName: String
 	@EnvironmentObject var streamInfo: StreamInfo
 
 	var station: RadioStation { streamInfo.stations[index] }
@@ -500,6 +504,7 @@ struct StreamOptionsSheet: View {
 					}
 					optionButton("Enter URL") {
 						manualUrl = station.url
+						manualName = station.name
 						isPresented = false
 						DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
 							showingManualEntry = true
@@ -556,6 +561,7 @@ struct ManualURLSheet: View {
 	@Binding var isPresented: Bool
 	@Binding var manualUrl: String
 	@EnvironmentObject var streamInfo: StreamInfo
+	@Binding var manualName: String
 
 	var station: RadioStation { streamInfo.stations[slotIndex] }
 
@@ -563,6 +569,15 @@ struct ManualURLSheet: View {
 		NavigationView {
 			VStack(spacing: 0) {
 				VStack(spacing: 8) {
+					HStack {
+						Image(systemName: "radio")
+							.foregroundColor(Color(.tertiaryLabel))
+						TextField("", text: $manualName)
+							.autocorrectionDisabled()
+					}
+					.padding()
+					.background(RoundedRectangle(cornerRadius: 10)
+						.fill(Color(.secondarySystemBackground)))
 					HStack {
 						Image(systemName: "link")
 							.foregroundColor(Color(.tertiaryLabel))
@@ -629,7 +644,7 @@ struct ManualURLSheet: View {
 	private func save() {
 		let saved = RadioStation(
 			url: manualUrl.trimmingCharacters(in: .whitespaces),
-			name: station.name,
+			name: manualName.trimmingCharacters(in: .whitespaces),
 			faviconUrl: station.faviconUrl
 		)
 		streamInfo.saveStation(saved, at: slotIndex)
