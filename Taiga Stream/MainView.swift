@@ -7,22 +7,32 @@ struct MainView: View {
 	@ObservedObject var streamInfo = StreamInfo.shared
 
 	var body: some View {
-		ScrollView {
-			ForEach(1...32, id: \.self) { streamNumber in
+		List {
+			ForEach(0..<32, id: \.self) { index in
 				HStack(spacing: 12) {
-					FaviconView(index: streamNumber - 1)
+					FaviconView(index: index)
 						.environmentObject(streamInfo)
 
-					StreamSlotRow(index: streamNumber - 1)
+					StreamSlotRow(index: index)
 						.environmentObject(streamInfo)
 
-					PlayButton(streamNumber: streamNumber)
+					PlayButton(streamNumber: index + 1)
 				}
 				.frame(minHeight: 56)
-				.padding(.horizontal)
+				.listRowInsets(
+					EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16)
+				)
+				.listRowSeparator(.hidden)
+				.moveDisabled(false)
+				.deleteDisabled(true)
 			}
-			Spacer()
+			.onMove { source, destination in
+				streamInfo.moveStation(from: source, to: destination)
+			}
 		}
+		.listStyle(.plain)
+		.scrollContentBackground(.hidden)
+		.environment(\.editMode, .constant(.active))
 	}
 }
 
@@ -380,11 +390,13 @@ struct RadioBrowserResultRow: View {
 						.lineLimit(1)
 				}
 				if !station.tags.isEmpty {
-					Text(station.tags.components(separatedBy: ",").prefix(2)
-						.joined(separator: ", "))
-						.font(.caption)
-						.foregroundColor(Color(.tertiaryLabel))
-						.lineLimit(1)
+					Text(
+						station.tags.components(separatedBy: ",").prefix(2)
+							.joined(separator: ", ")
+					)
+					.font(.caption)
+					.foregroundColor(Color(.tertiaryLabel))
+					.lineLimit(1)
 				}
 				if station.bitrate > 0 {
 					Text("\(station.bitrate) kbps")
@@ -576,8 +588,10 @@ struct ManualURLSheet: View {
 							.autocorrectionDisabled()
 					}
 					.padding()
-					.background(RoundedRectangle(cornerRadius: 10)
-						.fill(Color(.secondarySystemBackground)))
+					.background(
+						RoundedRectangle(cornerRadius: 10)
+							.fill(Color(.secondarySystemBackground))
+					)
 					HStack {
 						Image(systemName: "link")
 							.foregroundColor(Color(.tertiaryLabel))

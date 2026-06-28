@@ -1280,6 +1280,34 @@ public class StreamInfo: NSObject, ObservableObject {
 		}
 	}()
 
+	func moveStation(from source: IndexSet, to destination: Int) {
+		stations.move(fromOffsets: source, toOffset: destination)
+		stream.move(fromOffsets: source, toOffset: destination)
+		for i in 0..<32 {
+			NSUbiquitousKeyValueStore.default.set(
+				stations[i].url,
+				forKey: "Stream\(i + 1)Key"
+			)
+			NSUbiquitousKeyValueStore.default.set(
+				stations[i].name,
+				forKey: "StationName\(i + 1)Key"
+			)
+			NSUbiquitousKeyValueStore.default.set(
+				stations[i].faviconUrl,
+				forKey: "StationFavicon\(i + 1)Key"
+			)
+		}
+		NSUbiquitousKeyValueStore.default.synchronize()
+		if isPlaying {
+			for i in 0..<32 {
+				if stations[i].url == currentStreamUrl?.absoluteString {
+					currentStream = i + 1
+					break
+				}
+			}
+		}
+	}
+
 	func saveStation(_ station: RadioStation, at index: Int) {
 		guard index >= 0 && index < 32 else { return }
 		stations[index] = station
