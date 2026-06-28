@@ -8,10 +8,11 @@ struct MainView: View {
 
 	var body: some View {
 		List {
-			ForEach(0..<32, id: \.self) { index in
+			ForEach(Array(streamInfo.stations.enumerated()), id: \.element.id) {
+				index,
+				station in
 				HStack(spacing: 12) {
-					FaviconView(index: index)
-						.environmentObject(streamInfo)
+					FaviconView(station: station)
 
 					StreamSlotRow(index: index)
 						.environmentObject(streamInfo)
@@ -37,12 +38,9 @@ struct MainView: View {
 }
 
 struct FaviconView: View {
-	let index: Int
-	@EnvironmentObject var streamInfo: StreamInfo
+	let station: RadioStation
 	@State private var favicon: UIImage? = nil
 	@State private var fallbackIcon: UIImage? = nil
-
-	var station: RadioStation { streamInfo.stations[index] }
 
 	var body: some View {
 		Group {
@@ -76,6 +74,13 @@ struct FaviconView: View {
 		fallbackIcon = UIImage(systemName: "antenna.radiowaves.left.and.right")
 	}
 
+	private func normalizeImage(_ image: UIImage) -> UIImage {
+		let renderer = UIGraphicsImageRenderer(size: image.size)
+		return renderer.image { _ in
+			image.draw(in: CGRect(origin: .zero, size: image.size))
+		}
+	}
+
 	private func loadFavicon() {
 		guard !station.faviconUrl.isEmpty,
 			let url = URL(string: station.faviconUrl)
@@ -85,7 +90,8 @@ struct FaviconView: View {
 		}
 		URLSession.shared.dataTask(with: url) { data, _, _ in
 			if let data, let image = UIImage(data: data) {
-				DispatchQueue.main.async { favicon = image }
+				let normalized = self.normalizeImage(image)
+				DispatchQueue.main.async { favicon = normalized }
 			}
 		}.resume()
 	}
@@ -413,13 +419,21 @@ struct RadioBrowserResultRow: View {
 		.onAppear { loadFavicon() }
 	}
 
+	private func normalizeImage(_ image: UIImage) -> UIImage {
+		let renderer = UIGraphicsImageRenderer(size: image.size)
+		return renderer.image { _ in
+			image.draw(in: CGRect(origin: .zero, size: image.size))
+		}
+	}
+
 	private func loadFavicon() {
 		guard !station.faviconUrl.isEmpty,
 			let url = URL(string: station.faviconUrl)
 		else { return }
 		URLSession.shared.dataTask(with: url) { data, _, _ in
 			if let data, let image = UIImage(data: data) {
-				DispatchQueue.main.async { favicon = image }
+				let normalized = self.normalizeImage(image)
+				DispatchQueue.main.async { favicon = normalized }
 			}
 		}.resume()
 	}

@@ -27,10 +27,18 @@ extension URLRequest {
 	}
 }
 
-struct RadioStation: Codable, Equatable {
+struct RadioStation: Codable, Equatable, Identifiable {
+	let id: UUID
 	var url: String
 	var name: String
 	var faviconUrl: String
+
+	init(id: UUID = UUID(), url: String, name: String, faviconUrl: String) {
+		self.id = id
+		self.url = url
+		self.name = name
+		self.faviconUrl = faviconUrl
+	}
 
 	static let empty = RadioStation(url: "", name: "", faviconUrl: "")
 }
@@ -1276,6 +1284,10 @@ public class StreamInfo: NSObject, ObservableObject {
 				NSUbiquitousKeyValueStore.default.string(
 					forKey: "StationFavicon\(i)Key"
 				) ?? ""
+			let idString = NSUbiquitousKeyValueStore.default.string(
+				forKey: "StationID\(i)Key"
+			)
+			let id = idString.flatMap { UUID(uuidString: $0) } ?? UUID()
 			return RadioStation(url: url, name: name, faviconUrl: favicon)
 		}
 	}()
@@ -1284,6 +1296,10 @@ public class StreamInfo: NSObject, ObservableObject {
 		stations.move(fromOffsets: source, toOffset: destination)
 		stream.move(fromOffsets: source, toOffset: destination)
 		for i in 0..<32 {
+			NSUbiquitousKeyValueStore.default.set(
+				stations[i].id.uuidString,
+				forKey: "StationID\(i + 1)Key"
+			)
 			NSUbiquitousKeyValueStore.default.set(
 				stations[i].url,
 				forKey: "Stream\(i + 1)Key"
@@ -1310,19 +1326,29 @@ public class StreamInfo: NSObject, ObservableObject {
 
 	func saveStation(_ station: RadioStation, at index: Int) {
 		guard index >= 0 && index < 32 else { return }
-		stations[index] = station
-		stream[index] = station.url
+		let preserved = RadioStation(
+			id: stations[index].id,
+			url: station.url,
+			name: station.name,
+			faviconUrl: station.faviconUrl
+		)
+		stations[index] = preserved
+		stream[index] = preserved.url
 		NSUbiquitousKeyValueStore.default.set(
-			station.url,
+			preserved.url,
 			forKey: "Stream\(index + 1)Key"
 		)
 		NSUbiquitousKeyValueStore.default.set(
-			station.name,
+			preserved.name,
 			forKey: "StationName\(index + 1)Key"
 		)
 		NSUbiquitousKeyValueStore.default.set(
-			station.faviconUrl,
+			preserved.faviconUrl,
 			forKey: "StationFavicon\(index + 1)Key"
+		)
+		NSUbiquitousKeyValueStore.default.set(
+			preserved.id.uuidString,
+			forKey: "StationID\(index + 1)Key"
 		)
 		NSUbiquitousKeyValueStore.default.synchronize()
 	}
