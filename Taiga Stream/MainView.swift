@@ -1,6 +1,9 @@
 //  Taiga Stream
 //  github.com/andrewmichaelpowell
 
+import CFNetwork
+import Darwin
+import Foundation
 import SwiftUI
 
 struct MainView: View {
@@ -112,7 +115,64 @@ struct RadioBrowserStation: Identifiable {
 
 class RadioBrowserClient {
 	static let shared = RadioBrowserClient()
+
 	private var baseUrl = "https://de1.api.radio-browser.info"
+	private var serverResolved = false
+
+	init() {
+		resolveServer()
+	}
+
+	private func resolveServer() {
+		DispatchQueue.global(qos: .utility).async { [weak self] in
+			guard let self else { return }
+			let host = CFHostCreateWithName(
+				nil,
+				"all.api.radio-browser.info" as CFString
+			).takeRetainedValue()
+			CFHostStartInfoResolution(host, .addresses, nil)
+			var resolved = DarwinBoolean(false)
+			guard
+				let addresses = CFHostGetAddressing(host, &resolved)?
+					.takeUnretainedValue() as? [Data],
+				resolved.boolValue
+			else {
+				return
+			}
+
+			var hostnames: [String] = []
+			for addressData in addresses {
+				let hostname = addressData.withUnsafeBytes { ptr -> String? in
+					var hostBuffer = [CChar](
+						repeating: 0,
+						count: Int(NI_MAXHOST)
+					)
+					let sockaddr = ptr.baseAddress!.assumingMemoryBound(
+						to: sockaddr.self
+					)
+					let result = getnameinfo(
+						sockaddr,
+						socklen_t(addressData.count),
+						&hostBuffer,
+						socklen_t(hostBuffer.count),
+						nil,
+						0,
+						NI_NAMEREQD
+					)
+					return result == 0 ? String(cString: hostBuffer) : nil
+				}
+				if let hostname, !hostname.isEmpty {
+					hostnames.append(hostname)
+				}
+			}
+
+			guard !hostnames.isEmpty else { return }
+			let chosen = hostnames.shuffled().first!
+			let url = "https://\(chosen)"
+			self.baseUrl = url
+			self.serverResolved = true
+		}
+	}
 
 	struct SearchParams {
 		var name: String = ""
@@ -127,6 +187,15 @@ class RadioBrowserClient {
 		params: SearchParams,
 		completion: @escaping ([RadioBrowserStation]) -> Void
 	) {
+		if !serverResolved {
+			DispatchQueue.global(qos: .utility).asyncAfter(
+				deadline: .now() + 1.0
+			) { [weak self] in
+				self?.search(params: params, completion: completion)
+			}
+			return
+		}
+
 		var components = URLComponents(
 			string: "\(baseUrl)/json/stations/search"
 		)!
