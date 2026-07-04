@@ -1,3 +1,3 @@
 Taiga Stream (iOS)
 
-This application allows you configure up to 32 streaming audio URLs, and then play each stream using a button from the control center or lock screen. These buttons function like a configurable version of the default iOS ambient music buttons. If your device is connected to an iCloud account, your URL list will sync across all devices on your account.
+Taiga Stream is a streaming radio app featuring preset buttons for the control center and lock screen. You can add up to 32 station presets. If you are signed into an iCloud account, your presets will sync across all of your devices.
