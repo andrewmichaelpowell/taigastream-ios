@@ -10,6 +10,13 @@
 		<true/>
 		<key>NSExceptionDomains</key>
 		<dict>
+			<key>iheart.com</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
 			<key>wrvo.org</key>
 			<dict>
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>
