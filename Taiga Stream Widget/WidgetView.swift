@@ -1703,7 +1703,7 @@ public class StreamInfo: NSObject, ObservableObject {
 		VirginRadioRomaniaProvider(),
 		VirginRadioOmanProvider(),
 		ZenoFMProvider(),
-		//		IHeartRadioProvider(),
+		IHeartRadioProvider(),
 		RadioParadiseProvider(),
 		IcecastProvider(),
 	]
