@@ -1252,6 +1252,191 @@ private class ZenoSSEDelegate: NSObject, URLSessionDataDelegate {
 	}
 }
 
+struct IHeartRadioProvider: MetadataProvider {
+	var pollInterval: TimeInterval? { 15 }
+
+	private static var stationIdCache: [String: Int] = [:]
+
+	func matches(streamUrl: URL) -> Bool {
+		guard let host = streamUrl.host else { return false }
+		return host.contains("ihrhls.com")
+	}
+
+	private func stationId(from streamUrl: URL) -> String? {
+		let s = streamUrl.absoluteString
+		guard let numRange = s.range(of: #"(?<=zc)\d+"#, options: .regularExpression)
+		else { return nil }
+		return String(s[numRange])
+	}
+
+	func poll(streamUrl: URL, completion: @escaping (String, String) -> Void) {
+		guard let zcId = stationId(from: streamUrl) else { return }
+
+		if let cachedId = Self.stationIdCache[zcId] {
+			fetchNowPlaying(stationId: cachedId, streamUrl: streamUrl, completion: completion)
+			return
+		}
+
+		guard let stationInfoUrl = URL(string: "https://us.api.iheart.com/api/v2/content/liveStations/\(zcId)")
+		else { return }
+
+		var stationRequest = URLRequest.noCacheRequest(url: stationInfoUrl)
+		stationRequest.setValue("TaigaStream/1.0", forHTTPHeaderField: "User-Agent")
+		stationRequest.setValue("application/json", forHTTPHeaderField: "Accept")
+		stationRequest.setValue("https://www.iheart.com", forHTTPHeaderField: "Referer")
+		stationRequest.setValue("en-US", forHTTPHeaderField: "X-Locale")
+		stationRequest.setValue("webapp.US", forHTTPHeaderField: "X-hostName")
+
+		URLSession.shared.dataTask(with: stationRequest) { data, _, error in
+			guard let data, error == nil,
+				  let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+				  let hits = json["hits"] as? [[String: Any]],
+				  let station = hits.first,
+				  let stationId = station["id"] as? Int
+			else { return }
+
+			Self.stationIdCache[zcId] = stationId
+			self.fetchNowPlaying(stationId: stationId, streamUrl: streamUrl, completion: completion)
+		}.resume()
+	}
+
+	private func fetchNowPlaying(
+		stationId: Int,
+		streamUrl: URL,
+		completion: @escaping (String, String) -> Void
+	) {
+		guard let url = URL(string: "https://us.api.iheart.com/api/v3/live-meta/stream/\(stationId)/trackHistory?limit=1") else { return }
+
+		var request = URLRequest.noCacheRequest(url: url)
+		request.setValue("TaigaStream/1.0", forHTTPHeaderField: "User-Agent")
+		request.setValue("application/json", forHTTPHeaderField: "Accept")
+		request.setValue("https://www.iheart.com", forHTTPHeaderField: "Referer")
+		request.setValue("en-US", forHTTPHeaderField: "X-Locale")
+		request.setValue("webapp.US", forHTTPHeaderField: "X-hostName")
+
+		URLSession.shared.dataTask(with: request) { data, _, error in
+			guard let data, error == nil,
+				  let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+				  let dataArray = json["data"] as? [[String: Any]],
+				  let current = dataArray.first
+			else { return }
+
+			let artist = (current["artist"] as? String ?? "")
+				.trimmingCharacters(in: .whitespaces)
+			let title = (current["title"] as? String ?? "")
+				.trimmingCharacters(in: .whitespaces)
+			guard !title.isEmpty else { return }
+
+			if let imagePath = current["imagePath"] as? String,
+			   !imagePath.isEmpty,
+			   let imageUrl = URL(string: imagePath)
+			{
+				URLSession.shared.dataTask(with: imageUrl) { imageData, _, imageError in
+					if let imageData, imageError == nil,
+					   let image = UIImage(data: imageData)
+					{
+						DispatchQueue.main.async {
+							StreamInfo.shared.applyArtwork(image)
+						}
+					}
+				}.resume()
+			}
+
+			completion(artist, title)
+		}.resume()
+	}
+}
+
+struct RadioParadiseProvider: MetadataProvider {
+	var pollInterval: TimeInterval? { nil }
+
+	private static let streamToChannel: [String: Int] = [
+		"radioparadise.com/aac-320":      0,
+		"radioparadise.com/aac-128":      0,
+		"radioparadise.com/aac-64":       0,
+		"radioparadise.com/mp3-192":      0,
+		"radioparadise.com/flac":         0,
+		"radioparadise.com/flacm":        0,
+		"radioparadise.com/mellow-320":   1,
+		"radioparadise.com/mellow-128":   1,
+		"radioparadise.com/mellow-flac":  1,
+		"radioparadise.com/mellow-flacm": 1,
+		"radioparadise.com/rock-320":     2,
+		"radioparadise.com/rock-128":     2,
+		"radioparadise.com/rock-flac":    2,
+		"radioparadise.com/rock-flacm":   2,
+		"radioparadise.com/world-320":    3,
+		"radioparadise.com/world-128":    3,
+		"radioparadise.com/world-flac":   3,
+		"radioparadise.com/world-flacm":  3,
+		"radioparadise.com/world-etc":    3,
+	]
+
+	func matches(streamUrl: URL) -> Bool {
+		let s = streamUrl.absoluteString
+		return Self.streamToChannel.keys.contains(where: { s.contains($0) })
+	}
+
+	private func channel(from streamUrl: URL) -> Int {
+		let s = streamUrl.absoluteString
+		return Self.streamToChannel.first(where: { s.contains($0.key) })?.value ?? 0
+	}
+
+	func poll(streamUrl: URL, completion: @escaping (String, String) -> Void) {
+		fetchNowPlaying(streamUrl: streamUrl, completion: completion)
+	}
+
+	private func fetchNowPlaying(
+		streamUrl: URL,
+		completion: @escaping (String, String) -> Void
+	) {
+		let chan = channel(from: streamUrl)
+		guard let apiUrl = URL(string: "https://api.radioparadise.com/api/now_playing?chan=\(chan)")
+		else { return }
+
+		let request = URLRequest.noCacheRequest(url: apiUrl)
+
+		URLSession.shared.dataTask(with: request) { data, _, error in
+			guard StreamInfo.shared.currentStreamUrl == streamUrl else { return }
+			guard let data, error == nil,
+				  let json = try? JSONSerialization.jsonObject(with: data)
+					  as? [String: Any]
+			else { return }
+
+			let artist = (json["artist"] as? String ?? "")
+				.trimmingCharacters(in: .whitespaces)
+			let title = (json["title"] as? String ?? "")
+				.trimmingCharacters(in: .whitespaces)
+			guard !title.isEmpty else { return }
+
+			if let coverString = json["cover"] as? String,
+			   !coverString.isEmpty,
+			   let coverUrl = URL(string: coverString)
+			{
+				URLSession.shared.dataTask(with: coverUrl) { imageData, _, _ in
+					if let imageData, let image = UIImage(data: imageData) {
+						DispatchQueue.main.async {
+							StreamInfo.shared.applyArtwork(image)
+						}
+					}
+				}.resume()
+			}
+
+			completion(artist, title)
+
+			if let secondsUntilNext = json["time"] as? TimeInterval,
+			   secondsUntilNext > 0
+			{
+				let delay = secondsUntilNext + 2
+				DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+					guard StreamInfo.shared.currentStreamUrl == streamUrl else { return }
+					self.fetchNowPlaying(streamUrl: streamUrl, completion: completion)
+				}
+			}
+		}.resume()
+	}
+}
+
 struct IcecastProvider: MetadataProvider {
 	func matches(streamUrl: URL) -> Bool { true }
 
@@ -1444,6 +1629,8 @@ public class StreamInfo: NSObject, ObservableObject {
 		VirginRadioRomaniaProvider(),
 		VirginRadioOmanProvider(),
 		ZenoFMProvider(),
+		IHeartRadioProvider(),
+		RadioParadiseProvider(),
 		IcecastProvider(),
 	]
 
