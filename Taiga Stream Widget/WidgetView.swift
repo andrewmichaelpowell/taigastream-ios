@@ -350,8 +350,22 @@ struct BBCRadioProvider: MetadataProvider {
 			"https://rms.api.bbc.co.uk/v2/services/bbc_radio_two/segments/latest?experience=domestic&offset=0&limit=1",
 		"bbc_radio_three":
 			"https://rms.api.bbc.co.uk/v2/services/bbc_radio_three/segments/latest?experience=domestic&offset=0&limit=1",
+		"bbc_asian_network":
+			"https://rms.api.bbc.co.uk/v2/services/bbc_asian_network/segments/latest?experience=domestic&offset=0&limit=1",
+		"bbc_radio_scotland":
+			"https://rms.api.bbc.co.uk/v2/services/bbc_radio_scotland/segments/latest?experience=domestic&offset=0&limit=1",
+		"bbc_radio_wales":
+			"https://rms.api.bbc.co.uk/v2/services/bbc_radio_wales/segments/latest?experience=domestic&offset=0&limit=1",
+		"bbc_radio_ulster":
+			"https://rms.api.bbc.co.uk/v2/services/bbc_radio_ulster/segments/latest?experience=domestic&offset=0&limit=1",
+		"bbc_radio_cymru":
+			"https://rms.api.bbc.co.uk/v2/services/bbc_radio_cymru/segments/latest?experience=domestic&offset=0&limit=1",
+		"bbc_radio_foyle":
+			"https://rms.api.bbc.co.uk/v2/services/bbc_radio_foyle/segments/latest?experience=domestic&offset=0&limit=1",
+		"bbc_world_service":
+			"https://rms.api.bbc.co.uk/v2/services/bbc_world_service/segments/latest?experience=domestic&offset=0&limit=1",
 	]
-
+	
 	func matches(streamUrl: URL) -> Bool {
 		let s = streamUrl.absoluteString
 		return Self.serviceMap.keys.contains(where: { s.contains($0) })
