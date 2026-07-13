@@ -469,14 +469,16 @@ struct BBCRadioProvider: MetadataProvider {
 		"bbc_world_service":
 			"https://rms.api.bbc.co.uk/v2/services/bbc_world_service/segments/latest?experience=domestic&offset=0&limit=1",
 	]
-	
-	private static let sortedKeys = serviceMap.keys.sorted { $0.count > $1.count }
-	
+
+	private static let sortedKeys = serviceMap.keys.sorted {
+		$0.count > $1.count
+	}
+
 	func matches(streamUrl: URL) -> Bool {
 		let s = streamUrl.absoluteString
 		return Self.sortedKeys.contains { s.contains($0) }
 	}
-	
+
 	private func apiUrl(from streamUrl: URL) -> URL? {
 		let s = streamUrl.absoluteString
 
@@ -486,7 +488,7 @@ struct BBCRadioProvider: MetadataProvider {
 
 		return URL(string: Self.serviceMap[key]!)
 	}
-	
+
 	func poll(
 		streamUrl: URL,
 		completion: @escaping (String, String) -> Void
@@ -535,8 +537,10 @@ struct NRKProvider: MetadataProvider {
 		"sport": "https://psapi.nrk.no/channels/sport/liveelements",
 	]
 
-	private static let sortedKeys = channelMap.keys.sorted { $0.count > $1.count }
-	
+	private static let sortedKeys = channelMap.keys.sorted {
+		$0.count > $1.count
+	}
+
 	func matches(streamUrl: URL) -> Bool {
 		guard let host = streamUrl.host else { return false }
 		return host.contains("nrk-live-radio-world.akamaized.net")
@@ -551,7 +555,7 @@ struct NRKProvider: MetadataProvider {
 
 		return URL(string: Self.channelMap[key]!)
 	}
-	
+
 	func poll(
 		streamUrl: URL,
 		completion: @escaping (String, String) -> Void
@@ -1424,7 +1428,7 @@ struct VRTRadioProvider: MetadataProvider {
 	private static let sortedKeys = streamToPage.keys.sorted {
 		$0.count > $1.count
 	}
-	
+
 	func matches(streamUrl: URL) -> Bool {
 		let s = streamUrl.absoluteString
 		return Self.sortedKeys.contains { s.contains($0) }
@@ -1439,7 +1443,7 @@ struct VRTRadioProvider: MetadataProvider {
 
 		return Self.streamToPage[key]
 	}
-	
+
 	func poll(streamUrl: URL, completion: @escaping (String, String) -> Void) {
 		guard let pagePath = pagePath(from: streamUrl),
 			let apiUrl = URL(
