@@ -2164,7 +2164,10 @@ public class StreamInfo: NSObject, ObservableObject {
 		lastStreamTitle = ""
 		apiMetadataActive = false
 
-		guard let provider = metadataProviders.first(where: { $0.matches(streamUrl: streamUrl) })
+		guard
+			let provider = metadataProviders.first(where: {
+				$0.matches(streamUrl: streamUrl)
+			})
 		else { return }
 
 		if provider is IcecastProvider {
@@ -2182,7 +2185,7 @@ public class StreamInfo: NSObject, ObservableObject {
 				provider.poll(streamUrl: streamUrl, completion: completion)
 			}
 	}
-	
+
 	private func makeCompletion(for streamUrl: URL) -> (String, String) -> Void
 	{
 		{ [weak self] artist, title in
