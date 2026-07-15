@@ -1785,6 +1785,112 @@ struct CeskyRozhlasProvider: MetadataProvider {
 	}
 }
 
+struct RTBFRadioProvider: MetadataProvider {
+	var pollInterval: TimeInterval? { 15 }
+
+	private static let streamToKey: [String: String] = [
+		"laprem1ere": "lapremiere",
+		"classic21": "classic21",
+		"musiq3": "musiq3",
+		"vivaplus": "vivaplus",
+		"vivasport": "vivasport",
+		"vivabxl": "vivabxl",
+		"vivacharleroi": "vivacharleroi",
+		"vivahainaut": "vivahainaut",
+		"vivaliege": "vivaliege",
+		"vivalux": "vivalux",
+		"vivanamurbw": "vivanamurbw",
+		"tarmac": "tarmac",
+		"pure": "tipik",
+		"jam": "jam",
+		"lapremiere": "lapremiere",
+		"/c21-60s/": "classic21-60s",
+		"/c21-70s/": "classic21-70s",
+		"/c21-80nw/": "classic21-80nw",
+		"/c21-80s/": "classic21-80s",
+		"/c21-90s/": "classic21-90s",
+		"/c21-blues/": "classic21-blues",
+		"/c21-live/": "classic21-live",
+		"/c21-metal/": "classic21-metal",
+		"/c21-njr/": "classic21-njr",
+		"/c21-route66/": "classic21-route66",
+		"/c21-soul/": "classic21-soul",
+		"/c21-ugd/": "classic21-ugd",
+		"/c21/": "classic21",
+		"/musiq3-baroque/": "musiq3-baroque",
+		"/musiq3-jazz/": "musiq3-jazz",
+		"/musiq3/": "musiq3",
+		"/tipik/": "tipik",
+		"/tarmac/": "tarmac",
+		"/vivaplus/": "vivaplus",
+		"/viva-sport/": "vivasport",
+		"/viva-bxl/": "vivabxl",
+		"/viva-charleroi/": "vivacharleroi",
+		"/viva-hainaut/": "vivahainaut",
+		"/viva-liege/": "vivaliege",
+		"/viva-lux/": "vivalux",
+		"/viva-namur/": "vivanamurbw",
+		"/jam/": "jam",
+	]
+
+	func matches(streamUrl: URL) -> Bool {
+		guard let host = streamUrl.host else { return false }
+		guard host.contains("rtbf.be") else { return false }
+		return apiKey(from: streamUrl) != nil
+	}
+
+	private func apiKey(from streamUrl: URL) -> String? {
+		let s = streamUrl.absoluteString.lowercased()
+		return Self.streamToKey.keys
+			.sorted { $0.count > $1.count }
+			.first(where: { s.contains($0) })
+			.flatMap { Self.streamToKey[$0] }
+	}
+
+	func poll(streamUrl: URL, completion: @escaping (String, String) -> Void) {
+		guard let key = apiKey(from: streamUrl),
+			let apiUrl = URL(
+				string:
+					"https://bff-service.rtbf.be/radioplayer/v1/threads?keys=\(key)"
+			)
+		else { return }
+
+		let request = URLRequest.noCacheRequest(url: apiUrl)
+
+		URLSession.shared.dataTask(with: request) { data, _, error in
+			guard let data, error == nil,
+				let json = try? JSONSerialization.jsonObject(with: data)
+					as? [String: Any],
+				let dataArray = json["data"] as? [[String: Any]],
+				let current = dataArray.first
+			else { return }
+
+			let artist = (current["artist"] as? String ?? "")
+				.trimmingCharacters(in: .whitespaces)
+			let title = (current["title"] as? String ?? "")
+				.trimmingCharacters(in: .whitespaces)
+			guard !title.isEmpty,
+				!StreamInfo.shared.junkMetadata(title)
+			else { return }
+
+			if let imageString = current["image"] as? String,
+				!imageString.isEmpty,
+				let imageUrl = URL(string: imageString)
+			{
+				URLSession.shared.dataTask(with: imageUrl) { imageData, _, _ in
+					if let imageData, let image = UIImage(data: imageData) {
+						DispatchQueue.main.async {
+							StreamInfo.shared.applyArtwork(image)
+						}
+					}
+				}.resume()
+			}
+
+			completion(artist, title)
+		}.resume()
+	}
+}
+
 struct IcecastProvider: MetadataProvider {
 	func matches(streamUrl: URL) -> Bool { true }
 
@@ -1981,6 +2087,7 @@ public class StreamInfo: NSObject, ObservableObject {
 		DeutschlandfunkProvider(),
 		SverigesRadioProvider(),
 		CeskyRozhlasProvider(),
+		RTBFRadioProvider(),
 		IcecastProvider(),
 	]
 
