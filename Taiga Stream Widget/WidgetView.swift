@@ -2170,6 +2170,14 @@ public class StreamInfo: NSObject, ObservableObject {
 			})
 		else { return }
 
+		let aggressiveParsingProviders: [MetadataProvider.Type] = [
+			ZenoFMProvider.self
+		]
+
+		useAggressiveParsing = aggressiveParsingProviders.contains {
+			type(of: provider) == $0
+		}
+
 		if provider is IcecastProvider {
 			observeMetadata()
 		}
@@ -2218,6 +2226,7 @@ public class StreamInfo: NSObject, ObservableObject {
 		lastPolledTitle = ""
 		lastStreamTitle = ""
 		apiMetadataActive = false
+		useAggressiveParsing = false
 	}
 
 	private var metadataOutput: AVPlayerItemMetadataOutput?
@@ -2347,6 +2356,8 @@ public class StreamInfo: NSObject, ObservableObject {
 		)
 	}
 
+	private var useAggressiveParsing = false
+
 	private func parseMetadata(_ metadataItems: [AVMetadataItem]) {
 		guard !apiMetadataActive else { return }
 		Task {
@@ -2448,7 +2459,7 @@ public class StreamInfo: NSObject, ObservableObject {
 				if junkMetadata(title) { title = "" }
 				if junkMetadata(artist) { artist = "" }
 			}
-
+			
 			var artistFieldTitle = ""
 			if artist.contains(" - ") || artist.contains(" – ")
 				|| artist.contains(" — ")
@@ -2458,14 +2469,35 @@ public class StreamInfo: NSObject, ObservableObject {
 					artist = parsedArtist
 					artistFieldTitle = parsedTitle
 				}
+			} else if useAggressiveParsing,
+				let range = artist.range(
+					of: #"\s*-\s*"#,
+					options: .regularExpression
+				)
+			{
+				let parsedArtist = cleanMetadataString(
+					String(artist[..<range.lowerBound])
+				)
+				let parsedTitle = cleanMetadataString(
+					String(artist[range.upperBound...])
+				)
+				if !parsedArtist.isEmpty && !parsedTitle.isEmpty {
+					artist = parsedArtist
+					artistFieldTitle = parsedTitle
+				}
 			}
 
 			if !artistFieldTitle.isEmpty {
 				title = artistFieldTitle
 			} else if !artist.isEmpty && !title.isEmpty {
-				let separators = [
+				var separators = [
 					" — ", " – ", " - ", " / ", " · ", " | ",
 				]
+
+				if useAggressiveParsing {
+					separators.append("-")
+				}
+
 				for separator in separators {
 					guard title.contains(separator) else { continue }
 					let parts = title.components(separatedBy: separator)
