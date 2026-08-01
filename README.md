@@ -1,3 +1,3 @@
-Taiga Stream (iOS)
+Taiga Stream puts your favorite radio stations within easy reach. With unique preset buttons available directly from the Control Center and Lock Screen, you can switch stations instantly without interrupting what you're doing.
 
-Taiga Stream is a streaming radio app featuring preset buttons for the control center and lock screen. You can add up to 32 station presets. If you are signed into an iCloud account, your presets will sync across all of your devices.
+Create up to 32 station presets and enjoy quick access to the music, news, and talk you love. With iCloud, your presets automatically sync across your Apple devices, giving you the same personalized listening experience everywhere.

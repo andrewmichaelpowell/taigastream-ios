@@ -10,6 +10,6 @@ struct TaigaStream: App {
 		WindowGroup {
 			MainView()
 		}
-		.defaultSize(width: 500, height: 680)
+		.defaultSize(width: 500, height: 780)
 	}
 }
