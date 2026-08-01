@@ -2458,27 +2458,13 @@ public class StreamInfo: NSObject, ObservableObject {
 					artist = parsedArtist
 					artistFieldTitle = parsedTitle
 				}
-			} else if let range = artist.range(
-				of: #"\s*-\s*"#,
-				options: .regularExpression
-			) {
-				let parsedArtist = cleanMetadataString(
-					String(artist[..<range.lowerBound])
-				)
-				let parsedTitle = cleanMetadataString(
-					String(artist[range.upperBound...])
-				)
-				if !parsedArtist.isEmpty && !parsedTitle.isEmpty {
-					artist = parsedArtist
-					artistFieldTitle = parsedTitle
-				}
 			}
 
 			if !artistFieldTitle.isEmpty {
 				title = artistFieldTitle
 			} else if !artist.isEmpty && !title.isEmpty {
 				let separators = [
-					" — ", " – ", " - ", " / ", " · ", " | ", "-",
+					" — ", " – ", " - ", " / ", " · ", " | ",
 				]
 				for separator in separators {
 					guard title.contains(separator) else { continue }
