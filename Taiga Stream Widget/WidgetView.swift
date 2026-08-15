@@ -796,17 +796,91 @@ struct RadioFranceProvider: MetadataProvider {
 
 struct ABCRadioProvider: MetadataProvider {
 	private static let streamToApi: [String: String] = [
+		"mediahubaustralia.com/CTRW":
+			"https://music.abcradio.net.au/api/v1/plays/country/now.json",
+		"mediahubaustralia.com/JAZW":
+			"https://music.abcradio.net.au/api/v1/plays/jazz/now.json",
+		"mediahubaustralia.com/2FMW":
+			"https://music.abcradio.net.au/api/v1/plays/classic/now.json",
+		"mediahubaustralia.com/3FMW":
+			"https://music.abcradio.net.au/api/v1/plays/classic/now.json",
+		"mediahubaustralia.com/4FMW":
+			"https://music.abcradio.net.au/api/v1/plays/classic/now.json",
+		"mediahubaustralia.com/5FMW":
+			"https://music.abcradio.net.au/api/v1/plays/classic/now.json",
+		"mediahubaustralia.com/6FMW":
+			"https://music.abcradio.net.au/api/v1/plays/classic/now.json",
+		"mediahubaustralia.com/8FMW":
+			"https://music.abcradio.net.au/api/v1/plays/classic/now.json",
+		"mediahubaustralia.com/FM2W":
+			"https://music.abcradio.net.au/api/v1/plays/classic2/now.json",
+		"mediahubaustralia.com/DJDW":
+			"https://music.abcradio.net.au/api/v1/plays/doublej/now.json",
+		"mediahubaustralia.com/3DJW":
+			"https://music.abcradio.net.au/api/v1/plays/doublej/now.json",
+		"mediahubaustralia.com/4DJW":
+			"https://music.abcradio.net.au/api/v1/plays/doublej/now.json",
+		"mediahubaustralia.com/5DJW":
+			"https://music.abcradio.net.au/api/v1/plays/doublej/now.json",
+		"mediahubaustralia.com/6DJW":
+			"https://music.abcradio.net.au/api/v1/plays/doublej/now.json",
+		"mediahubaustralia.com/8DJW":
+			"https://music.abcradio.net.au/api/v1/plays/doublej/now.json",
+		"mediahubaustralia.com/2TJW":
+			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
+		"mediahubaustralia.com/3TJW":
+			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
+		"mediahubaustralia.com/4TJW":
+			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
+		"mediahubaustralia.com/5TJW":
+			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
+		"mediahubaustralia.com/6TJW":
+			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
+		"mediahubaustralia.com/8TJW":
+			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
+		"mediahubaustralia.com/TJHW":
+			"https://music.abcradio.net.au/api/v1/plays/h100/now.json",
+		"mediahubaustralia.com/UNEW":
+			"https://music.abcradio.net.au/api/v1/plays/unearthed/now.json",
 		"streamguys1.com/live/abccountry":
 			"https://music.abcradio.net.au/api/v1/plays/country/now.json",
 		"streamguys1.com/live/abcjazz":
 			"https://music.abcradio.net.au/api/v1/plays/jazz/now.json",
 		"streamguys1.com/live/classicfmnsw":
 			"https://music.abcradio.net.au/api/v1/plays/classic/now.json",
+		"streamguys1.com/live/classicfmnt":
+			"https://music.abcradio.net.au/api/v1/plays/classic/now.json",
+		"streamguys1.com/live/classicfmsa":
+			"https://music.abcradio.net.au/api/v1/plays/classic/now.json",
+		"streamguys1.com/live/classicfmvic":
+			"https://music.abcradio.net.au/api/v1/plays/classic/now.json",
+		"streamguys1.com/live/classicfmwa":
+			"https://music.abcradio.net.au/api/v1/plays/classic/now.json",
 		"streamguys1.com/live/classic2":
 			"https://music.abcradio.net.au/api/v1/plays/classic2/now.json",
 		"streamguys1.com/live/doublejnsw":
 			"https://music.abcradio.net.au/api/v1/plays/doublej/now.json",
+		"streamguys1.com/live/doublejnt":
+			"https://music.abcradio.net.au/api/v1/plays/doublej/now.json",
+		"streamguys1.com/live/doublejqld":
+			"https://music.abcradio.net.au/api/v1/plays/doublej/now.json",
+		"streamguys1.com/live/doublejsa":
+			"https://music.abcradio.net.au/api/v1/plays/doublej/now.json",
+		"streamguys1.com/live/doublejvic":
+			"https://music.abcradio.net.au/api/v1/plays/doublej/now.json",
+		"streamguys1.com/live/doublejwa":
+			"https://music.abcradio.net.au/api/v1/plays/doublej/now.json",
 		"streamguys1.com/live/triplejnsw":
+			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
+		"streamguys1.com/live/triplejnt":
+			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
+		"streamguys1.com/live/triplejqld":
+			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
+		"streamguys1.com/live/triplejsa":
+			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
+		"streamguys1.com/live/triplejvic":
+			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
+		"streamguys1.com/live/triplejwa":
 			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
 		"streamguys1.com/live/triplejhottest":
 			"https://music.abcradio.net.au/api/v1/plays/h100/now.json",
@@ -818,11 +892,41 @@ struct ABCRadioProvider: MetadataProvider {
 			"https://music.abcradio.net.au/api/v1/plays/jazz/now.json",
 		"streaming.abc-cdn.net.au/audio/hls/classicfmnsw":
 			"https://music.abcradio.net.au/api/v1/plays/classic/now.json",
+		"streaming.abc-cdn.net.au/audio/hls/classicfmnt":
+			"https://music.abcradio.net.au/api/v1/plays/classic/now.json",
+		"streaming.abc-cdn.net.au/audio/hls/classicfmqld":
+			"https://music.abcradio.net.au/api/v1/plays/classic/now.json",
+		"streaming.abc-cdn.net.au/audio/hls/classicfmsa":
+			"https://music.abcradio.net.au/api/v1/plays/classic/now.json",
+		"streaming.abc-cdn.net.au/audio/hls/classicfmvic":
+			"https://music.abcradio.net.au/api/v1/plays/classic/now.json",
+		"streaming.abc-cdn.net.au/audio/hls/classicfmwa":
+			"https://music.abcradio.net.au/api/v1/plays/classic/now.json",
 		"streaming.abc-cdn.net.au/audio/hls/classic2":
 			"https://music.abcradio.net.au/api/v1/plays/classic2/now.json",
 		"streaming.abc-cdn.net.au/audio/hls/doublejnsw":
 			"https://music.abcradio.net.au/api/v1/plays/doublej/now.json",
+		"streaming.abc-cdn.net.au/audio/hls/doublejnt":
+			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
+		"streaming.abc-cdn.net.au/audio/hls/doublejqld":
+			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
+		"streaming.abc-cdn.net.au/audio/hls/doublejsa":
+			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
+		"streaming.abc-cdn.net.au/audio/hls/doublejvic":
+			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
+		"streaming.abc-cdn.net.au/audio/hls/doublejwa":
+			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
 		"streaming.abc-cdn.net.au/audio/hls/triplejnsw":
+			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
+		"streaming.abc-cdn.net.au/audio/hls/triplejnt":
+			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
+		"streaming.abc-cdn.net.au/audio/hls/triplejqld":
+			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
+		"streaming.abc-cdn.net.au/audio/hls/triplejsa":
+			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
+		"streaming.abc-cdn.net.au/audio/hls/triplejvic":
+			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
+		"streaming.abc-cdn.net.au/audio/hls/triplejwa":
 			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
 		"streaming.abc-cdn.net.au/audio/hls/triplejhottest":
 			"https://music.abcradio.net.au/api/v1/plays/h100/now.json",
