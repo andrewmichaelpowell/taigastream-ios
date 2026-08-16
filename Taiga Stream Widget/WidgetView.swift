@@ -795,165 +795,146 @@ struct RadioFranceProvider: MetadataProvider {
 }
 
 struct ABCRadioProvider: MetadataProvider {
-	private static let streamToApi: [String: String] = [
-		"mediahubaustralia.com/CTRW":
-			"https://music.abcradio.net.au/api/v1/plays/country/now.json",
-		"mediahubaustralia.com/JAZW":
-			"https://music.abcradio.net.au/api/v1/plays/jazz/now.json",
-		"mediahubaustralia.com/2FMW":
-			"https://music.abcradio.net.au/api/v1/plays/classic/now.json",
-		"mediahubaustralia.com/3FMW":
-			"https://music.abcradio.net.au/api/v1/plays/classic/now.json",
-		"mediahubaustralia.com/4FMW":
-			"https://music.abcradio.net.au/api/v1/plays/classic/now.json",
-		"mediahubaustralia.com/5FMW":
-			"https://music.abcradio.net.au/api/v1/plays/classic/now.json",
-		"mediahubaustralia.com/6FMW":
-			"https://music.abcradio.net.au/api/v1/plays/classic/now.json",
-		"mediahubaustralia.com/8FMW":
-			"https://music.abcradio.net.au/api/v1/plays/classic/now.json",
-		"mediahubaustralia.com/FM2W":
-			"https://music.abcradio.net.au/api/v1/plays/classic2/now.json",
-		"mediahubaustralia.com/DJDW":
-			"https://music.abcradio.net.au/api/v1/plays/doublej/now.json",
-		"mediahubaustralia.com/3DJW":
-			"https://music.abcradio.net.au/api/v1/plays/doublej/now.json",
-		"mediahubaustralia.com/4DJW":
-			"https://music.abcradio.net.au/api/v1/plays/doublej/now.json",
-		"mediahubaustralia.com/5DJW":
-			"https://music.abcradio.net.au/api/v1/plays/doublej/now.json",
-		"mediahubaustralia.com/6DJW":
-			"https://music.abcradio.net.au/api/v1/plays/doublej/now.json",
-		"mediahubaustralia.com/8DJW":
-			"https://music.abcradio.net.au/api/v1/plays/doublej/now.json",
-		"mediahubaustralia.com/2TJW":
-			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
-		"mediahubaustralia.com/3TJW":
-			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
-		"mediahubaustralia.com/4TJW":
-			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
-		"mediahubaustralia.com/5TJW":
-			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
-		"mediahubaustralia.com/6TJW":
-			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
-		"mediahubaustralia.com/8TJW":
-			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
-		"mediahubaustralia.com/TJHW":
-			"https://music.abcradio.net.au/api/v1/plays/h100/now.json",
-		"mediahubaustralia.com/UNEW":
-			"https://music.abcradio.net.au/api/v1/plays/unearthed/now.json",
-		"streamguys1.com/live/abccountry":
-			"https://music.abcradio.net.au/api/v1/plays/country/now.json",
-		"streamguys1.com/live/abcjazz":
-			"https://music.abcradio.net.au/api/v1/plays/jazz/now.json",
-		"streamguys1.com/live/classicfmnsw":
-			"https://music.abcradio.net.au/api/v1/plays/classic/now.json",
-		"streamguys1.com/live/classicfmnt":
-			"https://music.abcradio.net.au/api/v1/plays/classic/now.json",
-		"streamguys1.com/live/classicfmsa":
-			"https://music.abcradio.net.au/api/v1/plays/classic/now.json",
-		"streamguys1.com/live/classicfmvic":
-			"https://music.abcradio.net.au/api/v1/plays/classic/now.json",
-		"streamguys1.com/live/classicfmwa":
-			"https://music.abcradio.net.au/api/v1/plays/classic/now.json",
-		"streamguys1.com/live/classic2":
-			"https://music.abcradio.net.au/api/v1/plays/classic2/now.json",
-		"streamguys1.com/live/doublejnsw":
-			"https://music.abcradio.net.au/api/v1/plays/doublej/now.json",
-		"streamguys1.com/live/doublejnt":
-			"https://music.abcradio.net.au/api/v1/plays/doublej/now.json",
-		"streamguys1.com/live/doublejqld":
-			"https://music.abcradio.net.au/api/v1/plays/doublej/now.json",
-		"streamguys1.com/live/doublejsa":
-			"https://music.abcradio.net.au/api/v1/plays/doublej/now.json",
-		"streamguys1.com/live/doublejvic":
-			"https://music.abcradio.net.au/api/v1/plays/doublej/now.json",
-		"streamguys1.com/live/doublejwa":
-			"https://music.abcradio.net.au/api/v1/plays/doublej/now.json",
-		"streamguys1.com/live/triplejnsw":
-			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
-		"streamguys1.com/live/triplejnt":
-			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
-		"streamguys1.com/live/triplejqld":
-			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
-		"streamguys1.com/live/triplejsa":
-			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
-		"streamguys1.com/live/triplejvic":
-			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
-		"streamguys1.com/live/triplejwa":
-			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
-		"streamguys1.com/live/triplejhottest":
-			"https://music.abcradio.net.au/api/v1/plays/h100/now.json",
-		"streamguys1.com/live/triplejunearthed":
-			"https://music.abcradio.net.au/api/v1/plays/unearthed/now.json",
-		"streaming.abc-cdn.net.au/audio/hls/abccountry":
-			"https://music.abcradio.net.au/api/v1/plays/country/now.json",
-		"streaming.abc-cdn.net.au/audio/hls/abcjazz":
-			"https://music.abcradio.net.au/api/v1/plays/jazz/now.json",
-		"streaming.abc-cdn.net.au/audio/hls/classicfmnsw":
-			"https://music.abcradio.net.au/api/v1/plays/classic/now.json",
-		"streaming.abc-cdn.net.au/audio/hls/classicfmnt":
-			"https://music.abcradio.net.au/api/v1/plays/classic/now.json",
-		"streaming.abc-cdn.net.au/audio/hls/classicfmqld":
-			"https://music.abcradio.net.au/api/v1/plays/classic/now.json",
-		"streaming.abc-cdn.net.au/audio/hls/classicfmsa":
-			"https://music.abcradio.net.au/api/v1/plays/classic/now.json",
-		"streaming.abc-cdn.net.au/audio/hls/classicfmvic":
-			"https://music.abcradio.net.au/api/v1/plays/classic/now.json",
-		"streaming.abc-cdn.net.au/audio/hls/classicfmwa":
-			"https://music.abcradio.net.au/api/v1/plays/classic/now.json",
-		"streaming.abc-cdn.net.au/audio/hls/classic2":
-			"https://music.abcradio.net.au/api/v1/plays/classic2/now.json",
-		"streaming.abc-cdn.net.au/audio/hls/doublejnsw":
-			"https://music.abcradio.net.au/api/v1/plays/doublej/now.json",
-		"streaming.abc-cdn.net.au/audio/hls/doublejnt":
-			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
-		"streaming.abc-cdn.net.au/audio/hls/doublejqld":
-			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
-		"streaming.abc-cdn.net.au/audio/hls/doublejsa":
-			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
-		"streaming.abc-cdn.net.au/audio/hls/doublejvic":
-			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
-		"streaming.abc-cdn.net.au/audio/hls/doublejwa":
-			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
-		"streaming.abc-cdn.net.au/audio/hls/triplejnsw":
-			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
-		"streaming.abc-cdn.net.au/audio/hls/triplejnt":
-			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
-		"streaming.abc-cdn.net.au/audio/hls/triplejqld":
-			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
-		"streaming.abc-cdn.net.au/audio/hls/triplejsa":
-			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
-		"streaming.abc-cdn.net.au/audio/hls/triplejvic":
-			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
-		"streaming.abc-cdn.net.au/audio/hls/triplejwa":
-			"https://music.abcradio.net.au/api/v1/plays/triplej/now.json",
-		"streaming.abc-cdn.net.au/audio/hls/triplejhottest":
-			"https://music.abcradio.net.au/api/v1/plays/h100/now.json",
-		"streaming.abc-cdn.net.au/audio/hls/triplejunearthed":
-			"https://music.abcradio.net.au/api/v1/plays/unearthed/now.json",
+	var pollInterval: TimeInterval? { 15 }
+
+	private static let streamToApi: [String: String] = {
+		let base = "https://www.abc.net.au/core-next/api/musicNowPlaying"
+		return [
+			"mediahubaustralia.com/CTRW":
+				"\(base)/COUNTRY?tz=Australia%2FSydney",
+			"mediahubaustralia.com/JAZW": "\(base)/JAZZ?tz=Australia%2FSydney",
+			"mediahubaustralia.com/2FMW":
+				"\(base)/CLASSIC?tz=Australia%2FSydney",
+			"mediahubaustralia.com/3FMW":
+				"\(base)/CLASSIC?tz=Australia%2FSydney",
+			"mediahubaustralia.com/4FMW":
+				"\(base)/CLASSIC?tz=Australia%2FBrisbane",
+			"mediahubaustralia.com/5FMW":
+				"\(base)/CLASSIC?tz=Australia%2FAdelaide",
+			"mediahubaustralia.com/6FMW":
+				"\(base)/CLASSIC?tz=Australia%2FPerth",
+			"mediahubaustralia.com/8FMW":
+				"\(base)/CLASSIC?tz=Australia%2FDarwin",
+			"mediahubaustralia.com/FM2W":
+				"\(base)/CLASSIC2?tz=Australia%2FSydney",
+			"mediahubaustralia.com/DJDW":
+				"\(base)/DOUBLEJ?tz=Australia%2FSydney",
+			"mediahubaustralia.com/3DJW":
+				"\(base)/DOUBLEJ?tz=Australia%2FSydney",
+			"mediahubaustralia.com/4DJW":
+				"\(base)/DOUBLEJ?tz=Australia%2FBrisbane",
+			"mediahubaustralia.com/5DJW":
+				"\(base)/DOUBLEJ?tz=Australia%2FAdelaide",
+			"mediahubaustralia.com/6DJW":
+				"\(base)/DOUBLEJ?tz=Australia%2FPerth",
+			"mediahubaustralia.com/8DJW":
+				"\(base)/DOUBLEJ?tz=Australia%2FDarwin",
+			"mediahubaustralia.com/2TJW":
+				"\(base)/TRIPLEJ?tz=Australia%2FSydney",
+			"mediahubaustralia.com/3TJW":
+				"\(base)/TRIPLEJ?tz=Australia%2FSydney",
+			"mediahubaustralia.com/4TJW":
+				"\(base)/TRIPLEJ?tz=Australia%2FBrisbane",
+			"mediahubaustralia.com/5TJW":
+				"\(base)/TRIPLEJ?tz=Australia%2FAdelaide",
+			"mediahubaustralia.com/6TJW":
+				"\(base)/TRIPLEJ?tz=Australia%2FPerth",
+			"mediahubaustralia.com/8TJW":
+				"\(base)/TRIPLEJ?tz=Australia%2FDarwin",
+			"mediahubaustralia.com/TJHW": "\(base)/H100?tz=Australia%2FSydney",
+			"mediahubaustralia.com/UNEW":
+				"\(base)/UNEARTHED?tz=Australia%2FSydney",
+		]
+	}()
+
+	private static let stationCodeToApi: [String: String] = {
+		let base = "https://www.abc.net.au/core-next/api/musicNowPlaying"
+		return [
+			"abccountry": "\(base)/COUNTRY?tz=Australia%2FSydney",
+			"abcjazz": "\(base)/JAZZ?tz=Australia%2FSydney",
+			"classicfmnsw": "\(base)/CLASSIC?tz=Australia%2FSydney",
+			"classicfmnt": "\(base)/CLASSIC?tz=Australia%2FDarwin",
+			"classicfmqld": "\(base)/CLASSIC?tz=Australia%2FBrisbane",
+			"classicfmsa": "\(base)/CLASSIC?tz=Australia%2FAdelaide",
+			"classicfmvic": "\(base)/CLASSIC?tz=Australia%2FSydney",
+			"classicfmwa": "\(base)/CLASSIC?tz=Australia%2FPerth",
+			"classic2": "\(base)/CLASSIC2?tz=Australia%2FSydney",
+			"doublejnsw": "\(base)/DOUBLEJ?tz=Australia%2FSydney",
+			"doublejnt": "\(base)/DOUBLEJ?tz=Australia%2FDarwin",
+			"doublejqld": "\(base)/DOUBLEJ?tz=Australia%2FBrisbane",
+			"doublejsa": "\(base)/DOUBLEJ?tz=Australia%2FAdelaide",
+			"doublejvic": "\(base)/DOUBLEJ?tz=Australia%2FSydney",
+			"doublejwa": "\(base)/DOUBLEJ?tz=Australia%2FPerth",
+			"triplejnsw": "\(base)/TRIPLEJ?tz=Australia%2FSydney",
+			"triplejnt": "\(base)/TRIPLEJ?tz=Australia%2FDarwin",
+			"triplejqld": "\(base)/TRIPLEJ?tz=Australia%2FBrisbane",
+			"triplejsa": "\(base)/TRIPLEJ?tz=Australia%2FAdelaide",
+			"triplejvic": "\(base)/TRIPLEJ?tz=Australia%2FSydney",
+			"triplejwa": "\(base)/TRIPLEJ?tz=Australia%2FPerth",
+			"triplejhottest": "\(base)/H100?tz=Australia%2FSydney",
+			"triplejunearthed": "\(base)/UNEARTHED?tz=Australia%2FSydney",
+		]
+	}()
+
+	private static let sortedKeys = streamToApi.keys.sorted {
+		$0.count > $1.count
+	}
+
+	private static let slugHosts = [
+		"akamaized.net",
+		"streamguys1.com",
+		"streaming.abc-cdn.net.au",
 	]
+
+	private func stationCode(from streamUrl: URL) -> String? {
+		let components = streamUrl.pathComponents
+		guard let host = streamUrl.host else { return nil }
+
+		if host.contains("akamaized.net") {
+			if let liveIndex = components.firstIndex(of: "live"),
+				components.count > liveIndex + 2
+			{
+				return components[liveIndex + 2]
+			}
+		} else {
+			if let last = components.last(where: { $0 != "/" && !$0.isEmpty }) {
+				return last.components(separatedBy: ".").first
+			}
+		}
+		return nil
+	}
 
 	func matches(streamUrl: URL) -> Bool {
 		let s = streamUrl.absoluteString
-		return Self.streamToApi.keys.contains(where: { s.contains($0) })
+		guard let host = streamUrl.host else { return false }
+
+		if Self.slugHosts.contains(where: { host.contains($0) }) {
+			guard let code = stationCode(from: streamUrl) else { return false }
+			return Self.stationCodeToApi[code] != nil
+		}
+		return Self.sortedKeys.contains(where: { s.contains($0) })
 	}
 
 	private func apiUrl(from streamUrl: URL) -> URL? {
 		let s = streamUrl.absoluteString
-		guard
-			let urlString = Self.streamToApi.first(where: { s.contains($0.key) }
-			)?
-			.value
+		guard let host = streamUrl.host else { return nil }
+
+		if Self.slugHosts.contains(where: { host.contains($0) }) {
+			guard let code = stationCode(from: streamUrl),
+				let urlString = Self.stationCodeToApi[code]
+			else { return nil }
+			return URL(string: urlString)
+		}
+
+		guard let key = Self.sortedKeys.first(where: { s.contains($0) }),
+			let urlString = Self.streamToApi[key]
 		else { return nil }
 		return URL(string: urlString)
 	}
 
-	func poll(
-		streamUrl: URL,
-		completion: @escaping (String, String) -> Void
-	) {
+	func poll(streamUrl: URL, completion: @escaping (String, String) -> Void) {
 		guard let apiUrl = apiUrl(from: streamUrl) else { return }
+
 		URLSession.shared.dataTask(with: .noCacheRequest(url: apiUrl)) {
 			data,
 			_,
@@ -961,22 +942,31 @@ struct ABCRadioProvider: MetadataProvider {
 			guard let data, error == nil,
 				let json = try? JSONSerialization.jsonObject(with: data)
 					as? [String: Any],
-				let now = json["now"] as? [String: Any],
-				let recording = now["recording"] as? [String: Any]
+				let mapiNow = json["mapiNow"] as? [String: Any]
 			else { return }
 
-			let title = (recording["title"] as? String ?? "")
+			let title = (mapiNow["title"] as? String ?? "")
 				.trimmingCharacters(in: .whitespaces)
-			var artist = ""
-			if let artists = recording["artists"] as? [[String: Any]] {
-				artist = artists.compactMap { $0["name"] as? String }
-					.joined(separator: ", ")
+			let artist = (mapiNow["artist"] as? String ?? "")
+				.trimmingCharacters(in: .whitespaces)
+			guard !title.isEmpty else { return }
+
+			if let imageString = mapiNow["primaryImage"] as? String,
+				!imageString.isEmpty,
+				let imageUrl = URL(string: imageString)
+			{
+				URLSession.shared.dataTask(with: imageUrl) { imageData, _, _ in
+					if let imageData, let image = UIImage(data: imageData) {
+						DispatchQueue.main.async {
+							StreamInfo.shared.applyArtwork(image)
+						}
+					}
+				}.resume()
 			}
+
 			completion(artist, title)
 		}.resume()
 	}
-
-	var pollInterval: TimeInterval? { 15 }
 }
 
 struct RTERadioProvider: MetadataProvider {
@@ -2563,7 +2553,7 @@ public class StreamInfo: NSObject, ObservableObject {
 				if junkMetadata(title) { title = "" }
 				if junkMetadata(artist) { artist = "" }
 			}
-			
+
 			var artistFieldTitle = ""
 			if artist.contains(" - ") || artist.contains(" – ")
 				|| artist.contains(" — ")
