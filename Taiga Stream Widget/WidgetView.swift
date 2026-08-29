@@ -1379,8 +1379,14 @@ struct VirginRadioItalyProvider: MetadataProvider {
 		var allowedCharacters = CharacterSet.urlQueryAllowed
 		allowedCharacters.remove(charactersIn: ":/?#[]@!$&'()*+,;=")
 
+		// The API rejects the `stream` param with a 400 unless it's https, regardless of the
+		// scheme the station itself actually streams over.
+		var httpsComponents = URLComponents(url: streamUrl, resolvingAgainstBaseURL: false)
+		httpsComponents?.scheme = "https"
+		let httpsStreamUrl = httpsComponents?.url?.absoluteString ?? streamUrl.absoluteString
+
 		guard
-			let encodedStream = streamUrl.absoluteString.addingPercentEncoding(
+			let encodedStream = httpsStreamUrl.addingPercentEncoding(
 				withAllowedCharacters: allowedCharacters),
 			let apiUrl = URL(
 				string:
@@ -2547,9 +2553,9 @@ public class StreamInfo: NSObject, ObservableObject {
 					if value.contains("~") {
 						let parts = value.components(separatedBy: "~")
 							.map { $0.trimmingCharacters(in: .whitespaces) }
-						let parsedTitle =
-							parts.count > 0 ? cleanMetadataString(parts[0]) : ""
 						let parsedArtist =
+							parts.count > 0 ? cleanMetadataString(parts[0]) : ""
+						let parsedTitle =
 							parts.count > 1 ? cleanMetadataString(parts[1]) : ""
 						if !parsedArtist.isEmpty && !parsedTitle.isEmpty {
 							artist =
