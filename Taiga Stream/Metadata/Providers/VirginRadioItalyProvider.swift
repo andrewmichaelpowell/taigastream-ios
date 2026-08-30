@@ -13,8 +13,6 @@ struct VirginRadioItalyProvider: MetadataProvider {
 		var allowedCharacters = CharacterSet.urlQueryAllowed
 		allowedCharacters.remove(charactersIn: ":/?#[]@!$&'()*+,;=")
 
-		// The API rejects the `stream` param with a 400 unless it's https, regardless of the
-		// scheme the station itself actually streams over.
 		var httpsComponents = URLComponents(url: streamUrl, resolvingAgainstBaseURL: false)
 		httpsComponents?.scheme = "https"
 		let httpsStreamUrl = httpsComponents?.url?.absoluteString ?? streamUrl.absoluteString
