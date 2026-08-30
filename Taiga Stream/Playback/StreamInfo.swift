@@ -1,10 +1,10 @@
 //  Taiga Stream
 //  github.com/andrewmichaelpowell
 
-import Foundation
 import AVFoundation
-import MediaPlayer
 import Combine
+import Foundation
+import MediaPlayer
 import SwiftUI
 import WidgetKit
 

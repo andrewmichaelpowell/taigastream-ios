@@ -1,8 +1,8 @@
 //  Taiga Stream
 //  github.com/andrewmichaelpowell
 
-import Foundation
 import AVFoundation
+import Foundation
 
 class PlayStream {
 	static let shared = PlayStream()

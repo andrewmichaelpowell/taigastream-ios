@@ -1,10 +1,10 @@
 //  Taiga Stream
 //  github.com/andrewmichaelpowell
 
+import AppIntents
 import Foundation
 import SwiftUI
 import WidgetKit
-import AppIntents
 
 private func configureControl(streamNumber: Int)
 	-> some ControlWidgetConfiguration

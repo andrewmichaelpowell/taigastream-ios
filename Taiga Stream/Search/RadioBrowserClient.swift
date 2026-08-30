@@ -1,9 +1,9 @@
 //  Taiga Stream
 //  github.com/andrewmichaelpowell
 
-import Foundation
 import CFNetwork
 import Darwin
+import Foundation
 
 class RadioBrowserClient {
 	static let shared = RadioBrowserClient()

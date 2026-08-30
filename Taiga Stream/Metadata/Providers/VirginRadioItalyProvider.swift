@@ -13,13 +13,18 @@ struct VirginRadioItalyProvider: MetadataProvider {
 		var allowedCharacters = CharacterSet.urlQueryAllowed
 		allowedCharacters.remove(charactersIn: ":/?#[]@!$&'()*+,;=")
 
-		var httpsComponents = URLComponents(url: streamUrl, resolvingAgainstBaseURL: false)
+		var httpsComponents = URLComponents(
+			url: streamUrl,
+			resolvingAgainstBaseURL: false
+		)
 		httpsComponents?.scheme = "https"
-		let httpsStreamUrl = httpsComponents?.url?.absoluteString ?? streamUrl.absoluteString
+		let httpsStreamUrl =
+			httpsComponents?.url?.absoluteString ?? streamUrl.absoluteString
 
 		guard
 			let encodedStream = httpsStreamUrl.addingPercentEncoding(
-				withAllowedCharacters: allowedCharacters),
+				withAllowedCharacters: allowedCharacters
+			),
 			let apiUrl = URL(
 				string:
 					"https://www.virginradio.it/wp-json/mediaset-mediaplayer/v1/getStreamInfo?stream=\(encodedStream)"
