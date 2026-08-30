@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		3E690D972FAE0E04006C88F6 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E690D962FAE0E04006C88F6 /* WidgetKit.framework */; };
 		3E690D992FAE0E04006C88F6 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E690D982FAE0E04006C88F6 /* SwiftUI.framework */; };
-		3E690DA42FAE0E05006C88F6 /* Taiga Stream WidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 3E690D942FAE0E04006C88F6 /* Taiga Stream WidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		3E690DA42FAE0E05006C88F6 /* Taiga Stream Widget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 3E690D942FAE0E04006C88F6 /* Taiga Stream Widget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -28,7 +28,7 @@
 			dstPath = "";
 			dstSubfolder = PlugIns;
 			files = (
-				3E690DA42FAE0E05006C88F6 /* Taiga Stream WidgetExtension.appex in Embed Foundation Extensions */,
+				3E690DA42FAE0E05006C88F6 /* Taiga Stream Widget.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 		};
@@ -36,30 +36,54 @@
 
 /* Begin PBXFileReference section */
 		3E1F17812F938D4B00DDE7E4 /* Taiga Stream.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Taiga Stream.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		3E690D942FAE0E04006C88F6 /* Taiga Stream WidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Taiga Stream WidgetExtension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3E690D942FAE0E04006C88F6 /* Taiga Stream Widget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Taiga Stream Widget.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E690D962FAE0E04006C88F6 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		3E690D982FAE0E04006C88F6 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		3E690DA82FAE0E05006C88F6 /* Exceptions for "Taiga Stream Widget" folder in "Taiga Stream WidgetExtension" target */ = {
+		3E690DA82FAE0E05006C88F6 /* Exceptions for "Taiga Stream Widget" folder in "Taiga Stream Widget" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = 3E690D932FAE0E04006C88F6 /* Taiga Stream WidgetExtension */;
+			target = 3E690D932FAE0E04006C88F6 /* Taiga Stream Widget */;
 		};
-		3E690E0C2FAFF79E006C88F6 /* Exceptions for "Taiga Stream" folder in "Taiga Stream WidgetExtension" target */ = {
+		3E690E0E2FB017B7006C88F6 /* Exceptions for "Taiga Stream" folder in "Taiga Stream Widget" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				MainView.swift,
+				Metadata/MetadataProvider.swift,
+				Metadata/Providers/ABCRadioProvider.swift,
+				Metadata/Providers/AudioAddictProvider.swift,
+				Metadata/Providers/BBCRadioProvider.swift,
+				Metadata/Providers/CeskyRozhlasProvider.swift,
+				Metadata/Providers/DeutschlandfunkProvider.swift,
+				Metadata/Providers/IcecastProvider.swift,
+				Metadata/Providers/NRKProvider.swift,
+				Metadata/Providers/RadioFranceProvider.swift,
+				Metadata/Providers/RadioSwissProvider.swift,
+				Metadata/Providers/RTERadioProvider.swift,
+				Metadata/Providers/RTLRadioProvider.swift,
+				Metadata/Providers/SomaFMProvider.swift,
+				Metadata/Providers/StarFMProvider.swift,
+				Metadata/Providers/SverigesRadioProvider.swift,
+				Metadata/Providers/VirginRadioFranceProvider.swift,
+				Metadata/Providers/VirginRadioItalyProvider.swift,
+				Metadata/Providers/VirginRadioOmanProvider.swift,
+				Metadata/Providers/VirginRadioRomaniaProvider.swift,
+				Metadata/Providers/VRTRadioProvider.swift,
+				Metadata/Providers/ZenoFMProvider.swift,
+				Models/RadioStation.swift,
+				Networking/URLRequest.swift,
+				Playback/PlayStream.swift,
+				Playback/StreamInfo.swift,
 			);
-			target = 3E690D932FAE0E04006C88F6 /* Taiga Stream WidgetExtension */;
+			target = 3E690D932FAE0E04006C88F6 /* Taiga Stream Widget */;
 		};
-		3E690E0E2FB017B7006C88F6 /* Exceptions for "Taiga Stream Widget" folder in "Taiga Stream" target */ = {
+		3E690E102FB017B9006C88F6 /* Exceptions for "Taiga Stream Widget" folder in "Taiga Stream" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				WidgetView.swift,
+				Controls/ControlWidgets.swift,
 			);
 			target = 3E1F17802F938D4B00DDE7E4 /* Taiga Stream */;
 		};
@@ -77,7 +101,7 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				3E860EEE2FA7FE4B000194F7 /* Exceptions for "Taiga Stream" folder in "Taiga Stream" target */,
-				3E690E0C2FAFF79E006C88F6 /* Exceptions for "Taiga Stream" folder in "Taiga Stream WidgetExtension" target */,
+				3E690E0E2FB017B7006C88F6 /* Exceptions for "Taiga Stream" folder in "Taiga Stream Widget" target */,
 			);
 			path = "Taiga Stream";
 			sourceTree = "<group>";
@@ -85,8 +109,8 @@
 		3E690D9A2FAE0E04006C88F6 /* Taiga Stream Widget */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				3E690E0E2FB017B7006C88F6 /* Exceptions for "Taiga Stream Widget" folder in "Taiga Stream" target */,
-				3E690DA82FAE0E05006C88F6 /* Exceptions for "Taiga Stream Widget" folder in "Taiga Stream WidgetExtension" target */,
+				3E690E102FB017B9006C88F6 /* Exceptions for "Taiga Stream Widget" folder in "Taiga Stream" target */,
+				3E690DA82FAE0E05006C88F6 /* Exceptions for "Taiga Stream Widget" folder in "Taiga Stream Widget" target */,
 			);
 			path = "Taiga Stream Widget";
 			sourceTree = "<group>";
@@ -124,7 +148,7 @@
 			isa = PBXGroup;
 			children = (
 				3E1F17812F938D4B00DDE7E4 /* Taiga Stream.app */,
-				3E690D942FAE0E04006C88F6 /* Taiga Stream WidgetExtension.appex */,
+				3E690D942FAE0E04006C88F6 /* Taiga Stream Widget.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -163,9 +187,9 @@
 			productReference = 3E1F17812F938D4B00DDE7E4 /* Taiga Stream.app */;
 			productType = "com.apple.product-type.application";
 		};
-		3E690D932FAE0E04006C88F6 /* Taiga Stream WidgetExtension */ = {
+		3E690D932FAE0E04006C88F6 /* Taiga Stream Widget */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 3E690DA52FAE0E05006C88F6 /* Build configuration list for PBXNativeTarget "Taiga Stream WidgetExtension" */;
+			buildConfigurationList = 3E690DA52FAE0E05006C88F6 /* Build configuration list for PBXNativeTarget "Taiga Stream Widget" */;
 			buildPhases = (
 				3E690D902FAE0E04006C88F6 /* Sources */,
 				3E690D912FAE0E04006C88F6 /* Frameworks */,
@@ -176,9 +200,9 @@
 			fileSystemSynchronizedGroups = (
 				3E690D9A2FAE0E04006C88F6 /* Taiga Stream Widget */,
 			);
-			name = "Taiga Stream WidgetExtension";
+			name = "Taiga Stream Widget";
 			productName = "Taiga Stream WidgetExtension";
-			productReference = 3E690D942FAE0E04006C88F6 /* Taiga Stream WidgetExtension.appex */;
+			productReference = 3E690D942FAE0E04006C88F6 /* Taiga Stream Widget.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
@@ -263,7 +287,7 @@
 			projectRoot = "";
 			targets = (
 				3E1F17802F938D4B00DDE7E4 /* Taiga Stream */,
-				3E690D932FAE0E04006C88F6 /* Taiga Stream WidgetExtension */,
+				3E690D932FAE0E04006C88F6 /* Taiga Stream Widget */,
 			);
 		};
 /* End PBXProject section */
@@ -297,7 +321,7 @@
 /* Begin PBXTargetDependency section */
 		3E690DA32FAE0E05006C88F6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 3E690D932FAE0E04006C88F6 /* Taiga Stream WidgetExtension */;
+			target = 3E690D932FAE0E04006C88F6 /* Taiga Stream Widget */;
 			targetProxy = 3E690DA22FAE0E05006C88F6 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -516,12 +540,12 @@
 			};
 			name = Release;
 		};
-		3E690DA62FAE0E05006C88F6 /* Debug configuration for PBXNativeTarget "Taiga Stream WidgetExtension" */ = {
+		3E690DA62FAE0E05006C88F6 /* Debug configuration for PBXNativeTarget "Taiga Stream Widget" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
-				CODE_SIGN_ENTITLEMENTS = "Taiga Stream Widget/Taiga Stream WidgetExtension.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "Taiga Stream Widget/Taiga Stream Widget.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 925F4PY4UL;
@@ -548,12 +572,12 @@
 			};
 			name = Debug;
 		};
-		3E690DA72FAE0E05006C88F6 /* Release configuration for PBXNativeTarget "Taiga Stream WidgetExtension" */ = {
+		3E690DA72FAE0E05006C88F6 /* Release configuration for PBXNativeTarget "Taiga Stream Widget" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
-				CODE_SIGN_ENTITLEMENTS = "Taiga Stream Widget/Taiga Stream WidgetExtension.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "Taiga Stream Widget/Taiga Stream Widget.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 925F4PY4UL;
@@ -599,11 +623,11 @@
 			);
 			defaultConfigurationName = Release;
 		};
-		3E690DA52FAE0E05006C88F6 /* Build configuration list for PBXNativeTarget "Taiga Stream WidgetExtension" */ = {
+		3E690DA52FAE0E05006C88F6 /* Build configuration list for PBXNativeTarget "Taiga Stream Widget" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				3E690DA62FAE0E05006C88F6 /* Debug configuration for PBXNativeTarget "Taiga Stream WidgetExtension" */,
-				3E690DA72FAE0E05006C88F6 /* Release configuration for PBXNativeTarget "Taiga Stream WidgetExtension" */,
+				3E690DA62FAE0E05006C88F6 /* Debug configuration for PBXNativeTarget "Taiga Stream Widget" */,
+				3E690DA72FAE0E05006C88F6 /* Release configuration for PBXNativeTarget "Taiga Stream Widget" */,
 			);
 			defaultConfigurationName = Release;
 		};
