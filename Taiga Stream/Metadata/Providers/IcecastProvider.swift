@@ -63,6 +63,31 @@ struct IcecastProvider: MetadataProvider {
 
 			let title = rawTitle.trimmingCharacters(in: .whitespaces)
 			guard !title.isEmpty else { return }
+
+			let hyphenParts = title.components(separatedBy: " - ")
+			let lastPart =
+				hyphenParts.last?.trimmingCharacters(in: .whitespaces) ?? ""
+			let isIsrc =
+				lastPart.range(
+					of: #"^[A-Z][A-Z0-9]{7,11}$"#,
+					options: .regularExpression
+				) != nil
+			if hyphenParts.count >= 3 && isIsrc {
+				let cleanParts = hyphenParts.dropLast().map {
+					$0.trimmingCharacters(in: .whitespaces)
+				}
+				let isrcTitle = StreamInfo.shared.cleanMetadataString(
+					cleanParts.first ?? ""
+				)
+				let isrcArtist = StreamInfo.shared.cleanMetadataString(
+					cleanParts.dropFirst().joined(separator: " - ")
+				)
+				if !isrcTitle.isEmpty {
+					completion(isrcArtist, isrcTitle)
+					return
+				}
+			}
+
 			let (parsedArtist, parsedTitle) = StreamInfo.shared
 				.splitArtistTitle(
 					from: title
