@@ -13,6 +13,19 @@ struct ManualURLSheet: View {
 
 	var station: RadioStation { streamInfo.stations[slotIndex] }
 
+	private var isValidUrl: Bool {
+		guard
+			let url = URL(
+				string: manualUrl.trimmingCharacters(in: .whitespaces)
+			),
+			let scheme = url.scheme?.lowercased(),
+			scheme == "http" || scheme == "https",
+			let host = url.host,
+			!host.isEmpty
+		else { return false }
+		return true
+	}
+
 	var body: some View {
 		NavigationView {
 			VStack(spacing: 0) {
@@ -50,8 +63,8 @@ struct ManualURLSheet: View {
 							Text("Save")
 								.bold()
 								.foregroundColor(
-									manualUrl.isEmpty
-										? Color(.tertiaryLabel) : Color(.label)
+									isValidUrl
+										? Color(.label) : Color(.tertiaryLabel)
 								)
 							Spacer()
 						}
@@ -63,7 +76,7 @@ struct ManualURLSheet: View {
 								)
 						)
 					}
-					.disabled(manualUrl.isEmpty)
+					.disabled(!isValidUrl)
 
 					Button(action: { isPresented = false }) {
 						HStack {
@@ -92,6 +105,7 @@ struct ManualURLSheet: View {
 	}
 
 	private func save() {
+		guard isValidUrl else { return }
 		let saved = RadioStation(
 			url: manualUrl.trimmingCharacters(in: .whitespaces),
 			name: manualName.trimmingCharacters(in: .whitespaces),
