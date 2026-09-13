@@ -142,6 +142,12 @@ public class StreamInfo: NSObject, ObservableObject {
 		}
 	}
 
+	func fallbackTitle(forSlot slot: Int) -> String {
+		guard slot >= 1, slot <= stations.count else { return "Stream \(slot)" }
+		let name = stations[slot - 1].name.trimmingCharacters(in: .whitespaces)
+		return name.isEmpty ? "Stream \(slot)" : name
+	}
+
 	var isPlaying: Bool {
 		get { streamState.bool(forKey: "PlayingKey") }
 		set {
@@ -268,7 +274,7 @@ public class StreamInfo: NSObject, ObservableObject {
 		nowPlayingInfo[MPMediaItemPropertyArtist] =
 			artist.isEmpty ? "Taiga Stream" : artist
 		nowPlayingInfo[MPMediaItemPropertyTitle] =
-			title.isEmpty ? "Stream \(currentStream)" : title
+			title.isEmpty ? fallbackTitle(forSlot: currentStream) : title
 		if let existingArtwork {
 			nowPlayingInfo[MPMediaItemPropertyArtwork] = existingArtwork
 		}
@@ -289,7 +295,9 @@ public class StreamInfo: NSObject, ObservableObject {
 		var stoppedInfo = [String: Any]()
 		stoppedInfo[MPNowPlayingInfoPropertyIsLiveStream] = false
 		stoppedInfo[MPNowPlayingInfoPropertyPlaybackRate] = 0.0
-		stoppedInfo[MPMediaItemPropertyTitle] = "Stream \(self.currentStream)"
+		stoppedInfo[MPMediaItemPropertyTitle] = fallbackTitle(
+			forSlot: self.currentStream
+		)
 		stoppedInfo[MPMediaItemPropertyArtist] = "Taiga Stream"
 		if let icon = appIconImage() {
 			let artworkSize = CGSize(width: 600, height: 600)
@@ -357,7 +365,8 @@ public class StreamInfo: NSObject, ObservableObject {
 
 			let resolvedArtist = artist.isEmpty ? "Taiga Stream" : artist
 			let resolvedTitle =
-				title.isEmpty ? "Stream \(self.currentStream)" : title
+				title.isEmpty
+				? self.fallbackTitle(forSlot: self.currentStream) : title
 
 			DispatchQueue.main.async {
 				self.lastKnownArtist = resolvedArtist
@@ -676,7 +685,7 @@ public class StreamInfo: NSObject, ObservableObject {
 
 			let resolvedArtist = artist.isEmpty ? "Taiga Stream" : artist
 			let resolvedTitle =
-				title.isEmpty ? "Stream \(currentStream)" : title
+				title.isEmpty ? fallbackTitle(forSlot: currentStream) : title
 
 			await MainActor.run {
 				let combined = "\(resolvedArtist)|\(resolvedTitle)"
@@ -694,7 +703,9 @@ public class StreamInfo: NSObject, ObservableObject {
 	var isFallbackArtworkSet = false
 
 	private func fetchArtwork(artist: String, title: String) {
-		guard artist != "Taiga Stream" || title != "Stream \(currentStream)"
+		guard
+			artist != "Taiga Stream"
+				|| title != fallbackTitle(forSlot: currentStream)
 		else {
 			if !isFallbackArtworkSet {
 				setFallbackArtwork()

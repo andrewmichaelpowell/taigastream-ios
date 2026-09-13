@@ -28,7 +28,7 @@ class PlayStream {
 		data.currentStream = streamNumber
 		data.currentStreamUrl = streamUrl
 		data.isFallbackArtworkSet = false
-		data.updateNowPlaying(title: "Stream \(streamNumber)")
+		data.updateNowPlaying(title: data.fallbackTitle(forSlot: streamNumber))
 		data.setFallbackArtwork()
 		data.isFallbackArtworkSet = true
 		data.observeMetadata()
