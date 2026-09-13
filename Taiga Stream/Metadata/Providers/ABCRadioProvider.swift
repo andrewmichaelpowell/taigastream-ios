@@ -98,19 +98,25 @@ struct ABCRadioProvider: MetadataProvider {
 
 	private func stationCode(from streamUrl: URL) -> String? {
 		let components = streamUrl.pathComponents
-		guard let host = streamUrl.host else { return nil }
 
-		if host.contains("akamaized.net") {
-			if let liveIndex = components.firstIndex(of: "live"),
-				components.count > liveIndex + 2
-			{
-				return components[liveIndex + 2]
-			}
-		} else {
-			if let last = components.last(where: { $0 != "/" && !$0.isEmpty }) {
-				return last.components(separatedBy: ".").first
+		if let liveIndex = components.firstIndex(of: "live") {
+			for offset in [1, 2] {
+				let index = liveIndex + offset
+				guard index < components.count else { continue }
+				let candidate = components[index]
+				if Self.stationCodeToApi[candidate] != nil {
+					return candidate
+				}
 			}
 		}
+
+		if let last = components.last(where: { $0 != "/" && !$0.isEmpty }),
+			let code = last.components(separatedBy: ".").first,
+			Self.stationCodeToApi[code] != nil
+		{
+			return code
+		}
+
 		return nil
 	}
 
@@ -119,8 +125,7 @@ struct ABCRadioProvider: MetadataProvider {
 		guard let host = streamUrl.host else { return false }
 
 		if Self.slugHosts.contains(where: { host.contains($0) }) {
-			guard let code = stationCode(from: streamUrl) else { return false }
-			return Self.stationCodeToApi[code] != nil
+			return stationCode(from: streamUrl) != nil
 		}
 		return Self.sortedKeys.contains(where: { s.contains($0) })
 	}
