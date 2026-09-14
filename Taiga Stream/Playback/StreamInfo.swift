@@ -148,6 +148,12 @@ public class StreamInfo: NSObject, ObservableObject {
 		return name.isEmpty ? "Stream \(slot)" : name
 	}
 
+	func resetKnownNowPlaying() {
+		lastKnownArtist = ""
+		lastKnownTitle = ""
+		lastKnownArtwork = nil
+	}
+
 	var isPlaying: Bool {
 		get { streamState.bool(forKey: "PlayingKey") }
 		set {

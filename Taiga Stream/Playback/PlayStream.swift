@@ -27,6 +27,7 @@ class PlayStream {
 			.continuesIfPossible
 		data.currentStream = streamNumber
 		data.currentStreamUrl = streamUrl
+		data.resetKnownNowPlaying()
 		data.isFallbackArtworkSet = false
 		data.updateNowPlaying(title: data.fallbackTitle(forSlot: streamNumber))
 		data.setFallbackArtwork()
