@@ -40,7 +40,7 @@ struct ToggleIntent: SetValueIntent, AudioPlaybackIntent {
 	init() { self.streamNumber = 1 }
 
 	@MainActor func perform() async throws -> some IntentResult {
-		PlayStream.shared.play(streamNumber: streamNumber)
+		await PlayStream.shared.play(streamNumber: streamNumber)
 		return .result()
 	}
 }

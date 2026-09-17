@@ -18,7 +18,9 @@ struct PlayButton: View {
 	}
 
 	var body: some View {
-		Button(action: { PlayStream.shared.play(streamNumber: streamNumber) }) {
+		Button(action: {
+			Task { await PlayStream.shared.play(streamNumber: streamNumber) }
+		}) {
 			if isPlaying {
 				Text(Image(systemName: "stop.fill"))
 					.font(.title3)

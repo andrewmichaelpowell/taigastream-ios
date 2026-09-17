@@ -7,20 +7,35 @@ import Foundation
 class PlayStream {
 	static let shared = PlayStream()
 
-	private func startStream(_ streamUrl: URL, streamNumber: Int) {
+	private func deactivateSession() async {
+		let session = AVAudioSession.sharedInstance()
+		if #available(iOS 27.0, *) {
+			try? await session.deactivate()
+		} else {
+			try? session.setActive(false, options: .notifyOthersOnDeactivation)
+		}
+	}
+
+	private func activateSession() async {
+		let session = AVAudioSession.sharedInstance()
+		if #available(iOS 27.0, *) {
+			try? await session.activate()
+		} else {
+			try? session.setActive(true)
+		}
+	}
+
+	private func startStream(_ streamUrl: URL, streamNumber: Int) async {
 		let newStreamItem = AVPlayerItem(url: streamUrl)
 		let data = StreamInfo.shared
 
-		try? AVAudioSession.sharedInstance().setActive(
-			false,
-			options: .notifyOthersOnDeactivation
-		)
+		await deactivateSession()
 		try? AVAudioSession.sharedInstance().setCategory(
 			.playback,
 			mode: .default,
 			options: []
 		)
-		try? AVAudioSession.sharedInstance().setActive(true)
+		await activateSession()
 
 		data.audioPlayer.replaceCurrentItem(with: newStreamItem)
 		data.audioPlayer.audiovisualBackgroundPlaybackPolicy =
@@ -38,29 +53,23 @@ class PlayStream {
 		data.startMetadataPolling(streamUrl: streamUrl)
 	}
 
-	private func playAction(streamUrl: URL, streamNumber: Int) {
+	private func playAction(streamUrl: URL, streamNumber: Int) async {
 		let data = StreamInfo.shared
 		if data.isPlaying && data.currentStream == streamNumber {
 			data.audioPlayer.pause()
 			data.stopPlaybackHeartbeat()
 			data.stopMetadataPolling()
-			try? AVAudioSession.sharedInstance().setActive(
-				false,
-				options: .notifyOthersOnDeactivation
-			)
+			await deactivateSession()
 			data.clearNowPlaying()
 		} else {
-			try? AVAudioSession.sharedInstance().setActive(
-				false,
-				options: .notifyOthersOnDeactivation
-			)
-			startStream(streamUrl, streamNumber: streamNumber)
+			await deactivateSession()
+			await startStream(streamUrl, streamNumber: streamNumber)
 		}
 	}
 
-	public func play(streamNumber: Int) {
+	public func play(streamNumber: Int) async {
 		guard let url = URL(string: StreamInfo.shared.stream[streamNumber - 1])
 		else { return }
-		playAction(streamUrl: url, streamNumber: streamNumber)
+		await playAction(streamUrl: url, streamNumber: streamNumber)
 	}
 }
