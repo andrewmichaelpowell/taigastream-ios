@@ -10,7 +10,7 @@ class PlayStream {
 	private func deactivateSession() async {
 		let session = AVAudioSession.sharedInstance()
 		if #available(iOS 27.0, *) {
-			try? await session.deactivate()
+			_ = try? await session.deactivate()
 		} else {
 			try? session.setActive(false, options: .notifyOthersOnDeactivation)
 		}
@@ -19,7 +19,7 @@ class PlayStream {
 	private func activateSession() async {
 		let session = AVAudioSession.sharedInstance()
 		if #available(iOS 27.0, *) {
-			try? await session.activate()
+			_ = try? await session.activate()
 		} else {
 			try? session.setActive(true)
 		}
