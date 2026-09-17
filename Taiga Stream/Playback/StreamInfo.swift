@@ -10,7 +10,7 @@ import WidgetKit
 
 public class StreamInfo: NSObject, ObservableObject {
 	static let shared = StreamInfo()
-	let streamState = UserDefaults(
+	nonisolated(unsafe) let streamState = UserDefaults(
 		suiteName: "group.xyz.andrewmichaelpowell.taigastream"
 	)!
 	var playerCancellables = Set<AnyCancellable>()
