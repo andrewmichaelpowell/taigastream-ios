@@ -1,4 +1,4 @@
-//  Taiga Stream
+//  Taiga Stream (iOS)
 //  github.com/andrewmichaelpowell
 
 import CFNetwork
