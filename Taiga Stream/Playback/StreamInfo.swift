@@ -24,6 +24,10 @@ public class StreamInfo: NSObject, ObservableObject {
 	private var lastKnownArtist: String = ""
 	private var lastKnownTitle: String = ""
 	private var lastKnownArtwork: UIImage?
+	private var hasRealArtwork = false
+	private var artworkRequestID = 0
+	private var fallbackRequestID = 0
+	private var faviconArtworkCache: [String: UIImage] = [:]
 	private var lastPolledTitle: String = ""
 	private var lastStreamTitle: String = ""
 	private var apiMetadataActive = false
@@ -152,6 +156,9 @@ public class StreamInfo: NSObject, ObservableObject {
 		lastKnownArtist = ""
 		lastKnownTitle = ""
 		lastKnownArtwork = nil
+		hasRealArtwork = false
+		artworkRequestID += 1
+		fallbackRequestID += 1
 	}
 
 	var isPlaying: Bool {
@@ -179,6 +186,19 @@ public class StreamInfo: NSObject, ObservableObject {
 		commandCenter()
 	}
 
+	private static func deactivateAudioSession() {
+		if #available(iOS 27.0, *) {
+			AVAudioSession.sharedInstance().deactivate { _, _ in }
+		} else {
+			DispatchQueue.global(qos: .userInitiated).async {
+				try? AVAudioSession.sharedInstance().setActive(
+					false,
+					options: .notifyOthersOnDeactivation
+				)
+			}
+		}
+	}
+
 	private func commandCenter() {
 		let commandCenter = MPRemoteCommandCenter.shared()
 		commandCenter.playCommand.isEnabled = true
@@ -194,7 +214,7 @@ public class StreamInfo: NSObject, ObservableObject {
 						title: self.lastKnownTitle
 					)
 					if let artwork = self.lastKnownArtwork {
-						self.applyArtwork(artwork)
+						self.applyArtwork(artwork, isReal: self.hasRealArtwork)
 					}
 				}
 			}
@@ -206,10 +226,7 @@ public class StreamInfo: NSObject, ObservableObject {
 			self?.audioPlayer.pause()
 			self?.stopPlaybackHeartbeat()
 			self?.stopMetadataPolling()
-			try? AVAudioSession.sharedInstance().setActive(
-				false,
-				options: .notifyOthersOnDeactivation
-			)
+			Self.deactivateAudioSession()
 			self?.clearNowPlaying()
 			return .success
 		}
@@ -221,10 +238,7 @@ public class StreamInfo: NSObject, ObservableObject {
 				self.audioPlayer.pause()
 				self.stopPlaybackHeartbeat()
 				self.stopMetadataPolling()
-				try? AVAudioSession.sharedInstance().setActive(
-					false,
-					options: .notifyOthersOnDeactivation
-				)
+				Self.deactivateAudioSession()
 				self.clearNowPlaying()
 			} else {
 				self.audioPlayer.play()
@@ -237,7 +251,10 @@ public class StreamInfo: NSObject, ObservableObject {
 							title: self.lastKnownTitle
 						)
 						if let artwork = self.lastKnownArtwork {
-							self.applyArtwork(artwork)
+							self.applyArtwork(
+								artwork,
+								isReal: self.hasRealArtwork
+							)
 						}
 					}
 				}
@@ -251,10 +268,7 @@ public class StreamInfo: NSObject, ObservableObject {
 			self.audioPlayer.pause()
 			self.stopPlaybackHeartbeat()
 			self.stopMetadataPolling()
-			try? AVAudioSession.sharedInstance().setActive(
-				false,
-				options: .notifyOthersOnDeactivation
-			)
+			Self.deactivateAudioSession()
 			self.clearNowPlaying()
 			return .success
 		}
@@ -305,18 +319,60 @@ public class StreamInfo: NSObject, ObservableObject {
 			forSlot: self.currentStream
 		)
 		stoppedInfo[MPMediaItemPropertyArtist] = "Taiga Stream"
-		if let icon = appIconImage() {
-			let artworkSize = CGSize(width: 600, height: 600)
-			let mediaArtwork = MPMediaItemArtwork(boundsSize: artworkSize) {
-				requestedSize in
-				let renderer = UIGraphicsImageRenderer(size: requestedSize)
-				return renderer.image { _ in
-					icon.draw(in: CGRect(origin: .zero, size: requestedSize))
-				}
-			}
-			stoppedInfo[MPMediaItemPropertyArtwork] = mediaArtwork
+		// Show the station's favicon when available, otherwise the app icon.
+		fallbackRequestID += 1
+		let requestID = fallbackRequestID
+		let faviconString = stationFaviconUrl(forSlot: currentStream)
+		let cachedFavicon = faviconString.flatMap { faviconArtworkCache[$0] }
+		if let image = cachedFavicon ?? appIconImage() {
+			stoppedInfo[MPMediaItemPropertyArtwork] = Self.mediaArtwork(image)
 		}
 		MPNowPlayingInfoCenter.default().nowPlayingInfo = stoppedInfo
+
+		guard let faviconString, cachedFavicon == nil else { return }
+		loadFaviconArtwork(faviconString) { [weak self] composed in
+			guard let self, let composed, self.fallbackRequestID == requestID,
+				!self.isPlaying,
+				var nowPlayingInfo = MPNowPlayingInfoCenter.default()
+					.nowPlayingInfo
+			else { return }
+			nowPlayingInfo[MPMediaItemPropertyArtwork] = Self.mediaArtwork(
+				composed
+			)
+			MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
+		}
+	}
+
+	private static func mediaArtwork(_ image: UIImage) -> MPMediaItemArtwork {
+		MPMediaItemArtwork(boundsSize: CGSize(width: 600, height: 600)) {
+			requestedSize in
+			UIGraphicsImageRenderer(size: requestedSize).image { _ in
+				image.draw(in: CGRect(origin: .zero, size: requestedSize))
+			}
+		}
+	}
+
+	private func loadFaviconArtwork(
+		_ urlString: String,
+		completion: @escaping (UIImage?) -> Void
+	) {
+		guard let url = URL(string: urlString) else {
+			completion(nil)
+			return
+		}
+		URLSession.shared.dataTask(with: .noCacheRequest(url: url)) {
+			[weak self] data, _, error in
+			let composed =
+				(error == nil ? data : nil)
+				.flatMap { UIImage(data: $0) }
+				.flatMap { Self.fallbackArtworkImage(from: $0) }
+			DispatchQueue.main.async {
+				if let composed {
+					self?.faviconArtworkCache[urlString] = composed
+				}
+				completion(composed)
+			}
+		}.resume()
 	}
 
 	private var icyPollTimer: AnyCancellable?
@@ -709,17 +765,22 @@ public class StreamInfo: NSObject, ObservableObject {
 	var isFallbackArtworkSet = false
 
 	private func fetchArtwork(artist: String, title: String) {
+		artworkRequestID += 1
+		let requestID = artworkRequestID
+
 		guard
 			artist != "Taiga Stream"
 				|| title != fallbackTitle(forSlot: currentStream)
 		else {
 			if !isFallbackArtworkSet {
+				hasRealArtwork = false
 				setFallbackArtwork()
 				isFallbackArtworkSet = true
 			}
 			return
 		}
 
+		hasRealArtwork = false
 		isFallbackArtworkSet = false
 		let nowPlayingQuery =
 			"\(artist) \(title)"
@@ -734,14 +795,14 @@ public class StreamInfo: NSObject, ObservableObject {
 
 		URLSession.shared.dataTask(with: .noCacheRequest(url: searchUrl)) {
 			[weak self] data, _, error in
-			guard let self, let data, error == nil,
+			guard let data, error == nil,
 				let json = try? JSONSerialization.jsonObject(with: data)
 					as? [String: Any],
 				let results = json["results"] as? [[String: Any]],
 				let firstResult = results.first,
 				let artworkString = firstResult["artworkUrl100"] as? String
 			else {
-				DispatchQueue.main.async { self?.setFallbackArtwork() }
+				self?.useFallbackArtwork(ifRequest: requestID)
 				return
 			}
 
@@ -750,33 +811,43 @@ public class StreamInfo: NSObject, ObservableObject {
 				with: "600x600bb"
 			)
 			guard let artworkUrl = URL(string: highResArtworkString) else {
-				DispatchQueue.main.async { self.setFallbackArtwork() }
+				self?.useFallbackArtwork(ifRequest: requestID)
 				return
 			}
 
 			URLSession.shared.dataTask(with: .noCacheRequest(url: artworkUrl)) {
 				[weak self] imageData, _, imageError in
-				guard let self, let imageData, imageError == nil,
+				guard let imageData, imageError == nil,
 					let artworkImage = UIImage(data: imageData)
 				else {
-					DispatchQueue.main.async { self?.setFallbackArtwork() }
+					self?.useFallbackArtwork(ifRequest: requestID)
 					return
 				}
-				DispatchQueue.main.async { self.applyArtwork(artworkImage) }
+				DispatchQueue.main.async {
+					guard let self, self.artworkRequestID == requestID else {
+						return
+					}
+					self.applyArtwork(artworkImage)
+				}
 			}.resume()
 		}.resume()
 	}
 
-	func applyArtwork(_ image: UIImage) {
-		lastKnownArtwork = image
-		let artworkSize = CGSize(width: 600, height: 600)
-		let artwork = MPMediaItemArtwork(boundsSize: artworkSize) {
-			requestedSize in
-			let renderer = UIGraphicsImageRenderer(size: requestedSize)
-			return renderer.image { _ in
-				image.draw(in: CGRect(origin: .zero, size: requestedSize))
-			}
+	private func useFallbackArtwork(ifRequest requestID: Int) {
+		DispatchQueue.main.async { [weak self] in
+			guard let self, self.artworkRequestID == requestID else { return }
+			self.setFallbackArtwork()
 		}
+	}
+
+	func applyArtwork(_ image: UIImage, isReal: Bool = true) {
+		if isReal {
+			hasRealArtwork = true
+		} else if hasRealArtwork {
+			return
+		}
+		lastKnownArtwork = image
+		let artwork = Self.mediaArtwork(image)
 		if var nowPlayingInfo = MPNowPlayingInfoCenter.default().nowPlayingInfo
 		{
 			nowPlayingInfo[MPMediaItemPropertyArtwork] = artwork
@@ -785,9 +856,120 @@ public class StreamInfo: NSObject, ObservableObject {
 	}
 
 	func setFallbackArtwork() {
-		let icon = appIconImage() ?? UIImage(systemName: "radio")
-		guard let icon else { return }
-		applyArtwork(icon)
+		guard !hasRealArtwork else { return }
+		fallbackRequestID += 1
+		let requestID = fallbackRequestID
+
+		let faviconString = stationFaviconUrl(forSlot: currentStream)
+		guard let faviconString, URL(string: faviconString) != nil else {
+			applyAppIconFallback()
+			return
+		}
+
+		if let cached = faviconArtworkCache[faviconString] {
+			applyArtwork(cached, isReal: false)
+			return
+		}
+
+		applyAppIconFallback()
+
+		loadFaviconArtwork(faviconString) { [weak self] composed in
+			guard let self, self.fallbackRequestID == requestID,
+				!self.hasRealArtwork
+			else { return }
+			if let composed {
+				self.applyArtwork(composed, isReal: false)
+			} else {
+				self.applyAppIconFallback()
+			}
+		}
+	}
+
+	private func applyAppIconFallback() {
+		guard let icon = appIconImage() ?? UIImage(systemName: "radio") else {
+			return
+		}
+		applyArtwork(icon, isReal: false)
+	}
+
+	private func stationFaviconUrl(forSlot slot: Int) -> String? {
+		guard slot >= 1, slot <= stations.count else { return nil }
+		let value = stations[slot - 1].faviconUrl
+			.trimmingCharacters(in: .whitespacesAndNewlines)
+		return value.isEmpty ? nil : value
+	}
+
+	static let transparentIconInset: CGFloat = 0.80
+
+	private static func fallbackArtworkImage(from source: UIImage) -> UIImage? {
+		let side: CGFloat = 600
+		guard source.size.width > 0, source.size.height > 0 else { return nil }
+		let size = CGSize(width: side, height: side)
+		let format = UIGraphicsImageRendererFormat()
+		format.scale = 1
+		format.opaque = true
+		return UIGraphicsImageRenderer(size: size, format: format).image {
+			context in
+			UIColor.white.setFill()
+			context.fill(CGRect(origin: .zero, size: size))
+			context.cgContext.interpolationQuality = .high
+			let fillScale = max(
+				side / source.size.width,
+				side / source.size.height
+			)
+			let fitScale = min(
+				side / source.size.width,
+				side / source.size.height
+			)
+			let scale =
+				hasTransparency(source)
+				? fitScale * Self.transparentIconInset : fillScale
+			let width = source.size.width * scale
+			let height = source.size.height * scale
+			source.draw(
+				in: CGRect(
+					x: (side - width) / 2,
+					y: (side - height) / 2,
+					width: width,
+					height: height
+				)
+			)
+		}
+	}
+
+	static func hasTransparency(_ image: UIImage) -> Bool {
+		guard let cgImage = image.cgImage else { return false }
+		switch cgImage.alphaInfo {
+		case .none, .noneSkipFirst, .noneSkipLast: return false
+		default: break
+		}
+		let width = min(cgImage.width, 64)
+		let height = min(cgImage.height, 64)
+		var pixels = [UInt8](repeating: 255, count: width * height * 4)
+		let drewImage = pixels.withUnsafeMutableBytes { buffer -> Bool in
+			guard
+				let context = CGContext(
+					data: buffer.baseAddress,
+					width: width,
+					height: height,
+					bitsPerComponent: 8,
+					bytesPerRow: width * 4,
+					space: CGColorSpaceCreateDeviceRGB(),
+					bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+				)
+			else { return false }
+			context.clear(CGRect(x: 0, y: 0, width: width, height: height))
+			context.interpolationQuality = .medium
+			context.draw(
+				cgImage,
+				in: CGRect(x: 0, y: 0, width: width, height: height)
+			)
+			return true
+		}
+		guard drewImage else { return false }
+		return stride(from: 3, to: pixels.count, by: 4).contains {
+			pixels[$0] < 255
+		}
 	}
 
 	private func appIconImage() -> UIImage? {
