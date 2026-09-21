@@ -319,7 +319,6 @@ public class StreamInfo: NSObject, ObservableObject {
 			forSlot: self.currentStream
 		)
 		stoppedInfo[MPMediaItemPropertyArtist] = "Taiga Stream"
-		// Show the station's favicon when available, otherwise the app icon.
 		fallbackRequestID += 1
 		let requestID = fallbackRequestID
 		let faviconString = stationFaviconUrl(forSlot: currentStream)
@@ -900,6 +899,7 @@ public class StreamInfo: NSObject, ObservableObject {
 	}
 
 	static let transparentIconInset: CGFloat = 0.80
+	static let artworkEdgeBleed: CGFloat = 1.05
 
 	private static func fallbackArtworkImage(from source: UIImage) -> UIImage? {
 		let side: CGFloat = 600
@@ -921,9 +921,11 @@ public class StreamInfo: NSObject, ObservableObject {
 				side / source.size.width,
 				side / source.size.height
 			)
+			let treatment = faviconTreatment(for: source)
 			let scale =
-				hasTransparency(source)
-				? fitScale * Self.transparentIconInset : fillScale
+				treatment.needsInset
+				? fitScale * Self.transparentIconInset
+				: fillScale * (treatment.needsBleed ? Self.artworkEdgeBleed : 1)
 			let width = source.size.width * scale
 			let height = source.size.height * scale
 			source.draw(
@@ -937,10 +939,30 @@ public class StreamInfo: NSObject, ObservableObject {
 		}
 	}
 
-	static func hasTransparency(_ image: UIImage) -> Bool {
-		guard let cgImage = image.cgImage else { return false }
+	static func isSquare(_ size: CGSize) -> Bool {
+		abs(size.width - size.height) <= max(size.width, size.height) * 0.02
+	}
+
+	static func faviconTreatment(for image: UIImage) -> (
+		needsBackground: Bool, needsInset: Bool, needsBleed: Bool
+	) {
+		let square = isSquare(image.size)
+		let alpha = alphaProfile(of: image)
+		let needsInset =
+			!square || (alpha.hasTransparency && !alpha.hasOpaqueEdges)
+		return (
+			needsBackground: needsInset,
+			needsInset: needsInset,
+			needsBleed: square && alpha.hasTransparency && alpha.hasOpaqueEdges
+		)
+	}
+
+	private static func alphaProfile(of image: UIImage) -> (
+		hasTransparency: Bool, hasOpaqueEdges: Bool
+	) {
+		guard let cgImage = image.cgImage else { return (false, true) }
 		switch cgImage.alphaInfo {
-		case .none, .noneSkipFirst, .noneSkipLast: return false
+		case .none, .noneSkipFirst, .noneSkipLast: return (false, true)
 		default: break
 		}
 		let width = min(cgImage.width, 64)
@@ -966,10 +988,26 @@ public class StreamInfo: NSObject, ObservableObject {
 			)
 			return true
 		}
-		guard drewImage else { return false }
-		return stride(from: 3, to: pixels.count, by: 4).contains {
+		guard drewImage else { return (false, true) }
+
+		let hasTransparency = stride(from: 3, to: pixels.count, by: 4).contains {
 			pixels[$0] < 255
 		}
+		guard hasTransparency else { return (false, true) }
+
+		let xRange = Int(Double(width) * 0.2)..<Int(Double(width) * 0.8)
+		let yRange = Int(Double(height) * 0.2)..<Int(Double(height) * 0.8)
+		var edgeAlphas = [UInt8]()
+		for x in xRange {
+			edgeAlphas.append(pixels[x * 4 + 3])
+			edgeAlphas.append(pixels[((height - 1) * width + x) * 4 + 3])
+		}
+		for y in yRange {
+			edgeAlphas.append(pixels[y * width * 4 + 3])
+			edgeAlphas.append(pixels[(y * width + width - 1) * 4 + 3])
+		}
+		let edgeOpaque = edgeAlphas.filter { $0 >= 128 }.count
+		return (true, edgeOpaque * 10 >= edgeAlphas.count * 9)
 	}
 
 	private func appIconImage() -> UIImage? {

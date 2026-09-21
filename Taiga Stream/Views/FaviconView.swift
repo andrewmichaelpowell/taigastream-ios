@@ -7,7 +7,8 @@ import SwiftUI
 struct FaviconView: View {
 	let station: RadioStation
 	@State private var favicon: UIImage? = nil
-	@State private var faviconIsTransparent = false
+	@State private var faviconNeedsBackground = false
+	@State private var faviconNeedsInset = false
 	@State private var faviconLoadFailed = false
 	@State private var fallbackIcon: UIImage? = nil
 
@@ -24,12 +25,12 @@ struct FaviconView: View {
 					.resizable()
 					.aspectRatio(contentMode: .fit)
 					.scaleEffect(
-						faviconIsTransparent
+						faviconNeedsInset
 							? StreamInfo.transparentIconInset : 1
 					)
 					.frame(width: 36, height: 36)
 					.background(
-						faviconIsTransparent ? Color.white : Color.clear
+						faviconNeedsBackground ? Color.white : Color.clear
 					)
 			} else if isSavedWithoutFavicon,
 				let appIcon = StreamInfo.shared.appIcon
@@ -76,16 +77,18 @@ struct FaviconView: View {
 			let url = URL(string: station.faviconUrl)
 		else {
 			favicon = nil
-			faviconIsTransparent = false
+			faviconNeedsBackground = false
+			faviconNeedsInset = false
 			return
 		}
 		URLSession.shared.dataTask(with: url) { data, _, _ in
 			if let data, let image = UIImage(data: data) {
 				let normalized = self.normalizeImage(image)
-				let isTransparent = StreamInfo.hasTransparency(normalized)
+				let treatment = StreamInfo.faviconTreatment(for: normalized)
 				DispatchQueue.main.async {
 					favicon = normalized
-					faviconIsTransparent = isTransparent
+					faviconNeedsBackground = treatment.needsBackground
+					faviconNeedsInset = treatment.needsInset
 				}
 			} else {
 				DispatchQueue.main.async { faviconLoadFailed = true }
