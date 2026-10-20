@@ -31,7 +31,6 @@ class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate {
 			completion: nil
 		)
 
-		// Stations, playback state and the current stream all announce changes here
 		streamInfo.objectWillChange
 			.debounce(for: .milliseconds(100), scheduler: RunLoop.main)
 			.sink { [weak self] _ in self?.updateList() }
@@ -40,7 +39,8 @@ class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate {
 
 	func templateApplicationScene(
 		_ templateApplicationScene: CPTemplateApplicationScene,
-		didDisconnectInterfaceController interfaceController: CPInterfaceController
+		didDisconnectInterfaceController interfaceController:
+			CPInterfaceController
 	) {
 		cancellables.removeAll()
 		listTemplate = nil
@@ -66,10 +66,8 @@ class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate {
 		item.isPlaying = isPlaying(number)
 		item.playingIndicatorLocation = .trailing
 		item.handler = { [weak self] _, completion in
+			guard let self else { return completion() }
 			Task { @MainActor in
-				guard let self else { return completion() }
-				// Selecting the station that is already playing opens Now Playing
-				// instead of stopping it
 				if !self.isPlaying(number) {
 					await PlayStream.shared.play(streamNumber: number)
 				}
@@ -95,8 +93,6 @@ class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate {
 		)
 	}
 
-	// Matches FaviconView: the station's favicon, the app icon when it has none, or an
-	// antenna while the favicon loads
 	private func listImage(for station: RadioStation) -> UIImage? {
 		let urlString = station.faviconUrl
 			.trimmingCharacters(in: .whitespacesAndNewlines)
