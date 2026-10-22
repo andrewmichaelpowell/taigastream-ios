@@ -37,6 +37,6 @@ struct PlayButton: View {
 		.frame(width: 50, height: 50)
 		.buttonStyle(.borderedProminent)
 		.buttonBorderShape(.circle)
-		.tint(isPlaying ? Color(.mint) : Color(.secondarySystemBackground))
+		.tint(isPlaying ? Color(red: 90 / 255, green: 120 / 255, blue: 60 / 255) : Color(.secondarySystemBackground))
 	}
 }
