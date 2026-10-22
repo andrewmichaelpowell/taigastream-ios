@@ -1010,15 +1010,10 @@ public class StreamInfo: NSObject, ObservableObject {
 		return (true, edgeOpaque * 10 >= edgeAlphas.count * 9)
 	}
 
+	// A flat version of the app icon, which looks at home next to station logos and album
+	// artwork in a way the glass-style app icon doesn't
 	private func appIconImage() -> UIImage? {
-		guard
-			let icons = Bundle.main.infoDictionary?["CFBundleIcons"]
-				as? [String: Any],
-			let primaryIcon = icons["CFBundlePrimaryIcon"] as? [String: Any],
-			let iconFiles = primaryIcon["CFBundleIconFiles"] as? [String],
-			let lastIcon = iconFiles.last
-		else { return nil }
-		return UIImage(named: lastIcon)
+		UIImage(named: "FallbackIcon")
 	}
 
 	private func playerObservers() {
