@@ -4,6 +4,9 @@
 import SwiftUI
 
 extension View {
+	// Liquid Glass behind a shape on iOS 26 and later, tinted when given a colour. Applied directly
+	// rather than through a glass button style so shapes and tints stay exactly as designed.
+	// Earlier versions keep the solid fill.
 	@ViewBuilder
 	func glassBackground<S: Shape>(
 		_ shape: S,
