@@ -37,7 +37,7 @@ struct ManualURLSheet: View {
 							.autocorrectionDisabled()
 					}
 					.padding()
-					.background(RoundedRectangle(cornerRadius: 10).fill(Color(.secondarySystemBackground)))
+					.glassBackground(RoundedRectangle(cornerRadius: 10), fill: Color(.secondarySystemBackground), interactive: false)
 					HStack {
 						Image(systemName: "link")
 							.foregroundColor(Color(.tertiaryLabel))
@@ -47,7 +47,7 @@ struct ManualURLSheet: View {
 							.onSubmit { save() }
 					}
 					.padding()
-					.background(RoundedRectangle(cornerRadius: 10).fill(Color(.secondarySystemBackground)))
+					.glassBackground(RoundedRectangle(cornerRadius: 10), fill: Color(.secondarySystemBackground), interactive: false)
 
 					Button(action: save) {
 						HStack {
