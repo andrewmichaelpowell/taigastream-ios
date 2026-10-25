@@ -30,7 +30,7 @@ struct RadioBrowserSearchSheet: View {
 							}
 					}
 					.padding()
-					.glassBackground(RoundedRectangle(cornerRadius: 10), fill: Color(.secondarySystemBackground), interactive: false)
+					.background(RoundedRectangle(cornerRadius: 10).fill(Color(.secondarySystemBackground)))
 
 					Button(action: performSearch) {
 						HStack {
