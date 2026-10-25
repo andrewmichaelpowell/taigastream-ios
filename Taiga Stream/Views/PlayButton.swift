@@ -21,22 +21,27 @@ struct PlayButton: View {
 		Button(action: {
 			Task { await PlayStream.shared.play(streamNumber: streamNumber) }
 		}) {
-			if isPlaying {
-				Text(Image(systemName: "stop.fill"))
-					.font(.title3)
-					.frame(maxWidth: .infinity, maxHeight: 50)
-			} else {
-				Text("\(streamNumber)")
-					.font(.title3)
-					.foregroundColor(
-						isConfigured ? Color(.quaternaryLabel) : Color(.label)
-					)
-					.frame(maxWidth: .infinity, maxHeight: 50)
+			ZStack {
+				if isPlaying {
+					Text(Image(systemName: "stop.fill"))
+						.font(.title3)
+						.foregroundColor(.white)
+				} else {
+					Text("\(streamNumber)")
+						.font(.title3)
+						.foregroundColor(
+							isConfigured ? Color(.quaternaryLabel) : Color(.label)
+						)
+				}
 			}
+			.frame(width: 50, height: 50)
+			.contentShape(Circle())
+			.glassBackground(
+				Circle(),
+				fill: Color(.secondarySystemBackground),
+				tint: isPlaying ? Color(red: 84 / 255, green: 117 / 255, blue: 50 / 255) : nil
+			)
 		}
-		.frame(width: 50, height: 50)
-		.buttonStyle(.borderedProminent)
-		.buttonBorderShape(.circle)
-		.tint(isPlaying ? Color(red: 84 / 255, green: 117 / 255, blue: 50 / 255) : Color(.secondarySystemBackground))
+		.buttonStyle(.plain)
 	}
 }
