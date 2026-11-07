@@ -13,10 +13,10 @@ struct StreamOptionsSheet: View {
 	@Binding var manualName: String
 	@EnvironmentObject var streamInfo: StreamInfo
 
-	var station: RadioStation { streamInfo.stations[index] }
+	var station: RadioStation { streamInfo.station(at: index) }
 
 	var body: some View {
-		NavigationView {
+		NavigationStack {
 			VStack(spacing: 0) {
 				VStack(spacing: 8) {
 					optionButton("Search") {
@@ -35,7 +35,7 @@ struct StreamOptionsSheet: View {
 					}
 					if !station.url.isEmpty {
 						optionButton("Clear", role: .destructive) {
-							streamInfo.saveStation(.empty, at: index)
+							streamInfo.clearStation(at: index)
 							isPresented = false
 						}
 					}
@@ -48,6 +48,7 @@ struct StreamOptionsSheet: View {
 			}
 			.navigationTitle("Stream \(index + 1)")
 			.navigationBarTitleDisplayMode(.inline)
+			.containerBackground(Color.sheetBackground, for: .navigation)
 		}
 	}
 
@@ -71,7 +72,7 @@ struct StreamOptionsSheet: View {
 			.background(
 				RoundedRectangle(cornerRadius: 10)
 					.fill(
-						Color(.secondarySystemBackground)
+						Color.sheetControl
 					)
 			)
 		}

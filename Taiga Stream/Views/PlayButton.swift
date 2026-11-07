@@ -8,13 +8,17 @@ struct PlayButton: View {
 	let streamNumber: Int
 	@ObservedObject var streamInfo = StreamInfo.shared
 
+	private var url: String {
+		streamInfo.station(at: streamNumber - 1).url
+	}
+
 	private var isPlaying: Bool {
 		streamInfo.isPlaying && streamInfo.currentStream == streamNumber
-			&& streamInfo.stream[streamNumber - 1] != ""
+			&& !url.isEmpty
 	}
 
 	private var isConfigured: Bool {
-		streamInfo.stream[streamNumber - 1] == ""
+		url.isEmpty
 	}
 
 	var body: some View {

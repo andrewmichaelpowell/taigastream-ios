@@ -17,7 +17,7 @@ struct RadioBrowserSearchSheet: View {
 	private let pageSize = 50
 
 	var body: some View {
-		NavigationView {
+		NavigationStack {
 			VStack(spacing: 0) {
 				VStack(spacing: 8) {
 					HStack {
@@ -33,7 +33,7 @@ struct RadioBrowserSearchSheet: View {
 					.background(
 						RoundedRectangle(cornerRadius: 10)
 							.fill(
-								Color(.secondarySystemBackground)
+								Color.sheetControl
 							)
 					)
 
@@ -55,7 +55,7 @@ struct RadioBrowserSearchSheet: View {
 						.background(
 							RoundedRectangle(cornerRadius: 10)
 								.fill(
-									Color(.secondarySystemBackground)
+									Color.sheetControl
 								)
 						)
 					}
@@ -73,7 +73,7 @@ struct RadioBrowserSearchSheet: View {
 						.background(
 							RoundedRectangle(cornerRadius: 10)
 								.fill(
-									Color(.secondarySystemBackground)
+									Color.sheetControl
 								)
 						)
 					}
@@ -92,6 +92,7 @@ struct RadioBrowserSearchSheet: View {
 								.onTapGesture {
 									selectStation(station)
 								}
+								.listRowBackground(Color.clear)
 						}
 						if results.count == pageSize
 							* (currentOffset / pageSize + 1)
@@ -105,6 +106,7 @@ struct RadioBrowserSearchSheet: View {
 									)
 									.padding(.leading, 48)
 							}
+							.listRowBackground(Color.clear)
 						}
 						if isLoading && !results.isEmpty {
 							HStack {
@@ -112,13 +114,16 @@ struct RadioBrowserSearchSheet: View {
 								ProgressView()
 								Spacer()
 							}
+							.listRowBackground(Color.clear)
 						}
 					}
 					.listStyle(.plain)
+					.scrollContentBackground(.hidden)
 				}
 			}
 			.navigationTitle("Search")
 			.navigationBarTitleDisplayMode(.inline)
+			.containerBackground(Color.sheetBackground, for: .navigation)
 		}
 	}
 

@@ -11,7 +11,7 @@ struct ManualURLSheet: View {
 	@EnvironmentObject var streamInfo: StreamInfo
 	@Binding var manualName: String
 
-	var station: RadioStation { streamInfo.stations[slotIndex] }
+	var station: RadioStation { streamInfo.station(at: slotIndex) }
 
 	private var isValidUrl: Bool {
 		guard
@@ -27,7 +27,7 @@ struct ManualURLSheet: View {
 	}
 
 	var body: some View {
-		NavigationView {
+		NavigationStack {
 			VStack(spacing: 0) {
 				VStack(spacing: 8) {
 					HStack {
@@ -39,7 +39,7 @@ struct ManualURLSheet: View {
 					.padding()
 					.background(
 						RoundedRectangle(cornerRadius: 10)
-							.fill(Color(.secondarySystemBackground))
+							.fill(Color.sheetControl)
 					)
 					HStack {
 						Image(systemName: "link")
@@ -53,7 +53,7 @@ struct ManualURLSheet: View {
 					.background(
 						RoundedRectangle(cornerRadius: 10)
 							.fill(
-								Color(.secondarySystemBackground)
+								Color.sheetControl
 							)
 					)
 
@@ -72,7 +72,7 @@ struct ManualURLSheet: View {
 						.background(
 							RoundedRectangle(cornerRadius: 10)
 								.fill(
-									Color(.secondarySystemBackground)
+									Color.sheetControl
 								)
 						)
 					}
@@ -90,7 +90,7 @@ struct ManualURLSheet: View {
 						.background(
 							RoundedRectangle(cornerRadius: 10)
 								.fill(
-									Color(.secondarySystemBackground)
+									Color.sheetControl
 								)
 						)
 					}
@@ -101,6 +101,7 @@ struct ManualURLSheet: View {
 			}
 			.navigationTitle("Enter URL")
 			.navigationBarTitleDisplayMode(.inline)
+			.containerBackground(Color.sheetBackground, for: .navigation)
 		}
 	}
 

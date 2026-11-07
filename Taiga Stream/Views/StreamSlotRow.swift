@@ -13,61 +13,83 @@ struct StreamSlotRow: View {
 	@State private var manualUrl = ""
 	@State private var manualName = ""
 
-	var station: RadioStation { streamInfo.stations[index] }
+	var isAddButton = false
+
+	var station: RadioStation { streamInfo.station(at: index) }
 
 	var body: some View {
-		Button(action: { showingOptions = true }) {
-			HStack(spacing: 12) {
-				if !station.name.isEmpty {
-					Text(station.name)
-						.font(.body)
-						.foregroundColor(Color(.label))
-						.lineLimit(1)
-				} else if !station.url.isEmpty {
-					Text(station.url)
-						.font(.body)
-						.foregroundColor(Color(.label))
-						.lineLimit(1)
-						.truncationMode(.middle)
-				}
-				Spacer()
+		rowButton
+			.stationSheet(isPresented: $showingOptions) {
+				StreamOptionsSheet(
+					index: index,
+					isPresented: $showingOptions,
+					showingSearch: $showingSearch,
+					showingManualEntry: $showingManualEntry,
+					manualUrl: $manualUrl,
+					manualName: $manualName
+				)
+				.environmentObject(streamInfo)
 			}
-			.padding()
-			.frame(maxWidth: .infinity, minHeight: 56, alignment: .leading)
-			.background(
-				RoundedRectangle(cornerRadius: 10)
-					.fill(
-						Color(.secondarySystemBackground)
-					)
-			)
-		}
-		.buttonStyle(.plain)
-		.sheet(isPresented: $showingOptions) {
-			StreamOptionsSheet(
-				index: index,
-				isPresented: $showingOptions,
-				showingSearch: $showingSearch,
-				showingManualEntry: $showingManualEntry,
-				manualUrl: $manualUrl,
-				manualName: $manualName
-			)
-			.environmentObject(streamInfo)
-		}
-		.sheet(isPresented: $showingSearch) {
-			RadioBrowserSearchSheet(
-				slotIndex: index,
-				isPresented: $showingSearch
-			)
-			.environmentObject(streamInfo)
-		}
-		.sheet(isPresented: $showingManualEntry) {
-			ManualURLSheet(
-				slotIndex: index,
-				isPresented: $showingManualEntry,
-				manualUrl: $manualUrl,
-				manualName: $manualName
-			)
-			.environmentObject(streamInfo)
+			.stationSheet(isPresented: $showingSearch) {
+				RadioBrowserSearchSheet(
+					slotIndex: index,
+					isPresented: $showingSearch
+				)
+				.environmentObject(streamInfo)
+			}
+			.stationSheet(isPresented: $showingManualEntry) {
+				ManualURLSheet(
+					slotIndex: index,
+					isPresented: $showingManualEntry,
+					manualUrl: $manualUrl,
+					manualName: $manualName
+				)
+				.environmentObject(streamInfo)
+			}
+	}
+
+	@ViewBuilder
+	private var rowButton: some View {
+		if isAddButton {
+			Button(action: { showingOptions = true }) {
+				Text(Image(systemName: "plus"))
+					.font(.title3)
+					.foregroundColor(Color(.label))
+					.frame(maxWidth: .infinity, maxHeight: 50)
+			}
+			.frame(width: 50, height: 50)
+			.buttonStyle(.borderedProminent)
+			.buttonBorderShape(.circle)
+			.tint(Color(.secondarySystemBackground))
+			.accessibilityLabel(Text("Add Station"))
+		} else {
+			Button(action: { showingOptions = true }) {
+				HStack(spacing: 12) {
+					if !station.name.isEmpty {
+						Text(station.name)
+							.font(.body)
+							.foregroundColor(Color(.label))
+							.lineLimit(1)
+					} else if !station.url.isEmpty {
+						Text(station.url)
+							.font(.body)
+							.foregroundColor(Color(.label))
+							.lineLimit(1)
+							.truncationMode(.middle)
+					}
+					Spacer()
+				}
+				.padding()
+				.frame(maxWidth: .infinity, minHeight: 56, alignment: .leading)
+				.contentShape(Rectangle())
+				.background(
+					RoundedRectangle(cornerRadius: 10)
+						.fill(
+							Color(.secondarySystemBackground)
+						)
+				)
+			}
+			.buttonStyle(.plain)
 		}
 	}
 }
