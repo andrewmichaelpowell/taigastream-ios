@@ -39,7 +39,7 @@ struct ManualURLSheet: View {
 					.padding()
 					.background(
 						RoundedRectangle(cornerRadius: 10)
-							.fill(Color.sheetControl)
+							.fill(.thinMaterial)
 					)
 					HStack {
 						Image(systemName: "link")
@@ -52,9 +52,7 @@ struct ManualURLSheet: View {
 					.padding()
 					.background(
 						RoundedRectangle(cornerRadius: 10)
-							.fill(
-								Color.sheetControl
-							)
+							.fill(.thinMaterial)
 					)
 
 					Button(action: save) {
@@ -69,12 +67,7 @@ struct ManualURLSheet: View {
 							Spacer()
 						}
 						.padding()
-						.background(
-							RoundedRectangle(cornerRadius: 10)
-								.fill(
-									Color.sheetControl
-								)
-						)
+						.sheetButtonGlass()
 					}
 					.disabled(!isValidUrl)
 
@@ -87,12 +80,7 @@ struct ManualURLSheet: View {
 							Spacer()
 						}
 						.padding()
-						.background(
-							RoundedRectangle(cornerRadius: 10)
-								.fill(
-									Color.sheetControl
-								)
-						)
+						.sheetButtonGlass()
 					}
 				}
 				.padding()
@@ -101,7 +89,7 @@ struct ManualURLSheet: View {
 			}
 			.navigationTitle("Enter URL")
 			.navigationBarTitleDisplayMode(.inline)
-			.containerBackground(Color.sheetBackground, for: .navigation)
+			.containerBackground(for: .navigation) { NowPlayingBackground() }
 		}
 	}
 

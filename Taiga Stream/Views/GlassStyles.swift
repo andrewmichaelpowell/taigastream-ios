@@ -13,6 +13,18 @@ extension View {
 		modifier(CircleButtonStyle(isOn: isOn))
 	}
 
+	@ViewBuilder
+	func sheetButtonGlass() -> some View {
+		if #available(iOS 26.0, *) {
+			glassEffect(
+				.regular.interactive(),
+				in: RoundedRectangle(cornerRadius: 10)
+			)
+		} else {
+			background(.thinMaterial, in: RoundedRectangle(cornerRadius: 10))
+		}
+	}
+
 	func frostedRowBackground() -> some View {
 		background(.thinMaterial, in: RoundedRectangle(cornerRadius: 10))
 	}

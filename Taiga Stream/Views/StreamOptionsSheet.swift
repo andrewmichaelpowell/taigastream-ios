@@ -48,7 +48,7 @@ struct StreamOptionsSheet: View {
 			}
 			.navigationTitle("Stream \(index + 1)")
 			.navigationBarTitleDisplayMode(.inline)
-			.containerBackground(Color.sheetBackground, for: .navigation)
+			.containerBackground(for: .navigation) { NowPlayingBackground() }
 		}
 	}
 
@@ -69,12 +69,7 @@ struct StreamOptionsSheet: View {
 				Spacer()
 			}
 			.padding()
-			.background(
-				RoundedRectangle(cornerRadius: 10)
-					.fill(
-						Color.sheetControl
-					)
-			)
+			.sheetButtonGlass()
 		}
 		.buttonStyle(.plain)
 	}

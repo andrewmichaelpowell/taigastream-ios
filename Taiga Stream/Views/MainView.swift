@@ -19,18 +19,31 @@ struct MainView: View {
 			Tab(value: MainTab.radio) {
 				withTopMargin(RadioView())
 			} label: {
-				Image(systemName: "radio")
+				tabIcon("radio")
 					.accessibilityLabel(Text("Radio"))
 			}
 			Tab(value: MainTab.podcasts) {
 				withTopMargin(PodcastsView())
 			} label: {
-				Image(systemName: "mic")
+				tabIcon("mic")
 					.accessibilityLabel(Text("Podcasts"))
 			}
 		}
 		.tint(Color(red: 4 / 255, green: 80 / 255, blue: 48 / 255))
 		.stationPopupHost(popupPresenter)
+	}
+
+	private func tabIcon(_ name: String) -> Image {
+		let config = UIImage.SymbolConfiguration(
+			pointSize: 21,
+			weight: .regular
+		)
+		guard let symbol = UIImage(systemName: name, withConfiguration: config)
+		else { return Image(systemName: name) }
+		let flat = UIGraphicsImageRenderer(size: symbol.size).image { _ in
+			symbol.draw(at: .zero)
+		}
+		return Image(uiImage: flat.withRenderingMode(.alwaysTemplate))
 	}
 
 	private func withTopMargin<Content: View>(_ content: Content) -> some View {

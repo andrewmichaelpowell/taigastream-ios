@@ -11,7 +11,10 @@ extension View {
 		@ViewBuilder content: @escaping () -> SheetContent
 	) -> some View {
 		modifier(
-			StationSheetModifier(isPresented: isPresented, sheetContent: content)
+			StationSheetModifier(
+				isPresented: isPresented,
+				sheetContent: content
+			)
 		)
 	}
 
@@ -106,7 +109,7 @@ private struct StationPopupHost: View {
 				popup.content
 					.environment(\.horizontalSizeClass, .compact)
 					.frame(maxWidth: 540, maxHeight: 620)
-					.background(Color.sheetBackground)
+					.background { NowPlayingBackground() }
 					.clipShape(
 						RoundedRectangle(cornerRadius: 32, style: .continuous)
 					)
@@ -116,23 +119,5 @@ private struct StationPopupHost: View {
 					.id(popup.id)
 			}
 		}
-	}
-}
-
-extension Color {
-	static let sheetBackground = elevated(.systemBackground)
-
-	static let sheetControl = elevated(.secondarySystemBackground)
-
-	private static func elevated(_ color: UIColor) -> Color {
-		Color(
-			uiColor: UIColor { traits in
-				color.resolvedColor(
-					with: traits.modifyingTraits {
-						$0.userInterfaceLevel = .elevated
-					}
-				)
-			}
-		)
 	}
 }

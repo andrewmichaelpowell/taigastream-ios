@@ -4,7 +4,6 @@
 import Foundation
 import SwiftUI
 
-/// A full-width sheet button matching the radio sheets.
 struct SheetButton: View {
 	let title: LocalizedStringResource
 	var role: ButtonRole? = nil
@@ -29,16 +28,13 @@ struct SheetButton: View {
 				Spacer()
 			}
 			.padding()
-			.background(
-				RoundedRectangle(cornerRadius: 10).fill(Color.sheetControl)
-			)
+			.sheetButtonGlass()
 		}
 		.buttonStyle(.plain)
 		.disabled(!isEnabled)
 	}
 }
 
-/// A text field row matching the radio sheets.
 struct SheetTextField: View {
 	let systemImage: String
 	@Binding var text: String
@@ -56,7 +52,7 @@ struct SheetTextField: View {
 				.onSubmit(onSubmit)
 		}
 		.padding()
-		.background(RoundedRectangle(cornerRadius: 10).fill(Color.sheetControl))
+		.background(RoundedRectangle(cornerRadius: 10).fill(.thinMaterial))
 	}
 }
 
@@ -104,7 +100,7 @@ struct PodcastOptionsSheet: View {
 			}
 			.navigationTitle("Podcast \(index + 1)")
 			.navigationBarTitleDisplayMode(.inline)
-			.containerBackground(Color.sheetBackground, for: .navigation)
+			.containerBackground(for: .navigation) { NowPlayingBackground() }
 		}
 	}
 }
@@ -149,7 +145,7 @@ struct PodcastURLSheet: View {
 			}
 			.navigationTitle("Enter URL")
 			.navigationBarTitleDisplayMode(.inline)
-			.containerBackground(Color.sheetBackground, for: .navigation)
+			.containerBackground(for: .navigation) { NowPlayingBackground() }
 		}
 	}
 
@@ -219,7 +215,7 @@ struct PodcastSearchSheet: View {
 			}
 			.navigationTitle("Search")
 			.navigationBarTitleDisplayMode(.inline)
-			.containerBackground(Color.sheetBackground, for: .navigation)
+			.containerBackground(for: .navigation) { NowPlayingBackground() }
 		}
 	}
 
@@ -268,20 +264,20 @@ struct PodcastSearchResultRow: View {
 				if !result.author.isEmpty {
 					Text(result.author)
 						.font(.caption)
-						.foregroundColor(Color(.tertiaryLabel))
+						.foregroundColor(Color(.secondaryLabel))
 						.lineLimit(1)
 				}
 				if !result.genre.isEmpty {
 					Text(result.genre)
 						.font(.caption)
-						.foregroundColor(Color(.tertiaryLabel))
+						.foregroundColor(Color(.secondaryLabel))
 						.lineLimit(1)
 				}
 			}
 			Spacer()
 			Image(systemName: "chevron.right")
 				.font(.caption)
-				.foregroundColor(Color(.tertiaryLabel))
+				.foregroundColor(Color(.secondaryLabel))
 		}
 		.padding(.vertical, 4)
 	}
@@ -308,7 +304,7 @@ struct EpisodePickerSheet: View {
 			}
 			.navigationTitle(podcast?.name ?? String(localized: "Episodes"))
 			.navigationBarTitleDisplayMode(.inline)
-			.containerBackground(Color.sheetBackground, for: .navigation)
+			.containerBackground(for: .navigation) { NowPlayingBackground() }
 		}
 		.task {
 			if let podcast, library.feeds[podcastID] == nil {
@@ -420,7 +416,7 @@ private struct EpisodeRow: View {
 				if !details.isEmpty {
 					Text(details)
 						.font(.caption)
-						.foregroundColor(Color(.tertiaryLabel))
+						.foregroundColor(Color(.secondaryLabel))
 						.lineLimit(1)
 				}
 				if let duration = episode.duration, duration > 0, position > 0 {

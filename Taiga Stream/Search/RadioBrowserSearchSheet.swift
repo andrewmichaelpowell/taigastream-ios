@@ -32,9 +32,7 @@ struct RadioBrowserSearchSheet: View {
 					.padding()
 					.background(
 						RoundedRectangle(cornerRadius: 10)
-							.fill(
-								Color.sheetControl
-							)
+							.fill(.thinMaterial)
 					)
 
 					Button(action: performSearch) {
@@ -52,12 +50,7 @@ struct RadioBrowserSearchSheet: View {
 							Spacer()
 						}
 						.padding()
-						.background(
-							RoundedRectangle(cornerRadius: 10)
-								.fill(
-									Color.sheetControl
-								)
-						)
+						.sheetButtonGlass()
 					}
 					.disabled(isLoading || searchName.isEmpty)
 
@@ -70,12 +63,7 @@ struct RadioBrowserSearchSheet: View {
 							Spacer()
 						}
 						.padding()
-						.background(
-							RoundedRectangle(cornerRadius: 10)
-								.fill(
-									Color.sheetControl
-								)
-						)
+						.sheetButtonGlass()
 					}
 				}
 				.padding()
@@ -123,7 +111,7 @@ struct RadioBrowserSearchSheet: View {
 			}
 			.navigationTitle("Search")
 			.navigationBarTitleDisplayMode(.inline)
-			.containerBackground(Color.sheetBackground, for: .navigation)
+			.containerBackground(for: .navigation) { NowPlayingBackground() }
 		}
 	}
 
