@@ -29,7 +29,20 @@ struct MainView: View {
 					.accessibilityLabel(Text("Podcasts"))
 			}
 		}
-		.tint(Color(red: 4 / 255, green: 80 / 255, blue: 48 / 255))
+		.tint(
+			Color(
+				uiColor: UIColor { traits in
+					traits.userInterfaceStyle == .dark
+						? .white
+						: UIColor(
+							red: 4 / 255,
+							green: 80 / 255,
+							blue: 48 / 255,
+							alpha: 1
+						)
+				}
+			)
+		)
 		.stationPopupHost(popupPresenter)
 	}
 
