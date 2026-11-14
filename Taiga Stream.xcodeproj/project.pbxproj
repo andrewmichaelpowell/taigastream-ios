@@ -52,6 +52,7 @@
 		3E690E0E2FB017B7006C88F6 /* Exceptions for "Taiga Stream" folder in "Taiga Stream Widget" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Localizable.xcstrings,
 				Metadata/MetadataProvider.swift,
 				Metadata/Providers/ABCRadioProvider.swift,
 				Metadata/Providers/AudioAddictProvider.swift,
@@ -73,10 +74,14 @@
 				Metadata/Providers/VirginRadioRomaniaProvider.swift,
 				Metadata/Providers/VRTRadioProvider.swift,
 				Metadata/Providers/ZenoFMProvider.swift,
+				Models/Podcast.swift,
 				Models/RadioStation.swift,
 				Networking/URLRequest.swift,
 				Playback/PlayStream.swift,
+				Playback/PodcastPlayer.swift,
 				Playback/StreamInfo.swift,
+				Podcasts/PodcastFeedParser.swift,
+				Podcasts/PodcastLibrary.swift,
 			);
 			target = 3E690D932FAE0E04006C88F6 /* Taiga Stream Widget */;
 		};
@@ -459,7 +464,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "Taiga Stream/Taiga Stream.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 10;
 				DEVELOPMENT_TEAM = 925F4PY4UL;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -476,7 +481,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2026.11.08;
+				MARKETING_VERSION = 2026.11.14;
 				PRODUCT_BUNDLE_IDENTIFIER = xyz.andrewmichaelpowell.taigastream;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -500,7 +505,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "Taiga Stream/Taiga Stream.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 10;
 				DEVELOPMENT_TEAM = 925F4PY4UL;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -517,7 +522,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2026.11.08;
+				MARKETING_VERSION = 2026.11.14;
 				PRODUCT_BUNDLE_IDENTIFIER = xyz.andrewmichaelpowell.taigastream;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;

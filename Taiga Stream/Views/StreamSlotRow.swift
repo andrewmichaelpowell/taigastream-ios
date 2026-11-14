@@ -58,9 +58,7 @@ struct StreamSlotRow: View {
 					.frame(maxWidth: .infinity, maxHeight: 50)
 			}
 			.frame(width: 50, height: 50)
-			.buttonStyle(.borderedProminent)
-			.buttonBorderShape(.circle)
-			.tint(Color(.secondarySystemBackground))
+			.circleButtonStyle()
 			.accessibilityLabel(Text("Add Station"))
 		} else {
 			Button(action: { showingOptions = true }) {
@@ -82,12 +80,7 @@ struct StreamSlotRow: View {
 				.padding()
 				.frame(maxWidth: .infinity, minHeight: 56, alignment: .leading)
 				.contentShape(Rectangle())
-				.background(
-					RoundedRectangle(cornerRadius: 10)
-						.fill(
-							Color(.secondarySystemBackground)
-						)
-				)
+				.frostedRowBackground()
 			}
 			.buttonStyle(.plain)
 		}

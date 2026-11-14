@@ -6,10 +6,16 @@ import Combine
 import Foundation
 import UIKit
 
-class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate {
+class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate,
+	CPNowPlayingTemplateObserver
+{
 	private let streamInfo = StreamInfo.shared
+	private let library = PodcastLibrary.shared
+	private let player = PodcastPlayer.shared
 	private var interfaceController: CPInterfaceController?
-	private var listTemplate: CPListTemplate?
+	private var radioTemplate: CPListTemplate?
+	private var podcastTemplate: CPListTemplate?
+	private weak var episodesTemplate: CPListTemplate?
 	private var cancellables = Set<AnyCancellable>()
 	private var listImages: [String: UIImage] = [:]
 	private var loadingImages = Set<String>()
@@ -19,22 +25,50 @@ class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate {
 		didConnect interfaceController: CPInterfaceController
 	) {
 		self.interfaceController = interfaceController
-		let template = CPListTemplate(title: "Taiga Stream", sections: [])
-		template.emptyViewTitleVariants = [
-			String(localized: "No stations")
-		]
-		listTemplate = template
-		updateList()
+
+		let radio = CPListTemplate(
+			title: String(localized: "Radio"),
+			sections: []
+		)
+		radio.tabTitle = String(localized: "Radio")
+		radio.tabImage = UIImage(systemName: "radio")
+		radio.emptyViewTitleVariants = [String(localized: "No stations")]
+		radioTemplate = radio
+
+		let podcasts = CPListTemplate(
+			title: String(localized: "Podcasts"),
+			sections: []
+		)
+		podcasts.tabTitle = String(localized: "Podcasts")
+		podcasts.tabImage = UIImage(systemName: "mic")
+		podcasts.emptyViewTitleVariants = [String(localized: "No podcasts")]
+		podcastTemplate = podcasts
+
+		updateLists()
 		interfaceController.setRootTemplate(
-			template,
+			CPTabBarTemplate(templates: [radio, podcasts]),
 			animated: false,
 			completion: nil
 		)
 
-		streamInfo.objectWillChange
-			.debounce(for: .milliseconds(100), scheduler: RunLoop.main)
-			.sink { [weak self] _ in self?.updateList() }
-			.store(in: &cancellables)
+		CPNowPlayingTemplate.shared.add(self)
+		if #available(iOS 27.0, *) {
+			CPNowPlayingTemplate.shared.allowsMiniPlayer = false
+		}
+		updateNowPlayingButtons()
+
+		Publishers.Merge4(
+			streamInfo.objectWillChange.map { _ in () },
+			library.objectWillChange.map { _ in () },
+			player.$activePodcastID.map { _ in () },
+			player.$activeEpisode.map { _ in () }
+		)
+		.debounce(for: .milliseconds(100), scheduler: RunLoop.main)
+		.sink { [weak self] _ in
+			self?.updateLists()
+			self?.updateNowPlayingButtons()
+		}
+		.store(in: &cancellables)
 	}
 
 	func templateApplicationScene(
@@ -42,33 +76,48 @@ class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate {
 		didDisconnectInterfaceController interfaceController:
 			CPInterfaceController
 	) {
+		CPNowPlayingTemplate.shared.remove(self)
 		cancellables.removeAll()
-		listTemplate = nil
+		radioTemplate = nil
+		podcastTemplate = nil
 		self.interfaceController = nil
 	}
 
-	private func updateList() {
-		guard let listTemplate else { return }
-		let items = streamInfo.stations.enumerated()
-			.filter { !$0.element.url.isEmpty }
-			.map { index, station in listItem(for: station, number: index + 1) }
-		listTemplate.updateSections([CPListSection(items: items)])
+	private func updateLists() {
+		updateRadioList()
+		updatePodcastList()
+		if let episodesTemplate, let id = player.activePodcastID {
+			episodesTemplate.updateSections([episodeSection(podcastID: id)])
+		}
 	}
 
-	private func listItem(for station: RadioStation, number: Int)
+	private func updateRadioList() {
+		guard let radioTemplate else { return }
+		let items = streamInfo.stations.enumerated()
+			.filter { !$0.element.url.isEmpty }
+			.map { index, station in
+				stationItem(for: station, number: index + 1)
+			}
+		radioTemplate.updateSections([CPListSection(items: items)])
+	}
+
+	private func stationItem(for station: RadioStation, number: Int)
 		-> CPListItem
 	{
 		let item = CPListItem(
 			text: streamInfo.fallbackTitle(forSlot: number),
 			detailText: String(localized: "Stream \(number)"),
-			image: listImage(for: station)
+			image: listImage(
+				urlString: station.faviconUrl,
+				fallbackSymbol: "antenna.radiowaves.left.and.right"
+			)
 		)
-		item.isPlaying = isPlaying(number)
+		item.isPlaying = isStationPlaying(number)
 		item.playingIndicatorLocation = .trailing
 		item.handler = { [weak self] _, completion in
 			guard let self else { return completion() }
 			Task { @MainActor in
-				if !self.isPlaying(number) {
+				if !self.isStationPlaying(number) {
 					await PlayStream.shared.play(streamNumber: number)
 				}
 				self.showNowPlaying()
@@ -78,11 +127,128 @@ class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate {
 		return item
 	}
 
-	private func isPlaying(_ number: Int) -> Bool {
+	private func isStationPlaying(_ number: Int) -> Bool {
 		streamInfo.isPlaying && streamInfo.currentStream == number
 	}
 
+	private func updatePodcastList() {
+		guard let podcastTemplate else { return }
+		let items = library.podcasts.enumerated().map { index, podcast in
+			podcastItem(for: podcast, number: index + 1)
+		}
+		podcastTemplate.updateSections([CPListSection(items: items)])
+	}
+
+	private func podcastItem(for podcast: Podcast, number: Int) -> CPListItem {
+		let name = podcast.name.trimmingCharacters(in: .whitespaces)
+		let episode = library.currentEpisode(for: podcast)
+		let item = CPListItem(
+			text: name.isEmpty ? String(localized: "Podcast \(number)") : name,
+			detailText: episode?.title,
+			image: listImage(
+				urlString: podcast.artworkUrl,
+				fallbackSymbol: "mic"
+			)
+		)
+		item.isPlaying = player.isPlaying(podcastID: podcast.id)
+		item.playingIndicatorLocation = .trailing
+		item.handler = { [weak self] _, completion in
+			guard let self else { return completion() }
+			Task { @MainActor in
+				if !self.player.isPlaying(podcastID: podcast.id) {
+					await self.player.play(podcastNumber: number)
+				}
+				self.showNowPlaying()
+				completion()
+			}
+		}
+		return item
+	}
+
+	private func updateNowPlayingButtons() {
+		let nowPlaying = CPNowPlayingTemplate.shared
+		let title = player.isActive ? String(localized: "Episodes") : ""
+		if nowPlaying.upNextTitle != title { nowPlaying.upNextTitle = title }
+		if nowPlaying.isUpNextButtonEnabled != player.isActive {
+			nowPlaying.isUpNextButtonEnabled = player.isActive
+		}
+	}
+
+	func nowPlayingTemplateUpNextButtonTapped(
+		_ nowPlayingTemplate: CPNowPlayingTemplate
+	) {
+		guard let id = player.activePodcastID,
+			let podcast = library.podcast(id: id)
+		else { return }
+		let template = CPListTemplate(
+			title: podcast.name.isEmpty
+				? String(localized: "Episodes") : podcast.name,
+			sections: [episodeSection(podcastID: id)]
+		)
+		template.emptyViewTitleVariants = [String(localized: "No episodes")]
+		episodesTemplate = template
+		interfaceController?.pushTemplate(
+			template,
+			animated: true,
+			completion: nil
+		)
+		if library.feeds[id] == nil {
+			Task { @MainActor in
+				await library.refreshFeed(for: podcast)
+				template.updateSections([episodeSection(podcastID: id)])
+			}
+		}
+	}
+
+	private func episodeSection(podcastID: UUID) -> CPListSection {
+		guard let podcast = library.podcast(id: podcastID) else {
+			return CPListSection(items: [])
+		}
+		let currentID = library.currentEpisode(for: podcast)?.id
+		let episodes = library.feeds[podcastID]?.episodes ?? []
+		let items = episodes.map { episode in
+			let position = library.savedPosition(
+				podcastID: podcastID,
+				episode: episode
+			)
+			let detail = [
+				PodcastFormat.date(episode.publishedAt),
+				PodcastFormat.remaining(
+					position: position,
+					duration: episode.duration
+				) ?? episode.duration.map { PodcastFormat.duration($0) },
+			].compactMap { $0 }.joined(separator: " · ")
+			let item = CPListItem(
+				text: episode.title.isEmpty ? episode.audioUrl : episode.title,
+				detailText: detail
+			)
+			item.isPlaying = episode.id == currentID
+			item.playingIndicatorLocation = .leading
+			if let progress = library.progress(
+				podcastID: podcastID,
+				episode: episode
+			) {
+				item.playbackProgress = progress
+			}
+			item.handler = { [weak self] _, completion in
+				guard let self else { return completion() }
+				Task { @MainActor in
+					self.library.selectEpisode(episode, for: podcast)
+					await self.player.play(episode, of: podcast)
+					self.interfaceController?.popTemplate(
+						animated: true,
+						completion: nil
+					)
+					completion()
+				}
+			}
+			return item
+		}
+		return CPListSection(items: items)
+	}
+
 	private func showNowPlaying() {
+		updateNowPlayingButtons()
 		guard let interfaceController,
 			!(interfaceController.topTemplate is CPNowPlayingTemplate)
 		else { return }
@@ -93,15 +259,16 @@ class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate {
 		)
 	}
 
-	private func listImage(for station: RadioStation) -> UIImage? {
-		let urlString = station.faviconUrl
-			.trimmingCharacters(in: .whitespacesAndNewlines)
-		guard !urlString.isEmpty, let url = URL(string: urlString) else {
+	private func listImage(urlString: String, fallbackSymbol: String)
+		-> UIImage?
+	{
+		let trimmed = urlString.trimmingCharacters(in: .whitespacesAndNewlines)
+		guard !trimmed.isEmpty, let url = URL(string: trimmed) else {
 			return streamInfo.appIcon
 		}
-		if let image = listImages[urlString] { return image }
-		loadImage(url, key: urlString)
-		return UIImage(systemName: "antenna.radiowaves.left.and.right")
+		if let image = listImages[trimmed] { return image }
+		loadImage(url, key: trimmed)
+		return UIImage(systemName: fallbackSymbol)
 	}
 
 	private func loadImage(_ url: URL, key: String) {
@@ -114,7 +281,7 @@ class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate {
 			self.loadingImages.remove(key)
 			self.listImages[key] =
 				source.map(Self.composeListImage) ?? self.streamInfo.appIcon
-			self.updateList()
+			self.updateLists()
 		}
 	}
 

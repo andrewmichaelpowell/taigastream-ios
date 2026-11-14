@@ -5,14 +5,38 @@ import Foundation
 import SwiftUI
 
 struct MainView: View {
-	@ObservedObject var streamInfo = StreamInfo.shared
 	@StateObject private var popupPresenter = StationPopupPresenter()
+	@AppStorage("SelectedTab") private var selectedTab = MainTab.radio
 
 	private static let noStatusBarTopMargin: CGFloat = 20
 
+	enum MainTab: String {
+		case radio, podcasts
+	}
+
 	var body: some View {
+		TabView(selection: $selectedTab) {
+			Tab(value: MainTab.radio) {
+				withTopMargin(RadioView())
+			} label: {
+				Image(systemName: "radio")
+					.accessibilityLabel(Text("Radio"))
+			}
+			Tab(value: MainTab.podcasts) {
+				withTopMargin(PodcastsView())
+			} label: {
+				Image(systemName: "mic")
+					.accessibilityLabel(Text("Podcasts"))
+			}
+		}
+		.tint(Color(red: 4 / 255, green: 80 / 255, blue: 48 / 255))
+		.stationPopupHost(popupPresenter)
+	}
+
+	private func withTopMargin<Content: View>(_ content: Content) -> some View {
 		GeometryReader { proxy in
-			stationList
+			content
+				.background { NowPlayingBackground() }
 				.contentMargins(
 					.top,
 					needsTopMargin(topInset: proxy.safeAreaInsets.top)
@@ -20,54 +44,9 @@ struct MainView: View {
 					for: .scrollContent
 				)
 		}
-		.stationPopupHost(popupPresenter)
 	}
 
 	private func needsTopMargin(topInset: CGFloat) -> Bool {
 		UIDevice.current.userInterfaceIdiom == .phone && topInset < 1
-	}
-
-	private var stationList: some View {
-		List {
-			ForEach(Array(streamInfo.stations.enumerated()), id: \.element.id) {
-				index,
-				station in
-				HStack(spacing: 12) {
-					FaviconView(station: station)
-
-					StreamSlotRow(index: index)
-						.environmentObject(streamInfo)
-
-					PlayButton(streamNumber: index + 1)
-				}
-				.frame(minHeight: 56)
-				.listRowInsets(
-					EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16)
-				)
-				.listRowSeparator(.hidden)
-				.moveDisabled(false)
-				.deleteDisabled(true)
-			}
-			.onMove { source, destination in
-				streamInfo.moveStation(from: source, to: destination)
-			}
-
-			HStack {
-				Spacer()
-				StreamSlotRow(index: streamInfo.stations.count, isAddButton: true)
-					.environmentObject(streamInfo)
-				Spacer()
-			}
-			.frame(minHeight: 56)
-			.listRowInsets(
-				EdgeInsets(top: 16, leading: 16, bottom: 4, trailing: 16)
-			)
-			.listRowSeparator(.hidden)
-			.moveDisabled(true)
-			.deleteDisabled(true)
-		}
-		.listStyle(.plain)
-		.scrollContentBackground(.hidden)
-		.environment(\.editMode, .constant(.active))
 	}
 }
