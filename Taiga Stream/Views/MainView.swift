@@ -7,8 +7,9 @@ import SwiftUI
 struct MainView: View {
 	@StateObject private var popupPresenter = StationPopupPresenter()
 	@AppStorage("SelectedTab") private var selectedTab = MainTab.radio
+	@State private var topSafeAreaInset: CGFloat = 0
 
-	private static let noStatusBarTopMargin: CGFloat = 20
+	private static let noStatusBarTopMargin: CGFloat = 12
 
 	enum MainTab: String {
 		case radio, podcasts
@@ -21,9 +22,19 @@ struct MainView: View {
 		}
 		.safeAreaInset(edge: .top, spacing: 0) {
 			NowPlayingPanel()
+				.padding(
+					.top,
+					needsTopMargin(topInset: topSafeAreaInset)
+						? Self.noStatusBarTopMargin : 0
+				)
 		}
 		.safeAreaInset(edge: .bottom) {
 			PageChooser(selection: $selectedTab)
+		}
+		.onGeometryChange(for: CGFloat.self) { proxy in
+			proxy.safeAreaInsets.top
+		} action: { inset in
+			topSafeAreaInset = inset
 		}
 		.stationPopupHost(popupPresenter)
 		.task { await PodcastLibrary.shared.refreshAllFeeds() }
@@ -33,22 +44,10 @@ struct MainView: View {
 		-> some View
 	{
 		let isSelected = selectedTab == tab
-		return withTopMargin(content)
+		return content
 			.opacity(isSelected ? 1 : 0)
 			.allowsHitTesting(isSelected)
 			.accessibilityHidden(!isSelected)
-	}
-
-	private func withTopMargin<Content: View>(_ content: Content) -> some View {
-		GeometryReader { proxy in
-			content
-				.contentMargins(
-					.top,
-					needsTopMargin(topInset: proxy.safeAreaInsets.top)
-						? Self.noStatusBarTopMargin : 0,
-					for: .scrollContent
-				)
-		}
 	}
 
 	private func needsTopMargin(topInset: CGFloat) -> Bool {
