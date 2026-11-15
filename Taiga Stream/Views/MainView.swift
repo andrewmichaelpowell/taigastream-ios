@@ -15,54 +15,33 @@ struct MainView: View {
 	}
 
 	var body: some View {
-		TabView(selection: $selectedTab) {
-			Tab(value: MainTab.radio) {
-				withTopMargin(RadioView())
-			} label: {
-				tabIcon("radio")
-					.accessibilityLabel(Text("Radio"))
-			}
-			Tab(value: MainTab.podcasts) {
-				withTopMargin(PodcastsView())
-			} label: {
-				tabIcon("mic")
-					.accessibilityLabel(Text("Podcasts"))
-			}
+		ZStack {
+			page(RadioView(), for: .radio)
+			page(PodcastsView(), for: .podcasts)
 		}
-		.tint(
-			Color(
-				uiColor: UIColor { traits in
-					traits.userInterfaceStyle == .dark
-						? .white
-						: UIColor(
-							red: 4 / 255,
-							green: 80 / 255,
-							blue: 48 / 255,
-							alpha: 1
-						)
-				}
-			)
-		)
+		.safeAreaInset(edge: .top, spacing: 0) {
+			NowPlayingPanel()
+		}
+		.safeAreaInset(edge: .bottom) {
+			PageChooser(selection: $selectedTab)
+		}
 		.stationPopupHost(popupPresenter)
+		.task { await PodcastLibrary.shared.refreshAllFeeds() }
 	}
 
-	private func tabIcon(_ name: String) -> Image {
-		let config = UIImage.SymbolConfiguration(
-			pointSize: 21,
-			weight: .regular
-		)
-		guard let symbol = UIImage(systemName: name, withConfiguration: config)
-		else { return Image(systemName: name) }
-		let flat = UIGraphicsImageRenderer(size: symbol.size).image { _ in
-			symbol.draw(at: .zero)
-		}
-		return Image(uiImage: flat.withRenderingMode(.alwaysTemplate))
+	private func page<Content: View>(_ content: Content, for tab: MainTab)
+		-> some View
+	{
+		let isSelected = selectedTab == tab
+		return withTopMargin(content)
+			.opacity(isSelected ? 1 : 0)
+			.allowsHitTesting(isSelected)
+			.accessibilityHidden(!isSelected)
 	}
 
 	private func withTopMargin<Content: View>(_ content: Content) -> some View {
 		GeometryReader { proxy in
 			content
-				.background { NowPlayingBackground() }
 				.contentMargins(
 					.top,
 					needsTopMargin(topInset: proxy.safeAreaInsets.top)
@@ -74,5 +53,66 @@ struct MainView: View {
 
 	private func needsTopMargin(topInset: CGFloat) -> Bool {
 		UIDevice.current.userInterfaceIdiom == .phone && topInset < 1
+	}
+}
+
+private struct PageChooser: View {
+	@Binding var selection: MainView.MainTab
+
+	@Namespace private var namespace
+
+	private static let itemWidth: CGFloat = 92
+	private static let itemHeight: CGFloat = 54
+	private static let inset: CGFloat = 4
+
+	var body: some View {
+		HStack(spacing: 0) {
+			item(.radio, symbol: "radio", label: Text("Radio"))
+			item(.podcasts, symbol: "mic", label: Text("Podcasts"))
+		}
+		.padding(Self.inset)
+		.chooserBackground()
+		.animation(.snappy, value: selection)
+	}
+
+	private func item(
+		_ tab: MainView.MainTab,
+		symbol: String,
+		label: Text
+	) -> some View {
+		let isSelected = selection == tab
+		return Button {
+			selection = tab
+		} label: {
+			Image(systemName: symbol)
+				.font(.system(size: 21))
+				.foregroundStyle(isSelected ? Color.white : Color.primary)
+				.frame(width: Self.itemWidth, height: Self.itemHeight)
+				.background {
+					if isSelected {
+						Capsule()
+							.fill(Color.taigaGreen)
+							.matchedGeometryEffect(
+								id: "selection",
+								in: namespace
+							)
+					}
+				}
+				.contentShape(Capsule())
+		}
+		.buttonStyle(.plain)
+		.accessibilityLabel(label)
+		.accessibilityAddTraits(isSelected ? .isSelected : [])
+	}
+}
+
+extension View {
+	@ViewBuilder
+	fileprivate func chooserBackground() -> some View {
+		if #available(iOS 26.0, *) {
+			glassEffect(.regular.interactive(), in: Capsule())
+		} else {
+			background(.regularMaterial, in: Capsule())
+		}
 	}
 }

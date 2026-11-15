@@ -23,8 +23,6 @@ struct PodcastsView: View {
 					PodcastPlayButton(podcastNumber: index + 1)
 				}
 				.frame(minHeight: 56)
-				// The lifted row while reordering: rounded, with a little room
-				// around the artwork and buttons, and no solid fill.
 				.contentShape(
 					.dragPreview,
 					RoundedRectangle(cornerRadius: 16).inset(by: -6)
@@ -59,7 +57,6 @@ struct PodcastsView: View {
 		.listStyle(.plain)
 		.scrollContentBackground(.hidden)
 		.refreshable { await library.refreshAllFeeds() }
-		.task { await library.refreshAllFeeds() }
 	}
 }
 

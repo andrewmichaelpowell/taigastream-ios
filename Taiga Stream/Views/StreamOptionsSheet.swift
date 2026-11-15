@@ -48,7 +48,7 @@ struct StreamOptionsSheet: View {
 			}
 			.navigationTitle("Stream \(index + 1)")
 			.navigationBarTitleDisplayMode(.inline)
-			.containerBackground(for: .navigation) { NowPlayingBackground() }
+			.containerBackground(Color.sheetBackground, for: .navigation)
 		}
 	}
 

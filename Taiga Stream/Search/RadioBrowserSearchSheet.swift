@@ -111,7 +111,7 @@ struct RadioBrowserSearchSheet: View {
 			}
 			.navigationTitle("Search")
 			.navigationBarTitleDisplayMode(.inline)
-			.containerBackground(for: .navigation) { NowPlayingBackground() }
+			.containerBackground(Color.sheetBackground, for: .navigation)
 		}
 	}
 

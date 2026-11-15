@@ -100,7 +100,7 @@ struct PodcastOptionsSheet: View {
 			}
 			.navigationTitle("Podcast \(index + 1)")
 			.navigationBarTitleDisplayMode(.inline)
-			.containerBackground(for: .navigation) { NowPlayingBackground() }
+			.containerBackground(Color.sheetBackground, for: .navigation)
 		}
 	}
 }
@@ -137,7 +137,11 @@ struct PodcastURLSheet: View {
 						isURL: true,
 						onSubmit: save
 					)
-					SheetButton(title: "Save", isEnabled: isValidUrl, action: save)
+					SheetButton(
+						title: "Save",
+						isEnabled: isValidUrl,
+						action: save
+					)
 					SheetButton(title: "Cancel") { isPresented = false }
 				}
 				.padding()
@@ -145,7 +149,7 @@ struct PodcastURLSheet: View {
 			}
 			.navigationTitle("Enter URL")
 			.navigationBarTitleDisplayMode(.inline)
-			.containerBackground(for: .navigation) { NowPlayingBackground() }
+			.containerBackground(Color.sheetBackground, for: .navigation)
 		}
 	}
 
@@ -215,7 +219,7 @@ struct PodcastSearchSheet: View {
 			}
 			.navigationTitle("Search")
 			.navigationBarTitleDisplayMode(.inline)
-			.containerBackground(for: .navigation) { NowPlayingBackground() }
+			.containerBackground(Color.sheetBackground, for: .navigation)
 		}
 	}
 
@@ -304,7 +308,7 @@ struct EpisodePickerSheet: View {
 			}
 			.navigationTitle(podcast?.name ?? String(localized: "Episodes"))
 			.navigationBarTitleDisplayMode(.inline)
-			.containerBackground(for: .navigation) { NowPlayingBackground() }
+			.containerBackground(Color.sheetBackground, for: .navigation)
 		}
 		.task {
 			if let podcast, library.feeds[podcastID] == nil {
@@ -350,7 +354,9 @@ struct EpisodePickerSheet: View {
 				.listStyle(.plain)
 				.scrollContentBackground(.hidden)
 				.onAppear {
-					if let selectedID { proxy.scrollTo(selectedID, anchor: .center) }
+					if let selectedID {
+						proxy.scrollTo(selectedID, anchor: .center)
+					}
 				}
 			}
 		}

@@ -89,7 +89,7 @@ struct ManualURLSheet: View {
 			}
 			.navigationTitle("Enter URL")
 			.navigationBarTitleDisplayMode(.inline)
-			.containerBackground(for: .navigation) { NowPlayingBackground() }
+			.containerBackground(Color.sheetBackground, for: .navigation)
 		}
 	}
 

@@ -75,7 +75,8 @@ struct PodcastSlotRow: View {
 			isActive
 			? player.position
 			: library.savedPosition(podcastID: podcast.id, episode: episode)
-		let duration = isActive ? (player.duration ?? episode.duration) : episode.duration
+		let duration =
+			isActive ? (player.duration ?? episode.duration) : episode.duration
 		let detail =
 			PodcastFormat.remaining(position: position, duration: duration)
 			?? PodcastFormat.date(episode.publishedAt)
@@ -163,26 +164,29 @@ struct PodcastPlayButton: View {
 			&& !podcast.feedUrl.isEmpty
 	}
 
+	private var showsSpinner: Bool {
+		isStarting
+			|| (player.activePodcastID == podcast.id && player.isBuffering)
+	}
+
 	var body: some View {
 		Button(action: {
+			if isPlaying {
+				isStarting = false
+				player.pause()
+				return
+			}
 			guard !isStarting else { return }
-			isStarting = !isPlaying
+			isStarting = true
 			Task {
 				await player.play(podcastNumber: podcastNumber)
-				// Keep the spinner while the episode buffers; give up if it
-				// never starts.
-				if player.activePodcastID != podcast.id {
-					isStarting = false
-				} else if isStarting {
-					try? await Task.sleep(for: .seconds(20))
-					isStarting = false
-				}
+				isStarting = false
 			}
 		}) {
 			Group {
 				if isPlaying {
 					Text(Image(systemName: "pause.fill"))
-				} else if isStarting {
+				} else if showsSpinner {
 					ProgressView()
 				} else {
 					Text("\(podcastNumber)")
@@ -194,9 +198,6 @@ struct PodcastPlayButton: View {
 			}
 			.font(.title3)
 			.frame(maxWidth: .infinity, maxHeight: 50)
-		}
-		.onChange(of: isPlaying) { _, playing in
-			if playing { isStarting = false }
 		}
 		.frame(width: 50, height: 50)
 		.circleButtonStyle(isOn: isPlaying)

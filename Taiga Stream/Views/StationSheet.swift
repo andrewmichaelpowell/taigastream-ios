@@ -109,7 +109,7 @@ private struct StationPopupHost: View {
 				popup.content
 					.environment(\.horizontalSizeClass, .compact)
 					.frame(maxWidth: 540, maxHeight: 620)
-					.background { NowPlayingBackground() }
+					.background(Color.sheetBackground)
 					.clipShape(
 						RoundedRectangle(cornerRadius: 32, style: .continuous)
 					)
@@ -120,4 +120,16 @@ private struct StationPopupHost: View {
 			}
 		}
 	}
+}
+
+extension Color {
+	static let sheetBackground = Color(
+		uiColor: UIColor { traits in
+			UIColor.systemBackground.resolvedColor(
+				with: traits.modifyingTraits {
+					$0.userInterfaceLevel = .elevated
+				}
+			)
+		}
+	)
 }
