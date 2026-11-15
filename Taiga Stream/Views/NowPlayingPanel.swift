@@ -93,7 +93,6 @@ struct NowPlayingPanel: View {
 				.frame(width: Self.routeSide, height: Self.routeSide)
 		}
 		.padding(16)
-		.frame(maxWidth: 600)
 		.panelBackground()
 		.padding(.horizontal, 16)
 		.padding(.bottom, 8)
