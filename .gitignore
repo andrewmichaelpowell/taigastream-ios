@@ -1,7 +1,2 @@
 Taiga\ Stream.xcodeproj/project.xcworkspace/xcuserdata/andrewmichaelpowell.xcuserdatad/UserInterfaceState.xcuserstate
 .DS_Store
-
-# fastlane: App Review contact details stay out of the repository
-fastlane/metadata/review_information/
-fastlane/metadata/trade_representative_contact_information/
-fastlane/report.xml

@@ -1,3 +1,0 @@
-A Taiga Stream segítségével kedvenc rádióállomásaid és podcastjaid könnyen elérhetőek. Az egyedi, közvetlenül a Vezérlőközpontból és a Zárolási képernyőről elérhető gombokkal azonnal válthatsz állomásokat anélkül, hogy megszakítanád a tevékenységedet.
-
-Hozz létre előbeállításokat, és élvezd a gyors hozzáférést kedvenc zenéidhez, híreidhez, sportközvetítéseidhez és podcastjaidhoz. Az iCloud segítségével az előbeállításaid automatikusan szinkronizálódnak az Apple-eszközeid között, így mindenhol ugyanazt a személyre szabott zenehallgatási élményt nyújtják.

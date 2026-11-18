@@ -1,9 +1,0 @@
-require "json"
-
-api_key(JSON.parse(File.read(File.expand_path("/Volumes/SanDisk/Repositories/keystore-repository/fastlane-ios.json")), symbolize_names: true))
-app_identifier("xyz.andrewmichaelpowell.taigastream")
-
-skip_screenshots(true)
-skip_binary_upload(true)
-submit_for_review(false)
-run_precheck_before_submit(false)
