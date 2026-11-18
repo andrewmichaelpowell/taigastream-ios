@@ -1,12 +1,8 @@
-# Taiga Stream: App Store listing text, uploaded with fastlane deliver.
-# The API key settings live outside the repository, in ~/.appstoreconnect/api_key.json.
-
 require "json"
 
-api_key(JSON.parse(File.read(File.expand_path("~/.appstoreconnect/api_key.json")), symbolize_names: true))
+api_key(JSON.parse(File.read(File.expand_path("/Volumes/SanDisk/Repositories/keystore-repository/fastlane-ios.json")), symbolize_names: true))
 app_identifier("xyz.andrewmichaelpowell.taigastream")
 
-# Text only: never upload screenshots or builds, and never submit for review.
 skip_screenshots(true)
 skip_binary_upload(true)
 submit_for_review(false)
