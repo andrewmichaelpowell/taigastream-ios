@@ -9,7 +9,7 @@ struct MainView: View {
 	@AppStorage("SelectedTab") private var selectedTab = MainTab.radio
 	@State private var topSafeAreaInset: CGFloat = 0
 
-	private static let noStatusBarTopMargin: CGFloat = 12
+	private static let noStatusBarTopMargin: CGFloat = 17
 
 	enum MainTab: String {
 		case radio, podcasts

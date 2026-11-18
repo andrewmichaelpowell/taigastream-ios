@@ -80,8 +80,6 @@ struct NowPlayingPanel: View {
 				Text(title)
 					.font(.headline)
 					.lineLimit(1)
-				// A blank line keeps the panel's height when there's no
-				// subtitle.
 				Text(subtitle.isEmpty ? " " : subtitle)
 					.font(.subheadline)
 					.foregroundStyle(.secondary)
@@ -95,7 +93,7 @@ struct NowPlayingPanel: View {
 		.padding(16)
 		.panelBackground()
 		.padding(.horizontal, 16)
-		.padding(.bottom, 8)
+		.padding(.bottom, 13)
 	}
 
 	private func artwork(showsAppIcon: Bool) -> some View {
